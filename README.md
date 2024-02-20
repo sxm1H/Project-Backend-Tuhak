@@ -8,6 +8,8 @@
 
 ## Change Log
 
+* 20/02: Removing unnecessary `user.js` file
+
 ## 🫡 0. Aims:
 
 1. Demonstrate effective use of software development tools to build full-stack end-user applications.
