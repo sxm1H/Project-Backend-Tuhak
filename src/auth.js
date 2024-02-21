@@ -5,4 +5,10 @@ function adminAuthLogin(email, password) {
       authUserId: 1,
     }
   }
+
+function adminAuthRegister(email, password, nameFirst, nameLast) {
+    return {
+      authUserId: 1,
+    }
+  }
   
