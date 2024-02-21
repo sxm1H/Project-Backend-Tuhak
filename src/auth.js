@@ -10,11 +10,8 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
   return {
     authUserId: 1,
   }
-<<<<<<< src/auth.js
 }
 
-=======
->>>>>>> src/auth.js
 function adminUserDetails(authUserId) {
   return {
       user: {
