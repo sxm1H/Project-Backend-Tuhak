@@ -21,3 +21,7 @@ function adminQuizCreate(authUserId, name, description) {
         quizId: 2,
     }
 }
+
+function adminQuizDescriptionUpdate(authUserId, quizId, description) {
+    return { } //Empty Object
+}
