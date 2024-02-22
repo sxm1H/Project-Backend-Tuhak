@@ -6,6 +6,16 @@ function adminQuizRemove(authUserId, quizId) {
     return { } // Empty object
 }
 
+function adminQuizList(authUserId) {
+    return {
+        quizzes: [
+            {
+                quizId: 1,
+                name: 'My Quiz',
+            }
+        ]
+    }
+}
 function adminQuizInfo(authUserId, quizId) {
     return {
         quizId: 1,
