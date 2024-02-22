@@ -16,6 +16,12 @@ function adminQuizInfo(authUserId, quizId) {
     }
 }
 
+function adminQuizCreate(authUserId, name, description) {
+    return {
+        quizId: 2,
+    }
+}
+
 function adminQuizDescriptionUpdate(authUserId, quizId, description) {
     return { } //Empty Object
 }
