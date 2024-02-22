@@ -15,3 +15,9 @@ function adminQuizInfo(authUserId, quizId) {
         description: 'This is my quiz',
     }
 }
+
+function adminQuizCreate(authUserId, name, description) {
+    return {
+        quizId: 2,
+    }
+}
