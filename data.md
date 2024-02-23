@@ -14,8 +14,6 @@ let data = {
         numSuccessfulLogins: 3,
         passwordData: {
           password: 'Basketball1',
-          oldPassword: 'Soccer1',
-          newPassword: 'Basketball1',
           strength: 'Weak',
         }
       },
