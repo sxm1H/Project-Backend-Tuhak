@@ -1,3 +1,5 @@
+import { getData, setData } from './dataStore.js'
+
 function adminQuizNameUpdate(authUserId, quizId, name) {
     return { } // Empty object
     }
