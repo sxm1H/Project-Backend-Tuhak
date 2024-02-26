@@ -4,8 +4,6 @@ function clear() {
 
     let data = getData();
 
-    console.log(data);
-
     setData({
         user: [],
         quizzes: [],
@@ -13,14 +11,10 @@ function clear() {
 
     data = getData();
 
-    console.log(data);
-
     return {
 
     }
 }
-
-clear();
 
 export { clear };
 
