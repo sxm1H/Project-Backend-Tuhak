@@ -1,5 +1,5 @@
-import { adminQuizNameUpdate } from './quiz.js';
-import { adminAuthRegister, adminQuizCreate } from 'auth.js'
+import { adminQuizNameUpdate, adminQuizCreate } from './quiz.js';
+import { adminAuthRegister } from './auth.js'
 import { clear } from './other.js'
 
 describe('adminQuizNameUpdate', () => {
