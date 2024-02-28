@@ -1,7 +1,17 @@
-import { adminQuizRemove } from './quiz.js';
+import { adminQuizRemove, adminQuizCreate } from './quiz.js';
+import { adminAuthRegister } from './auth.js';
+
 import { clear } from './other.js'
 
 describe('adminQuizRemove', () => {
+    test('Successful test', () => {
+      clear()
+      let userId = adminAuthRegister('nick@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
+      let quiz = adminQuizCreate(userId.authUserId, 'Cities of Australia', 'good quiz');
+
+      expect(adminQuizRemove(userId.authUserId, quiz.quizId)).toStrictEqual({ });
+
+    });
     test('authUserId is not a valid user', () => {
       clear()
 
@@ -13,7 +23,7 @@ describe('adminQuizRemove', () => {
       expect(error).toStrictEqual({error: 'AuthUserId is not a valid user.'});
 
     });
-    test('QuizId is not a valid quiz Error', () => {
+    test('QuizId is not a valid quiz.', () => {
         clear()
 
         let userId = adminAuthRegister('nick@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
@@ -22,7 +32,7 @@ describe('adminQuizRemove', () => {
   
         expect(error).toStrictEqual({error: 'Quiz ID does not refer to a valid quiz.'});
     });
-    test('QuizId is not a valid quiz Error', () => {
+    test('Quiz ID does not refer to a quiz that this user owns.', () => {
         clear()
 
         let userId = adminAuthRegister('nick@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
