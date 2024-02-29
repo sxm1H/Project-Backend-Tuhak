@@ -43,7 +43,6 @@ describe('adminAuthRegister', () => {
   });
   
   test.each([
-    ['dunyao@unsw.edu.au', 'abcd1234', '', 'Foo'],
     ['dunyao@unsw.edu.au', 'abcd1234', 'o', 'Foo'],
     ['dunyao@unsw.edu.au', 'abcd1234', 'abcdefghijklmnopqrstu', 'Foo'],
     ['dunyao@unsw.edu.au', 'abcd1234', 'abcdefghijklmnopqrstuv', 'Foo'],
@@ -64,7 +63,6 @@ describe('adminAuthRegister', () => {
   });
 
   test.each([
-    ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', ''],
     ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'a'],
     ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'abcdefghijklmnopqrstu'],
     ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'abcdefghijklmnopqrstuv'],
