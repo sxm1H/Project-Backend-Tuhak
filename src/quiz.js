@@ -37,3 +37,12 @@ function adminQuizCreate(authUserId, name, description) {
 function adminQuizDescriptionUpdate(authUserId, quizId, description) {
     return { } //Empty Object
 }
+
+export {
+    adminQuizNameUpdate,
+    adminQuizRemove,
+    adminQuizList,
+    adminQuizInfo,
+    adminQuizCreate,
+    adminQuizDescriptionUpdate,
+}
