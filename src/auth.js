@@ -36,3 +36,11 @@ function adminUserPasswordUpdate(authUserId, oldPassword, newPassword ) {
 
   };
 }
+
+export {
+  adminAuthLogin, 
+  adminAuthRegister, 
+  adminUserDetails, 
+  adminUserDetailsUpdate, 
+  adminUserPasswordUpdate,
+}
