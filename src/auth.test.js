@@ -1,3 +1,4 @@
+
 import { clear } from './other.js';
 import {
   adminAuthLogin, 
@@ -11,6 +12,10 @@ describe('adminAuthLogin', () => {
     test('Successful auth login', () => {
       clear();
       let userReg = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
+
+      adminAuthRegister('sami@gmail.com', 'sami1234', 'Sami', 'Hossein');
+      adminAuthRegister('kyle1234@gmail.com', 'kyle1234', 'Kyle', 'Morley');
+
       let userLog = adminAuthLogin('nick1234@gmail.com', 'nick1234')
 
       expect(userReg.authUserId).toBe(userLog.authUserId);
@@ -31,6 +36,7 @@ describe('adminAuthLogin', () => {
       expect(error).toBe({error: 'Password is not correct for the given email.'});
     });
   });
+
 
 describe('adminAuthRegister', () => {
 
