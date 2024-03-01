@@ -4,19 +4,22 @@ import {adminQuizNameUpdate, adminQuizRemove, adminQuizList, adminQuizInfo, admi
 import {clear} from './other.js';
 import {getData, setData} from './dataStore.js';
 
+beforeEach(() => {
+    clear();
+})
+
 describe('adminQuizList', () => {
     test('Non valid User Id', () => {
-        clear();
-        let userId = adminAuthRegister('fakeemail@gmail.com', 'abcde1234', 'John', 'Smith');
-        let quizList = adminQuizList(userId);
-        expect(quizList).toStrictEqual({error: 'Invalid User Id'})
+        let quizList1 = adminQuizList(999999999999999);
+        expect(quizList1).toStrictEqual({error: 'Invalid User Id'});
+        let quizList2 = adminQuizList(-1);
+        expect(quizList2).toStrictEqual({error: 'Invalid User Id'});
     })
 
     test('User Id Quiz List successfully accessed', () => {
-        clear();
         let userId = adminAuthRegister("pogchamp@gmail.com", 'thisisvalidpassword', 'Steve', 'Jobs');
         let quizList = adminQuizList(userId);
-        expect(quizList.error).toBeDefined;
+        expect(quizList.quizzes).toBeDefined;
     })
 
 })
