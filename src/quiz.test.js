@@ -16,7 +16,7 @@ describe ("adminQuizCreate", () => {
 		expect(createQuiz2).toStrictEqual({error: "User Id is not valid"});
 	})
 	
-	test.only("Quiz name has invalid characters", () => {
+	test("Quiz name has invalid characters", () => {
 		let userId1 = adminAuthRegister("somethin@gmail.com", "validpassword123", "Franz", "Kafka");
 		let createQuiz1 = adminQuizCreate(userId1.authUserId, "$:^)$", "Quiz smile");
 		expect(createQuiz1).toStrictEqual({error: "Quiz Name contains invalid characters"});
@@ -53,8 +53,8 @@ describe ("adminQuizCreate", () => {
 	test("Successful Quiz Created", () => {
 		let userId1 = adminAuthRegister("fakerT1@gmail.com", "pass123word", "Smith", "John");
 		let createQuiz1 = adminQuizCreate(userId1.authUserId, "good name", "descriptive description");
-		expect(createQuiz1.quizId).toBeDefined();
-		let createQuiz2 = adminQuizCreate(userId1, "blank quiz", "");
-		expect(createQuiz2.quizId).toBeDefined();
+		expect(createQuiz1.quizId).toStrictEqual(expect.any(Number));
+		let createQuiz2 = adminQuizCreate(userId1.authUserId, "blank quiz", "");
+		expect(createQuiz2.quizId).toStrictEqual(expect.any(Number));
 	})    
 })
