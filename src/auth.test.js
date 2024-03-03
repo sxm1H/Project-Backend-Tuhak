@@ -90,6 +90,7 @@ describe('adminAuthRegister', () => {
   test.each([
     ['dunyao@unsw.edu.au', '12345678', 'DunYao', 'Foo'],
     ['dunyao@unsw.edu.au', 'abcdefgh', 'DunYao', 'Foo'],
+    ['dunyao@unsw.edu.au', 'ABCDEFGH', 'DunYao', 'Foo'],
   ]) ('Invalid password: Characters', (email, password, nameFirst, nameLast) => {
     clear();
     let user = adminAuthRegister(email, password, nameFirst, nameLast);
