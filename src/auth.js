@@ -8,7 +8,7 @@ function adminAuthLogin(email, password) {
     authUserId: 1,
   }
 }
-
+let countUserId = 0
 function adminAuthRegister(email, password, nameFirst, nameLast) {
   let newdata = getData();
 
@@ -68,10 +68,11 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
     password: password,
     nameFirst: nameFirst,
     nameLast: nameLast,
+    userId: countUserId
   })
   
   return {
-    authUserId: newdata.user.length,
+    authUserId: countUserId//newdata.user.length,
   }
 }
 
