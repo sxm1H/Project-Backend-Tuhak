@@ -10,7 +10,9 @@ function adminAuthLogin(email, password) {
   for (const data of newData.user) {
     if (data.email === email) {
       if (data.password === password) {
-        return data.UserId;
+        return {
+          authUserId: data.userId,
+        }
       } else {
         return { 
           error: 'Password is not correct for the given email.'
@@ -78,16 +80,21 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
       error: 'Password must have at least one number and one letter.',
     }
   }
+
   
+  let id = newdata.user.length + 1;
+
   newdata.user.push({
     email: email,
     password: password,
     nameFirst: nameFirst,
     nameLast: nameLast,
+    userId: id,
+    passwordHistory: [password],
   })
   
   return {
-    authUserId: newdata.user.length,
+    authUserId: id,
   }
 }
 
