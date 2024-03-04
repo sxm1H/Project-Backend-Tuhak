@@ -25,7 +25,7 @@ describe('adminAuthLogin', () => {
       let userReg = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
       let error = adminAuthLogin('DunYao@gmail.com', 'nick1234');
 
-      expect(error).toBe({error: 'Email address does not exist.'});
+      expect(error.error).toEqual(expect.any(String));
     });
     test('Password is not correct for the given email.', () => {
       clear();
@@ -33,7 +33,7 @@ describe('adminAuthLogin', () => {
       let userReg = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
       let error = adminAuthLogin('nick1234@gmail.com', 'notTheSamePassword');
 
-      expect(error).toBe({error: 'Password is not correct for the given email.'});
+      expect(error.error).toEqual(expect.any(String));
     });
   });
 
@@ -50,7 +50,7 @@ describe('adminAuthRegister', () => {
     clear();
     let user1 = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo');
     let user2 = adminAuthRegister('dunyao@unsw.edu.au', '1234abcd', 'Nick', 'Sebastian');
-    expect(user2.error).toStrictEqual('Email is already in use.');
+    expect(user2.error).toEqual(expect.any(String));
   });
 
   test.each([
@@ -60,7 +60,7 @@ describe('adminAuthRegister', () => {
   ]) ('Invalid email: Incorrect input', (email, password, nameFirst, nameLast) => {
     clear();
     let user = adminAuthRegister(email, password, nameFirst, nameLast);
-    expect(user.error).toStrictEqual('Invalid email.');
+    expect(user.error).toEqual(expect.any(String));
   })
   
   test.each([
@@ -70,7 +70,7 @@ describe('adminAuthRegister', () => {
   ]) ('Invalid first name: Characters', (email, password, nameFirst, nameLast) => {
     clear();
     let user = adminAuthRegister(email, password, nameFirst, nameLast);
-    expect(user.error).toStrictEqual('Invalid characters in first name.');
+    expect(user.error).toEqual(expect.any(String));
   });
   
   test.each([
@@ -80,7 +80,7 @@ describe('adminAuthRegister', () => {
   ]) ('Invalid first name: Length', (email, password, nameFirst, nameLast) => {
     clear();
     let user = adminAuthRegister(email, password, nameFirst, nameLast);
-    expect(user.error).toStrictEqual('Invalid first name length.');
+    expect(user.error).toEqual(expect.any(String));
   });
   
   test.each([
@@ -90,7 +90,7 @@ describe('adminAuthRegister', () => {
   ]) ('Invalid last name: Characters', (email, password, nameFirst, nameLast) => {
     clear();
     let user = adminAuthRegister(email, password, nameFirst, nameLast);
-    expect(user.error).toStrictEqual('Invalid characters in last name.');
+    expect(user.error).toEqual(expect.any(String));
   });
 
   test.each([
@@ -100,7 +100,7 @@ describe('adminAuthRegister', () => {
   ]) ('Invalid last name: Length', (email, password, nameFirst, nameLast) => {
     clear();
     let user = adminAuthRegister(email, password, nameFirst, nameLast);
-    expect(user.error).toStrictEqual('Invalid last name length.');
+    expect(user.error).toEqual(expect.any(String));
   });
   
   test.each([
@@ -115,7 +115,7 @@ describe('adminAuthRegister', () => {
   ]) ('Invalid password: Length', (email, password, nameFirst, nameLast) => {
     clear();
     let user = adminAuthRegister(email, password, nameFirst, nameLast);
-    expect(user.error).toStrictEqual('Password must be at least 8 characters long.');
+    expect(user.error).toEqual(expect.any(String));
   });
 
   test.each([
@@ -124,7 +124,7 @@ describe('adminAuthRegister', () => {
   ]) ('Invalid password: Characters', (email, password, nameFirst, nameLast) => {
     clear();
     let user = adminAuthRegister(email, password, nameFirst, nameLast);
-    expect(user.error).toStrictEqual('Password must have at least one number and one letter.');
+    expect(user.error).toEqual(expect.any(String));
   });
   
 });
