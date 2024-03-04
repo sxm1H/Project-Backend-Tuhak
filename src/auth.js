@@ -81,7 +81,6 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
     }
   }
 
-  
   let id = newdata.user.length + 1;
 
   newdata.user.push({
