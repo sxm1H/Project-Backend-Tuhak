@@ -20,7 +20,7 @@ function adminAuthLogin(email, password) {
       }
     }
   }
-
+     
 
   return {
     error: 'Email address does not exist.',
@@ -44,7 +44,7 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
     }
   }
 
-  if (Boolean(nameFirst.match(/^[A-Za-z'"\x-]+$/)) === false) {
+  if (Boolean(nameFirst.match(/^[A-Za-z'" -]+$/)) === false) {
     return {
       error: 'Invalid characters in first name.',
     }
@@ -56,7 +56,7 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
     }
   }
 
-  if (Boolean(nameLast.match(/^[A-Za-z'"\x-]+$/)) === false) {
+  if (Boolean(nameLast.match(/^[A-Za-z'" -]+$/)) === false) {
     return {
       error: 'Invalid characters in last name.',
     }
