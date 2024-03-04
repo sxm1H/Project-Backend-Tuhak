@@ -26,7 +26,7 @@ function adminAuthLogin(email, password) {
     error: 'Email address does not exist.',
   }
 }
-
+let countUserId = 0
 function adminAuthRegister(email, password, nameFirst, nameLast) {
   let newdata = getData();
 
@@ -129,4 +129,3 @@ export {
   adminUserDetailsUpdate,
   adminUserPasswordUpdate,
  };
-
