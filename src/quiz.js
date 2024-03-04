@@ -10,13 +10,22 @@ function adminQuizRemove(authUserId, quizId) {
 }
 
 function adminQuizList(authUserId) {
+  let newdata = getData()
+  let serachUserId = newdata.user.findIndex(ids => ids.userId === authUserId);
+  
+  if (serachUserId === -1) {
+    return {
+      error: 'invalid user Id'
+    }
+  }
+
+  let quizList =  newdata.quizzes.map(quizes => ({
+    quizId: quizes.quizId,
+    name: quizes.name,
+  }))
+
 	return {
-		quizzes: [
-			{
-				quizId: 1,
-				name: 'My Quiz',
-			}
-		]
+		quizzes: quizList
 	}
 }
 

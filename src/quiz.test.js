@@ -1,10 +1,43 @@
 import {expect, jest, test} from '@jest/globals';
-import {adminAuthRegister} from "./auth.js";
-import {clear} from "./other.js";
-import {adminQuizCreate} from "./quiz.js";
+import {adminAuthRegister} from './auth.js';
+import {adminQuizNameUpdate, adminQuizRemove, adminQuizList, adminQuizInfo, adminAuizCreate, adminQuizDescriptionUpdate, adminQuizCreate} from './quiz.js';
+import {clear} from './other.js';
+import {getData, setData} from './dataStore.js';
 
 beforeEach(() => {
-	clear();
+  clear();
+})
+
+describe('adminQuizList', () => {
+	test('Non valid User Id', () => {
+		let quizList1 = adminQuizList(999999999999999);
+		expect(quizList1.error).toEqual(expect.any(String));
+		let quizList2 = adminQuizList(-1);
+		expect(quizList2.error).toEqual(expect.any(String));
+		let userId = adminAuthRegister('pain@gmail.com', 'Wowowowow123', 'Alex', 'Hirsch');
+		let quizList3 = adminQuizList(userId.authUserId + 1)
+		expect(quizList3.error).toEqual(expect.any(String));
+	})
+
+	test('User Id Quiz List successfully accessed', () => {
+		let userId = adminAuthRegister("pogchamp@gmail.com", 'thisisvalidpassword1', 'Steve', 'Jobs');
+		let quizListEmpty = adminQuizList(userId.authUserId);
+		
+		expect(quizListEmpty).toStrictEqual({
+			quizzes: []
+		});
+
+		let quizId = adminQuizCreate(userId.authUserId, 'creative name', 'description');
+		let quizList = adminQuizList(userId.authUserId);
+		expect(quizList).toStrictEqual({
+			quizzes: [
+				{
+					quizId: quizId.quizId,
+					name: 'creative name'
+				}
+			]
+		})
+	})
 })
 
 describe ("adminQuizCreate", () => {
@@ -58,3 +91,4 @@ describe ("adminQuizCreate", () => {
 		expect(createQuiz2.quizId).toStrictEqual(expect.any(Number));
 	})    
 })
+
