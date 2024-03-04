@@ -62,16 +62,21 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
       error: 'Password must have at least one number and one letter.',
     }
   }
+
   
+  let id = newdata.user.length + 1;
+
   newdata.user.push({
     email: email,
     password: password,
     nameFirst: nameFirst,
     nameLast: nameLast,
+    userId: id,
+    passwordHistory: [password],
   })
   
   return {
-    authUserId: newdata.user.length,
+    authUserId: id,
   }
 }
 
