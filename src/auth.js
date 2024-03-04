@@ -73,6 +73,8 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
     nameLast: nameLast,
     userId: id,
     passwordHistory: [password],
+    numSuccessfulLogins: 1,
+    numFailedPasswordsSinceLastLogin: 0,
   })
   
   return {
