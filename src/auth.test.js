@@ -20,6 +20,7 @@ describe('adminAuthLogin', () => {
 
       expect(userReg.authUserId).toBe(userLog.authUserId);
     });
+
     test('Email address does not exist', () => {
       clear();
       let userReg = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
@@ -27,6 +28,7 @@ describe('adminAuthLogin', () => {
 
       expect(error.error).toEqual(expect.any(String));
     });
+    
     test('Password is not correct for the given email.', () => {
       clear();
 
@@ -35,6 +37,19 @@ describe('adminAuthLogin', () => {
 
       expect(error.error).toEqual(expect.any(String));
     });
+
+    test('Password is not correct for the given email.', () => {
+      clear();
+
+      let userReg = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
+      let error = adminAuthLogin('nick1234@gmail.com', 'notTheSamePassword');
+
+      expect(error.error).toEqual(expect.any(String));
+    });
+
+
+
+
   });
 
 
