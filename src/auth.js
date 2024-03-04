@@ -102,16 +102,24 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
 }
 
 function adminUserDetails(authUserId) {
-  return {
-      user: {
-          userId: 1,
-          name: 'Hayden Smith',
-          email: 'hayden.smith@unsw.edu.au',
-          numSuccessfulLogins: 3,
-          numFailedPasswordsSinceLastLogin: 1,
-      },
-  };
-}  
+  console.log(authUserId)
+  let data = getData();
+ 
+  for (const j of data.user) {
+    if (j.userId === authUserId) {
+      return {
+        user: {
+          userId: j.userId,
+          name: j.nameFirst + ' ' + j.nameLast,
+          email: j.email,
+          numSuccessfulLogins: j.numSuccessfulLogins  || 0,
+          numFailedPasswordsSinceLastLogin: j.numFailedPasswordsSinceLastLogin ||  0,
+        }
+      };
+    }
+  }
+  return { error: 'authUserId not a valid Id' };
+}
 
 function adminUserDetailsUpdate(authUserId, email, nameFirst, nameLast ) {
   return {
