@@ -10,17 +10,19 @@ function adminAuthLogin(email, password) {
   for (const data of newData.user) {
     if (data.email === email) {
       if (data.password === password) {
+        data.numFailedPasswordsSinceLastLogin = 0;
+        data.numSuccessfulLogins++;
         return {
           authUserId: data.userId,
         }
       } else {
+        data.numFailedPasswordsSinceLastLogin++;
         return { 
           error: 'Password is not correct for the given email.'
         }
       }
     }
   }
-     
 
   return {
     error: 'Email address does not exist.',
