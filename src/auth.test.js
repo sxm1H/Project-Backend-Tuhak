@@ -226,7 +226,7 @@ describe('adminUserDetails', () => {
 test('Admin updates user details successfully', () => {
   clear();
   let admin = adminAuthRegister('dilhanmr@gmail.com', 'abCdddD123', 'Dilhan', 'Mert');
-  adminUserDetailsUpdate(admin.authUserId, 'dilhanmert@gmail.com','Dun Yao','Foo');
+  expect(adminUserDetailsUpdate(admin.authUserId, 'dilhanmert@gmail.com','Dun Yao','Foo')).toEqual({});
 
  
   expect(adminUserDetails(admin.authUserId)).toEqual({
@@ -242,19 +242,19 @@ test('Admin updates user details successfully', () => {
 
 test('Admin updates user details with invalid email format', () => {
   clear();
-  let admin = adminAuthRegister('admin@example.com', 'password123', 'John', 'Doe');
+  let admin = adminAuthRegister('admin@example.com', 'abCdddD123', 'John', 'Doe');
 
   const result = adminUserDetailsUpdate(admin.authUserId, 'invalidemail', 'NewName', 'NewLastName');
 
  
   expect(result).toEqual({
-    error: "User not found."
+    error: "Invalid email."
   });
 });
 test('Invalid email: Used by another user', () => {
   clear();
-  let user1 = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo');
-  user1 = adminUserDetailsUpdate('dunyao@unsw.edu.au', '1234abcd', 'Nick', 'Sebastian');
+  let user1 = adminAuthRegister('dunyao@unsw.edu.au', 'abCdddD123', 'DunYao', 'Foo');
+  user1 = adminUserDetailsUpdate('dunyao@unsw.edu.au', 'abCdddD1232', 'Nick', 'Sebastian');
   expect(user1.error).toEqual(expect.any(String));
 });
 
@@ -264,7 +264,7 @@ test.each([
   ['dunyao@', 'abcd1234', 'DunYao', 'Foo'],
 ]) ('Invalid email: Incorrect input', (email, password, nameFirst, nameLast) => {
   clear();
-  let user1 = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo');
+  let user1 = adminAuthRegister('dunyao@unsw.edu.au', 'abCdddD123', 'DunYao', 'Foo');
   user1 = adminUserDetailsUpdate(email, password, nameFirst, nameLast);
   expect(user1.error).toEqual(expect.any(String));
 })
