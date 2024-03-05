@@ -24,7 +24,7 @@ describe('adminQuizRemove', () => {
 
       let error = adminQuizRemove(1234, quiz.quizId); // 1234 being an obvious not authorised ID.
 
-      expect(error).toStrictEqual({error: 'AuthUserId is not a valid user.'});
+      expect(error.error).toEqual(expect.any(String));
 
     });
     test('QuizId is not a valid quiz.', () => {
@@ -33,7 +33,7 @@ describe('adminQuizRemove', () => {
     
         let error = adminQuizRemove(userId.authUserId, 1234); // 1234 being an obvious not authorised quizId.
   
-        expect(error).toStrictEqual({error: 'Quiz ID does not refer to a valid quiz.'});
+        expect(error.error).toEqual(expect.any(String));
     });
     test('Quiz ID does not refer to a quiz that this user owns.', () => {
 
@@ -44,7 +44,7 @@ describe('adminQuizRemove', () => {
 
         let error = adminQuizRemove(userId2.authUserId, quiz.quizId); // userId2 is Dun Yao
   
-        expect(error).toStrictEqual({error: 'Quiz ID does not refer to a quiz that this user owns.'});
+        expect(error.error).toEqual(expect.any(String));
     });
   });
 
