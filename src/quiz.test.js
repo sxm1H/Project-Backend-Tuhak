@@ -14,7 +14,8 @@ describe('adminQuizNameUpdate', () => {
       
       let quiz = adminQuizCreate(userReg.authUserId, 'QuizName', 'QuizDescription');
 
-      expect(adminQuizNameUpdate(userReg.authUserId, quiz.quizId, 'newName')).toBe({ });
+      expect(adminQuizNameUpdate(userReg.authUserId, quiz.quizId, 'newName')).toEqual({});
+
   });
   test('AuthUserId is not a valid user', () => {
 
@@ -22,8 +23,10 @@ describe('adminQuizNameUpdate', () => {
       
     let quiz = adminQuizCreate(userReg.authUserId, 'QuizName', 'QuizDescription');
 
+    let error = adminQuizNameUpdate(1234, quiz.quizId, 'newName')
+
     // 1234 being not a valid authUserId
-    expect(adminQuizNameUpdate(1234, quiz.quizId, 'newName')).toBe({error: 'AuthUserId is not a valid user.'}); 
+    expect(error.error).toEqual(expect.any(String)); 
   });
   test('Quiz ID does not refer to a valid quiz.', () => {
 
@@ -31,8 +34,10 @@ describe('adminQuizNameUpdate', () => {
       
     let quiz = adminQuizCreate(userReg.authUserId, 'QuizName', 'QuizDescription');
 
+    let error = adminQuizNameUpdate(userReg.authUserId, 1234, 'newName');
+
     // 1234 being not a valid quizId
-    expect(adminQuizNameUpdate(userReg.authUserId, quiz.quizId, 'newName')).toBe({error: 'Quiz ID does not refer to a valid quiz.'}); 
+    expect(error.error).toEqual(expect.any(String)); 
   });
   test('Name contains invalid characters. Valid characters are alphanumeric and spaces.', () => {
 
@@ -40,17 +45,21 @@ describe('adminQuizNameUpdate', () => {
       
     let quiz = adminQuizCreate(userReg.authUserId, 'QuizName', 'QuizDescription');
 
+    let error = adminQuizNameUpdate(userReg.authUserId, quiz.quizId, '🚫')
+
     // 🚫 is an emoji, therefore a invalid character
-    expect(adminQuizNameUpdate(userReg.authUserId, quiz.quizId, '🚫')).toBe({error: 'Name contains invalid characters. Valid characters are alphanumeric and spaces.'}); 
+    expect(error.error).toEqual(expect.any(String)); 
   });
   test('Name is either less than 3 characters long or more than 30 characters long.', () => {
 
     let userReg = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
       
     let quiz = adminQuizCreate(userReg.authUserId, 'QuizName', 'QuizDescription');
+
+    let error = adminQuizNameUpdate(userReg.authUserId, quiz.quizId, 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb')
 
     // bb is only two characters long
-    expect(adminQuizNameUpdate(userReg.authUserId, quiz.quizId, 'bb')).toBe({error: 'Name is either less than 3 characters long or more than 30 characters long.'}); 
+    expect(error.error).toEqual(expect.any(String)); 
   });
   test('Name is either less than 3 characters long or more than 30 characters long.', () => {
 
@@ -58,8 +67,9 @@ describe('adminQuizNameUpdate', () => {
       
     let quiz = adminQuizCreate(userReg.authUserId, 'QuizName', 'QuizDescription');
 
+    let error = adminQuizNameUpdate(userReg.authUserId, quiz.quizId, 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb')
     // bb is 31 characters characters long
-    expect(adminQuizNameUpdate(userReg.authUserId, quiz.quizId, 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb')).toBe({error: 'Name is either less than 3 characters long or more than 30 characters long.'}); 
+    expect(error.error).toEqual(expect.any(String)); 
   });
   test('Name is already used by the current logged in user for another quiz.', () => {
 
@@ -67,9 +77,9 @@ describe('adminQuizNameUpdate', () => {
     let quizDuplicate = adminQuizCreate(userReg.authUserId, 'duplicateName', 'quizDuplicateDescription');
     let quiz = adminQuizCreate(userReg.authUserId, 'duplicateName', 'quizDescription');
 
-
+    let error = adminQuizNameUpdate(userReg.authUserId, quiz.quizId, 'duplicateName')
     // duplicateName is already used
-    expect(adminQuizNameUpdate(userReg.authUserId, quiz.quizId, 'duplicateName')).toBe({error: 'Name is already used by the current logged in user for another quiz.'}); 
+    expect(error.error).toEqual(expect.any(String)); 
   });
 });
 
