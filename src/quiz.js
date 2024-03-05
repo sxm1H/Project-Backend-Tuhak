@@ -135,7 +135,8 @@ function adminQuizCreate(authUserId, name, description) {
 	let newdata = getData();
 	let userData = newdata.user;
 	let searchUserId = userData.findIndex(Ids => Ids.userId === authUserId);
-	let isAlphanumeric = /^[a-zA-Z0-9\s]+$/.test(name);
+	let isAlphanumeric = /^[a-zA-Z0-9 ]+$/.test(name);
+	let date = Date.now();
 
 	if (searchUserId === -1) {
 		return {error: 'User Id is not valid'};
@@ -169,6 +170,8 @@ function adminQuizCreate(authUserId, name, description) {
 		name: name,
 		description: description,
 		authUserId: authUserId,
+		timeCreated: date,
+		timeLastEdited: date,
 	})
 
 	return {
