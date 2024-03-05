@@ -102,7 +102,7 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
 }
 
 function adminUserDetails(authUserId) {
-  console.log(authUserId)
+
   let data = getData();
  
   for (const j of data.user) {
@@ -122,9 +122,60 @@ function adminUserDetails(authUserId) {
 }
 
 function adminUserDetailsUpdate(authUserId, email, nameFirst, nameLast ) {
-  return {
-    
-  };
+  let data = getData();
+
+  if (!data.user) {
+    data.user = [];
+  }
+  
+  let indexToUpdate = data.user.findIndex(user => user.userId === authUserId);
+ 
+  if (indexToUpdate < 0) {
+    return {
+      error: 'User not found.',
+    };
+  }
+
+  if (validator.isEmail(email) === false) {
+    return {
+      error: 'Invalid email.',
+    };
+  }
+
+  if (!nameFirst.match(/^[A-Za-z'" -]+$/)) {
+    return {
+      error: 'Invalid characters in first name.',
+    };
+  }
+
+  if (nameFirst.length < 2 || nameFirst.length > 20) {
+    return {
+      error: 'Invalid first name length.',
+    };
+  }
+
+  if (!nameLast.match(/^[A-Za-z'" -]+$/)) {
+    return {
+      error: 'Invalid characters in last name.',
+    };
+  }
+
+  if (nameLast.length < 2 || nameLast.length > 20) {
+    return {
+      error: 'Invalid last name length.',
+    };
+  }
+  
+
+  data.user[indexToUpdate].email = email;
+  data.user[indexToUpdate].nameFirst = nameFirst;
+  data.user[indexToUpdate].nameLast = nameLast;
+  data.user[indexToUpdate].name = nameFirst + ' ' + nameLast;
+
+ return {
+
+ }
+
 }
 function adminUserPasswordUpdate(authUserId, oldPassword, newPassword ) {
   return {
