@@ -132,7 +132,6 @@ function adminUserPasswordUpdate(authUserId, oldPassword, newPassword ) {
   };
 }
 
-
 export {
   adminAuthLogin, 
   adminAuthRegister,
@@ -140,3 +139,4 @@ export {
   adminUserDetailsUpdate,
   adminUserPasswordUpdate,
  };
+
