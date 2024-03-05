@@ -223,3 +223,80 @@ describe('adminUserDetails', () => {
     });
   });
 });
+test('Admin updates user details successfully', () => {
+  clear();
+  let admin = adminAuthRegister('dilhanmr@gmail.com', 'abCdddD123', 'Dilhan', 'Mert');
+  expect(adminUserDetailsUpdate(admin.authUserId, 'dilhanmert@gmail.com','Dun Yao','Foo')).toEqual({});
+
+ 
+  expect(adminUserDetails(admin.authUserId)).toEqual({
+    user: {
+      userId: admin.authUserId,
+      name: 'Dun Yao Foo',
+      email: 'dilhanmert@gmail.com',
+      numSuccessfulLogins: expect.any(Number),
+      numFailedPasswordsSinceLastLogin: 0,
+    }
+  });
+});
+
+test('Admin updates user details with invalid email format', () => {
+  clear();
+  let admin = adminAuthRegister('admin@example.com', 'abCdddD123', 'John', 'Doe');
+
+  const result = adminUserDetailsUpdate(admin.authUserId, 'invalidemail', 'NewName', 'NewLastName');
+
+ 
+  expect(result).toEqual({
+    error: "Invalid email."
+  });
+});
+test('Invalid email: Used by another user', () => {
+  clear();
+  let user1 = adminAuthRegister('dunyao@unsw.edu.au', 'abCdddD123', 'DunYao', 'Foo');
+  user1 = adminUserDetailsUpdate('dunyao@unsw.edu.au', 'abCdddD1232', 'Nick', 'Sebastian');
+  expect(user1.error).toEqual(expect.any(String));
+});
+
+test.each([
+  ['dunyaounsw.edu.au', 'abcd1234', 'DunYao', 'Foo'],
+  ['dunyao@unsw', 'abcd1234', 'DunYao', 'Foo'],
+  ['dunyao@', 'abcd1234', 'DunYao', 'Foo'],
+]) ('Invalid email: Incorrect input', (email, password, nameFirst, nameLast) => {
+  clear();
+  let user1 = adminAuthRegister('dunyao@unsw.edu.au', 'abCdddD123', 'DunYao', 'Foo');
+  user1 = adminUserDetailsUpdate(email, password, nameFirst, nameLast);
+  expect(user1.error).toEqual(expect.any(String));
+})
+test.each([
+  ['dunyao@unsw.edu.au', 'abcd1234', '1984', 'Foo'],
+  ['dunyao@unsw.edu.au', 'abcd1234', '?+-/*)(*&^%$#@!~`:><,.={}\|', 'Foo'],
+  ['dunyao@unsw.edu.au', 'abcd1234', 'Dun Yao123', 'Foo'],
+]) ('Invalid first name: Characters', (email, password, nameFirst, nameLast) => {
+  clear();
+  let user1 = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo');
+  user1 = adminUserDetailsUpdate(email, password, nameFirst, nameLast);
+  expect(user1.error).toEqual(expect.any(String));
+});
+
+test.each([
+  ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', '1984'],
+  ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', '?+-/*)(*&^%$#@!~`:><,.={}\|'],
+  ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Dun Yao123'],
+]) ('Invalid last name: Characters', (email, password, nameFirst, nameLast) => {
+  clear();
+  let user1 = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo');
+  user1 = adminUserDetailsUpdate(email, password, nameFirst, nameLast);
+  expect(user1.error).toEqual(expect.any(String));
+});
+
+test.each([
+  ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'a'],
+  ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'abcdefghijklmnopqrstu'],
+  ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'abcdefghijklmnopqrstuv'],
+]) ('Invalid last name: Length', (email, password, nameFirst, nameLast) => {
+  clear();
+  let user1 = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo');
+  user1 = adminUserDetailsUpdate(email, password, nameFirst, nameLast);
+  expect(user1.error).toEqual(expect.any(String));
+});
