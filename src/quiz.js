@@ -124,12 +124,30 @@ function adminQuizList(authUserId) {
 }
 
 function adminQuizInfo(authUserId, quizId) {
+	let data = getData();
+	let searchUserId = data.user.findIndex(Ids => Ids.userId === authUserId);
+	let searchquizId = data.quizzes.findIndex(Ids => Ids.quizId === quizId);
+
+	if (searchUserId === -1) {
+		return { error: 'User Id is not valid.'};
+	} else if ( searchquizId === -1) {
+		return { error: 'Quiz Id is not valid.'};
+	}
+
+	let quizMatch = data.quizzes[searchquizId];
+
+	if (authUserId !== quizMatch.authUserId) {
+		return { error: 'User does not own this quiz.'};
+	}
+
+	console.log(quizMatch);
+	
 	return {
-		quizId: 1,
-		name: 'My Quiz',
-		timeCreated: 1683125870,
-		timeLastEdited: 1683125871,
-		description: 'This is my quiz',
+		quizId: quizMatch.quizId,
+		name: quizMatch.name,
+		timeCreated: quizMatch.timeCreated,
+		timeLastEdited: quizMatch.timeLastEdited,
+		description: quizMatch.description,
 	}
 }
 
