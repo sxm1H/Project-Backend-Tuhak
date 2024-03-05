@@ -8,7 +8,8 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
 	let newdata = getData();
 	let userData = newdata.user;
 	let searchUserId = userData.findIndex(Ids => Ids.userId === authUserId);
-	let isAlphanumeric = /^[a-zA-Z0-9\s]+$/.test(name);
+	let isAlphanumeric = /^[a-zA-Z0-9 ]+$/.test(name);
+	let date = Date.now();
 
 	if (searchUserId === -1) {
 		return {error: 'User Id is not valid'};
@@ -39,6 +40,7 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
         if (data.authUserId === authUserId) {
             flag = 1;
             data.name = name;
+						data.timeLastEdited = date;
             break;
         } else {
             return {
