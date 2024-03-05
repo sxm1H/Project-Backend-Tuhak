@@ -58,6 +58,46 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
 }
 
 function adminQuizRemove(authUserId, quizId) {
+
+	let newdata = getData();
+
+	let flag = 0;
+
+	for (const data of newdata.user) {
+		if (authUserId === data.userId) {
+			flag = 1;
+			break;
+		}
+	}
+
+	if (!flag) {
+		return {
+			error: 'authUserId is not a valid user.',
+		}
+	}
+
+	flag = 0;
+	for (let i = 0; i < newdata.quizzes.length; i++) {
+    const data = newdata.quizzes[i];
+    if (quizId === data.quizId) {
+        if (data.authUserId === authUserId) {
+            flag = 1;
+            newdata.quizzes.splice(i, 1);
+            break;
+        } else {
+            return {
+                error: 'Quiz ID does not refer to a quiz that this user owns.'
+            };
+        }
+    }
+}
+
+	if (!flag) {
+		return {
+			error: 'Quiz ID does not refer to a valid quiz',
+		}
+	}
+
 	return { } // Empty object
 }
 
@@ -139,6 +179,7 @@ function adminQuizCreate(authUserId, name, description) {
 function adminQuizDescriptionUpdate(authUserId, quizId, description) {
     return { } //Empty Object
 }
+
 
 export {
 	adminQuizNameUpdate,
