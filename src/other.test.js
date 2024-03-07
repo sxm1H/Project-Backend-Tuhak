@@ -1,6 +1,10 @@
 import { clear } from './other.js'
 import { adminAuthRegister } from './auth.js'
 
+beforeEach(() => {
+  clear();
+})
+
 describe('Tests for clear', () => {
 
     test('Successful login after clear of same id', () => {
