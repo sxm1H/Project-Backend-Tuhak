@@ -122,6 +122,49 @@ describe('adminQuizRemove', () => {
   
         expect(error.error).toEqual(expect.any(String));
     });
+		test('Successful quiz remove - comprehensive test', () => {
+			let userId = adminAuthRegister('nick@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
+      let quiz = adminQuizCreate(userId.authUserId, 'Cities of Australia', 'good quiz');
+
+			let quizList = adminQuizList(userId.authUserId);
+			expect(quizList).toStrictEqual({
+				quizzes: [
+					{
+						quizId: quiz.quizId,
+						name: 'Cities of Australia'
+					}
+				]
+			})
+
+			let quizToDelete = adminQuizCreate(userId.authUserId, 'i will be gone soon', 'goodbye');
+
+			quizList = adminQuizList(userId.authUserId);
+			expect(quizList).toStrictEqual({
+				quizzes: [
+					{
+						quizId: quiz.quizId,
+						name: 'Cities of Australia'
+					},
+					{
+						quizId: quizToDelete.quizId,
+						name: 'i will be gone soon'
+					}
+				]
+			})
+
+			expect(adminQuizRemove(userId.authUserId, quizToDelete.quizId)).toStrictEqual({ });
+
+			quizList = adminQuizList(userId.authUserId);
+			expect(quizList).toStrictEqual({
+				quizzes: [
+					{
+						quizId: quiz.quizId,
+						name: 'Cities of Australia'
+					}
+				]
+			})
+
+		});
   });
 
 
