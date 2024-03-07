@@ -100,7 +100,11 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
     authUserId: id,
   }
 }
-
+/* Gets the authUserId and if that matches a user updates their email or first name or last name
+* parameter @ {int} authUserId - the id of the user we want to change 
+* @returns  {string} if there is an error occurs error string returned
+* @returns  {user:} returns the user: object with the necessary values of the details returned.
+*/
 function adminUserDetails(authUserId) {
 
   let data = getData();
@@ -120,7 +124,14 @@ function adminUserDetails(authUserId) {
   }
   return { error: 'authUserId not a valid Id' };
 }
-
+/* Gets the authUserId and if that matches a user updates their email or first name or last name
+* parameter @ {int} authUserId - the id of the user we want to change 
+* parameter @ { string } email - the email we want to update or keep
+* parameter @ { string } nameFirst - the first name of the user we want to change or  keep the same
+* parameter @ { string } nameLast - the last name of the user we want to change or keep the same
+* @returns  {string} if there is an error occurs error string returned
+* @returns  { } if function is succesful returns empty object
+*/
 function adminUserDetailsUpdate(authUserId, email, nameFirst, nameLast ) {
   let data = getData();
 
@@ -177,75 +188,10 @@ function adminUserDetailsUpdate(authUserId, email, nameFirst, nameLast ) {
  }
 
 }
-
-function passwordChecker(userDetails, oldPassword, newPassword) {
-  if (oldPassword === newPassword) {
-    return {
-      error: 'New Password is the same as old passward.'
-    }
-  }
-  for (let i = 0; i < userDetails.passwordHistory.length; i++) {
-    if (newPassword === userDetails.passwordHistory[i]) {
-      return {
-        error: 'Password has already been used before.'
-      }
-    }
-  }
-  if (newPassword.length < 8) {
-    return {
-      error: 'New Password must be at least 8 characters long.',
-    }
-  }
-
-  let letterCounter = 0;
-  let numberCounter = 0;
-  for (let i = 0; i < newPassword.length; i++) {
-    if (newPassword[i] >= 'a' && newPassword[i] <= 'z') {
-      letterCounter++;
-    }
-    if (newPassword[i] >= 'A' && newPassword[i] <= 'Z') {
-      letterCounter++;
-    }
-    if (newPassword[i] >= '0' && newPassword[i] <= '9') {
-      numberCounter++;
-    }
-  }
-
-  if (letterCounter === 0 || numberCounter === 0) {
-    return {
-      error: 'New Password must have at least one number and one letter.'
-    }
-  }
-
+function adminUserPasswordUpdate(authUserId, oldPassword, newPassword ) {
   return {
-    error: 'No Error'
-  }
-}
 
-function adminUserPasswordUpdate(authUserId, oldPassword, newPassword) {
-  let data = getData();
-  if (authUserId < 1 || authUserId > data.user.length) {
-    return {
-      error: 'Auth User ID invalid'
-    }
-  }
-
-  let userInfo = data.user[authUserId - 1];
-  if (oldPassword !== userInfo.password) {
-    return {
-      error: 'Password Entered Is Incorrect.'
-    }
-  }
-
-  let newPassIsOk = passwordChecker(userInfo, oldPassword, newPassword);
-
-  if (newPassIsOk.error !== 'No Error') {
-    return newPassIsOk;
-  } else {
-    userInfo.passwordHistory.push(newPassword);
-    userInfo.password = newPassword;
-    return {};
-  }
+  };
 }
 
 export {
