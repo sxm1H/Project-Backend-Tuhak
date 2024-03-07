@@ -140,8 +140,6 @@ function adminQuizInfo(authUserId, quizId) {
 		return { error: 'User does not own this quiz.'};
 	}
 
-	console.log(quizMatch);
-	
 	return {
 		quizId: quizMatch.quizId,
 		name: quizMatch.name,
