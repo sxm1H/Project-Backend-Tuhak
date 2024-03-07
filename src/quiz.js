@@ -200,7 +200,34 @@ function adminQuizCreate(authUserId, name, description) {
 }
 
 function adminQuizDescriptionUpdate(authUserId, quizId, description) {
-    return { } //Empty Object
+	let data = getData();
+	if (authUserId < 1 || authUserId > data.user.length) {
+		return {
+			error: 'Auth User ID invalid'
+		}
+	}
+
+	let quizInfo = false;
+
+	for (let i = 0; i < data.quizzes.length; i++) {
+		if (data.quizzes[i].quizId === quizId) {
+			quizInfo = data.quizzes[i];
+			if (quizInfo.authUserId !== authUserId) {
+				return { error: 'Quiz Does Not Belong to User' }
+			}
+		}
+	}
+
+	if (quizInfo === false) {
+		return { error: 'Quiz ID Invalid' };
+	}
+
+	if (description.length > 100) {
+		return { error: 'Description Too Long' };
+	} else {
+		quizInfo.description = description;
+		return {};
+	}
 }
 
 
