@@ -18,6 +18,56 @@ describe('adminQuizNameUpdate', () => {
       expect(adminQuizNameUpdate(userReg.authUserId, quiz.quizId, 'newName')).toEqual({});
 
   });
+
+	test('Comprehensive successful test case', () => {
+		let userReg = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
+		
+		let quiz = adminQuizCreate(userReg.authUserId, 'QuizName', 'QuizDescription');
+
+		let quizList = adminQuizList(userReg.authUserId);
+		expect(quizList).toStrictEqual({
+			quizzes: [
+				{
+					quizId: quiz.quizId,
+					name: 'QuizName'
+				}
+			]
+		})
+
+		let quiz2 = adminQuizCreate(userReg.authUserId, 'new quiz hello', 'hihihihi');
+
+		expect(adminQuizNameUpdate(userReg.authUserId, quiz.quizId, 'newName')).toEqual({});
+		quizList = adminQuizList(userReg.authUserId);
+		expect(quizList).toStrictEqual({
+			quizzes: [
+				{
+					quizId: quiz.quizId,
+					name: 'newName'
+				},
+				{
+					quizId: quiz2.quizId,
+					name: 'new quiz hello'
+				}
+			]
+		})
+
+		expect(adminQuizNameUpdate(userReg.authUserId, quiz2.quizId, 'omg new name')).toEqual({});
+		quizList = adminQuizList(userReg.authUserId);
+		expect(quizList).toStrictEqual({
+			quizzes: [
+				{
+					quizId: quiz.quizId,
+					name: 'newName'
+				},
+				{
+					quizId: quiz2.quizId,
+					name: 'omg new name'
+				}
+			]
+		})
+
+	});
+
   test('AuthUserId is not a valid user', () => {
 
     let userReg = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
