@@ -129,19 +129,17 @@ function adminQuizInfo(authUserId, quizId) {
 	let searchquizId = data.quizzes.findIndex(Ids => Ids.quizId === quizId);
 
 	if (searchUserId === -1) {
-		return { error: 'User Id is not valid.'};
+		return { error: 'User Id is not valid.' };
 	} else if ( searchquizId === -1) {
-		return { error: 'Quiz Id is not valid.'};
+		return { error: 'Quiz Id is not valid.' };
 	}
 
 	let quizMatch = data.quizzes[searchquizId];
 
 	if (authUserId !== quizMatch.authUserId) {
-		return { error: 'User does not own this quiz.'};
+		return { error: 'User does not own this quiz.' };
 	}
 
-	console.log(quizMatch);
-	
 	return {
 		quizId: quizMatch.quizId,
 		name: quizMatch.name,
