@@ -177,10 +177,75 @@ function adminUserDetailsUpdate(authUserId, email, nameFirst, nameLast ) {
  }
 
 }
-function adminUserPasswordUpdate(authUserId, oldPassword, newPassword ) {
-  return {
 
-  };
+function passwordChecker(userDetails, oldPassword, newPassword) {
+  if (oldPassword === newPassword) {
+    return {
+      error: 'New Password is the same as old passward.'
+    }
+  }
+  for (let i = 0; i < userDetails.passwordHistory.length; i++) {
+    if (newPassword === userDetails.passwordHistory[i]) {
+      return {
+        error: 'Password has already been used before.'
+      }
+    }
+  }
+  if (newPassword.length < 8) {
+    return {
+      error: 'New Password must be at least 8 characters long.',
+    }
+  }
+
+  let letterCounter = 0;
+  let numberCounter = 0;
+  for (let i = 0; i < newPassword.length; i++) {
+    if (newPassword[i] >= 'a' && newPassword[i] <= 'z') {
+      letterCounter++;
+    }
+    if (newPassword[i] >= 'A' && newPassword[i] <= 'Z') {
+      letterCounter++;
+    }
+    if (newPassword[i] >= '0' && newPassword[i] <= '9') {
+      numberCounter++;
+    }
+  }
+
+  if (letterCounter === 0 || numberCounter === 0) {
+    return {
+      error: 'New Password must have at least one number and one letter.'
+    }
+  }
+
+  return {
+    error: 'No Error'
+  }
+}
+
+function adminUserPasswordUpdate(authUserId, oldPassword, newPassword) {
+  let data = getData();
+  if (authUserId < 1 || authUserId > data.user.length) {
+    return {
+      error: 'Auth User ID invalid'
+    }
+  }
+
+  let userInfo = data.user[authUserId - 1];
+  if (oldPassword !== userInfo.password) {
+    return {
+      error: 'Password Entered Is Incorrect.'
+    }
+  }
+
+  let newPassIsOk = passwordChecker(userInfo, oldPassword, newPassword);
+
+  if (newPassIsOk.error !== 'No Error') {
+    return newPassIsOk;
+  } else {
+    userInfo.passwordHistory.push(newPassword);
+    userInfo.password = newPassword;
+    return {};
+  }
 }
 
 export {
