@@ -132,6 +132,28 @@ function adminQuizList(authUserId) {
 	}
 }
 
+/**
+  * Function allows user to view information about a specified quiz, unless the inputted ID's, user
+  * and quiz respectively, are invalid, then returns an error message.
+  * 
+  * @param {number} authUserId - ID of user trying to access quiz information.
+  * @param {number} quizId - ID of quiz user is trying to access.
+  * 
+  * @returns {
+*   object {
+  *     error: string
+  *   }	
+  * } - Error object with information regarding error.
+  * @returns {
+  *   return {
+  *     quizId: number,
+  *     name: string,
+  *     timeCreated: number,
+  *     timeLastEdited: number,
+  *     description: string,
+  *   }
+  * } - Returns the quiz information user wants to access.
+*/
 function adminQuizInfo(authUserId, quizId) {
 	let data = getData();
 	let searchUserId = data.user.findIndex(Ids => Ids.userId === authUserId);
