@@ -2,7 +2,17 @@ import { isAlpha } from 'validator'
 import { getData, setData } from './dataStore.js'
 let quizIdcounter = 0;
 
-
+/**
+  * <Given a registered user's id, a quizId that is valid, and a name that matches specified 
+	* criteria, the quizId specified will have their name changed to the name parameter>
+  * 
+  * @param {number} authUserId - UserId which may or not be registered in the data
+  * @param {number} quizId - quizId that may or may not correlate with a quiz in the data.
+	* @param {string} name - string that User wants the specified quizId to change the name to
+  * 
+  * @returns {object { }} returns empty object if no error and parameters match specified criteria.
+  * @returns {object {error: string}} returns specified error message
+*/
 function adminQuizNameUpdate(authUserId, quizId, name) {
 
 	let newdata = getData();
@@ -140,6 +150,28 @@ function adminQuizList(authUserId) {
 	}
 }
 
+/**
+  * Function allows user to view information about a specified quiz, unless the inputted ID's, user
+  * and quiz respectively, are invalid, then returns an error message.
+  * 
+  * @param {number} authUserId - ID of user trying to access quiz information.
+  * @param {number} quizId - ID of quiz user is trying to access.
+  * 
+  * @returns {
+*   object {
+  *     error: string
+  *   }	
+  * } - Error object with information regarding error.
+  * @returns {
+  *   return {
+  *     quizId: number,
+  *     name: string,
+  *     timeCreated: number,
+  *     timeLastEdited: number,
+  *     description: string,
+  *   }
+  * } - Returns the quiz information user wants to access.
+*/
 function adminQuizInfo(authUserId, quizId) {
 	let data = getData();
 	let searchUserId = data.user.findIndex(Ids => Ids.userId === authUserId);
@@ -165,6 +197,21 @@ function adminQuizInfo(authUserId, quizId) {
 		description: quizMatch.description,
 	}
 }
+
+/**
+ * adminQuizCreate will create a new quiz and push all of its information (quizId, name, description, 
+ * user Id, time create, last time edited) into dataStore it will return a unique quizId.
+ * 
+ * @param {Int} authUserId - user id for the person creating the quiz
+ * @param {string} name - The name of the quiz that is being created
+ * @param {string} description - the description of the quiz being created
+ * 
+ * @return {object {error: string}} - returns an error string if an the correct error
+ * is encountered
+ * 
+ * @return {object {quizId: number}} - returns a quiz Id object that contains the unique quiz Id relating
+ * to the created quiz.
+ */
 
 function adminQuizCreate(authUserId, name, description) {
 	let newdata = getData();
