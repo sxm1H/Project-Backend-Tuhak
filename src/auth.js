@@ -167,9 +167,7 @@ function adminUserDetails(authUserId) {
 function adminUserDetailsUpdate(authUserId, email, nameFirst, nameLast ) {
   let data = getData();
 
-  if (!data.user) {
-    data.user = [];
-  }
+  
   
   let indexToUpdate = data.user.findIndex(user => user.userId === authUserId);
  
@@ -213,7 +211,7 @@ function adminUserDetailsUpdate(authUserId, email, nameFirst, nameLast ) {
   data.user[indexToUpdate].email = email;
   data.user[indexToUpdate].nameFirst = nameFirst;
   data.user[indexToUpdate].nameLast = nameLast;
-  data.user[indexToUpdate].name = nameFirst + ' ' + nameLast;
+  
 
  return {
 
