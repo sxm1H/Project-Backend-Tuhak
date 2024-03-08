@@ -55,15 +55,21 @@ describe('adminAuthLogin', () => {
 
 describe('adminAuthRegister', () => {
 
-  test('Successful registration', () => {
+  test('Successful registration: Return value', () => {
     let user = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo');
-    expect(user.authUserId).toBeDefined();
+    expect(user.authUserId).toStrictEqual(expect.any(Number));
+  });
+
+  test('Successful registration: adminAuthLogin', () => {
+    let user = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo');
+    let userlog = adminAuthLogin('dunyao@unsw.edu.au', 'abcd1234');
+    expect(userlog.authUserId).toStrictEqual(expect.any(Number));
   });
   
   test('Invalid email: Used by another user', () => {
     let user1 = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo');
     let user2 = adminAuthRegister('dunyao@unsw.edu.au', '1234abcd', 'Nick', 'Sebastian');
-    expect(user2.error).toEqual(expect.any(String));
+    expect(user2.error).toStrictEqual(expect.any(String));
   });
 
   test.each([
@@ -72,7 +78,7 @@ describe('adminAuthRegister', () => {
     ['dunyao@', 'abcd1234', 'DunYao', 'Foo'],
   ]) ('Invalid email: Incorrect input', (email, password, nameFirst, nameLast) => {
     let user = adminAuthRegister(email, password, nameFirst, nameLast);
-    expect(user.error).toEqual(expect.any(String));
+    expect(user.error).toStrictEqual(expect.any(String));
   })
   
   test.each([
@@ -81,7 +87,7 @@ describe('adminAuthRegister', () => {
     ['dunyao@unsw.edu.au', 'abcd1234', 'Dun Yao123', 'Foo'],
   ]) ('Invalid first name: Characters', (email, password, nameFirst, nameLast) => {
     let user = adminAuthRegister(email, password, nameFirst, nameLast);
-    expect(user.error).toEqual(expect.any(String));
+    expect(user.error).toStrictEqual(expect.any(String));
   });
   
   test.each([
@@ -90,7 +96,7 @@ describe('adminAuthRegister', () => {
     ['dunyao@unsw.edu.au', 'abcd1234', 'abcdefghijklmnopqrstuv', 'Foo'],
   ]) ('Invalid first name: Length', (email, password, nameFirst, nameLast) => {
     let user = adminAuthRegister(email, password, nameFirst, nameLast);
-    expect(user.error).toEqual(expect.any(String));
+    expect(user.error).toStrictEqual(expect.any(String));
   });
   
   test.each([
@@ -99,7 +105,7 @@ describe('adminAuthRegister', () => {
     ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Dun Yao123'],
   ]) ('Invalid last name: Characters', (email, password, nameFirst, nameLast) => {
     let user = adminAuthRegister(email, password, nameFirst, nameLast);
-    expect(user.error).toEqual(expect.any(String));
+    expect(user.error).toStrictEqual(expect.any(String));
   });
 
   test.each([
@@ -108,7 +114,7 @@ describe('adminAuthRegister', () => {
     ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'abcdefghijklmnopqrstuv'],
   ]) ('Invalid last name: Length', (email, password, nameFirst, nameLast) => {
     let user = adminAuthRegister(email, password, nameFirst, nameLast);
-    expect(user.error).toEqual(expect.any(String));
+    expect(user.error).toStrictEqual(expect.any(String));
   });
   
   test.each([
@@ -122,7 +128,7 @@ describe('adminAuthRegister', () => {
     ['dunyao@unsw.edu.au', 'abcd123', 'DunYao', 'Foo'],
   ]) ('Invalid password: Length', (email, password, nameFirst, nameLast) => {
     let user = adminAuthRegister(email, password, nameFirst, nameLast);
-    expect(user.error).toEqual(expect.any(String));
+    expect(user.error).toStrictEqual(expect.any(String));
   });
 
   test.each([
@@ -131,7 +137,7 @@ describe('adminAuthRegister', () => {
     ['dunyao@unsw.edu.au', 'ABCDEFGH', 'DunYao', 'Foo'],
   ]) ('Invalid password: Characters', (email, password, nameFirst, nameLast) => {
     let user = adminAuthRegister(email, password, nameFirst, nameLast);
-    expect(user.error).toEqual(expect.any(String));
+    expect(user.error).toStrictEqual(expect.any(String));
   });
   
 });
