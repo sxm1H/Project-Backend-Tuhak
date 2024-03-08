@@ -241,6 +241,29 @@ function passwordChecker(userDetails, oldPassword, newPassword) {
   }
 }
 
+/*
+  * adminUserPasswordUpdate takes in the user's Id, current password and the
+  * password they want to change it to. If the current and new password passes 
+  * a series of error checks, their password will be changed and updated
+  * and pushed onto the passwordHistory.
+  * 
+  * @param {integer} authUserId - This is the user's id.
+  * @param {string} oldPassword - User's current password.
+  * @param {string} newPassword - User's new password.
+  * 
+  * @returns {
+  *   object {
+  *      error: string
+  *   }
+  * } Error Object with information regarding the error.
+  * @returns {
+  *   object {
+  * 
+  *   }
+  * } Empty Object to indicidate that everything worked.
+  * 
+*/
+
 function adminUserPasswordUpdate(authUserId, oldPassword, newPassword) {
   let data = getData();
   if (authUserId < 1 || authUserId > data.user.length) {
