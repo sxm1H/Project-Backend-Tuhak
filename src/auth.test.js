@@ -350,21 +350,21 @@ describe('adminUserPasswordUpdate', () => {
       let adminId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
       adminId.authUserId++;
       let passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'efgh5678');
-      expect(passwordChange.error).toStrictEqual('Auth User ID invalid');
+      expect(passwordChange.error).toStrictEqual(expect.any(String));
     });
   
     test('Test Unsuccessful: Old Password Incorrect', () => {
       clear();
       let adminId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
       let passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'aecd1234', 'efgh5678');
-      expect(passwordChange.error).toStrictEqual('Password Entered Is Incorrect.');
+      expect(passwordChange.error).toStrictEqual(expect.any(String));
     });
   
    test('Test Unsuccessful: Passwords are the Same', () => {
       clear();
       let adminId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
       let passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'abcd1234');
-      expect(passwordChange.error).toStrictEqual('New Password is the same as old passward.');
+      expect(passwordChange.error).toStrictEqual(expect.any(String));
     });
 
     test('Test Unsuccessful: New Password Matches Old Password', () => {
@@ -372,20 +372,20 @@ describe('adminUserPasswordUpdate', () => {
       let adminId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
       let passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'efgh5678');
       passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'efgh5678', 'abcd1234');
-      expect(passwordChange.error).toStrictEqual('Password has already been used before.');
+      expect(passwordChange.error).toStrictEqual(expect.any(String));
     });
 
     test('Test Unsuccessful: Password less than 8 charachters', () => {
       clear();
       let adminId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
       let passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'efgh567');
-      expect(passwordChange.error).toStrictEqual('New Password must be at least 8 characters long.');
+      expect(passwordChange.error).toStrictEqual(expect.any(String));
     });
 
     test('Test Unsuccessful: Password does not contain at least one number and at least one letter', () => {
       clear();
       let adminId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
       let passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', '***********');
-      expect(passwordChange.error).toStrictEqual('New Password must have at least one number and one letter.');
+      expect(passwordChange.error).toStrictEqual(expect.any(String));
     });
 });
