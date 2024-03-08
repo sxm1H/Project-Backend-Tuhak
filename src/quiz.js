@@ -60,7 +60,7 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
 }
 
 /**
-  * <Given a registered user's email and password returns their authUserId value>.
+  * <Given a registered userId and quizId, delete the quiz from data storage.>
   * 
   * @param {number} authUserId - userId which may or may not be registered in the data
   * @param {number} quizId - quizId which may or may not be registered in the data
