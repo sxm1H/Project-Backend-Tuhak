@@ -2,7 +2,17 @@ import { isAlpha } from 'validator'
 import { getData, setData } from './dataStore.js'
 let quizIdcounter = 0;
 
-
+/**
+  * <Given a registered user's id, a quizId that is valid, and a name that matches specified 
+	* criteria, the quizId specified will have their name changed to the name parameter>
+  * 
+  * @param {number} authUserId - UserId which may or not be registered in the data
+  * @param {number} quizId - quizId that may or may not correlate with a quiz in the data.
+	* @param {string} name - string that User wants the specified quizId to change the name to
+  * 
+  * @returns {object { }} returns empty object if no error and parameters match specified criteria.
+  * @returns {object {error: string}} returns specified error message
+*/
 function adminQuizNameUpdate(authUserId, quizId, name) {
 
 	let newdata = getData();
