@@ -333,7 +333,7 @@ function passwordChecker(userDetails, oldPassword, newPassword) {
 */
 function adminUserPasswordUpdate(authUserId, oldPassword, newPassword) {
   let data = getData();
-  if (data.findIndex(Ids => Ids.userId === authUserId) === -1) {
+  if (data.user.findIndex(Ids => Ids.userId === authUserId) === -1) {
     return {
       error: 'Auth User ID invalid'
     }
