@@ -1,13 +1,13 @@
-import { getData, setData } from './dataStore.js'
+import { getData, setData } from './dataStore.js';
 
 function clear() {
 
-    setData({
-        user: [],
-        quizzes: [],
-    });
+  setData({
+    user: [],
+    quizzes: [],
+  });
 
-    return {}
+  return {};
 }
 
 export { clear };
