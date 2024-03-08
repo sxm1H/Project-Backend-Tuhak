@@ -206,6 +206,35 @@ function adminQuizCreate(authUserId, name, description) {
 	}
 }
 
+/**
+ * Function takes in UserId, QuizId and New Description and returns 
+ * an empty object if it passes all the error checks.
+ * Otherwise, an error object will be returned containing the specific 
+ * error.
+ * 
+ * Before changing the Quiz Description, the function checks for whether:
+ * 	 1. Is Auth Id Valid
+ *   2. Is Quiz Id Valid
+ *   3. Does the Quiz Belong to the user
+ *   4. Is the Desc Under 100 words
+ *
+ * @param {integer} authUserId - This is the user's id.
+ * @param {string} quizId - This is the quiz id.
+ * @param {string} description - This is the new description for the quiz.
+ * 
+ * @returns {
+ *   object {
+ *     error: string
+ *   }
+ * } Error Object with information regarding the error.
+ * @returns {
+ *   object { 
+ * 
+ *   }
+ * } Empty Object to indicidate that everything worked.
+ * 
+*/
+
 function adminQuizDescriptionUpdate(authUserId, quizId, description) {
 	let data = getData();
 	if (authUserId < 1 || authUserId > data.user.length) {
