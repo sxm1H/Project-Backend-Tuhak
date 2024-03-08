@@ -36,7 +36,29 @@ function adminAuthLogin(email, password) {
     error: 'Email address does not exist.',
   }
 }
-let countUserId = 0
+
+/**
+  * Registers a user with a given email, password, first name and last name. The function pushes
+  * the new user to be stores in the dataStore object and returns the new generated adminAuthId for
+  * the newly registered user.
+  * If any errors are occured, the user is not registered and the function returns an error message.
+  * 
+  * @param {string} email - Email chosen by user to register.
+  * @param {string} password - Password chosen by user to register.
+  * @param {string} nameFirst - First name of user registering.
+  * @param {string} nameLast - Last name of user registering.
+  * 
+  * @returns {
+  *   object {
+  *     error: string
+  *   }	
+  * } - Error object with information regarding error.
+  * @returns {
+  *   object {
+  *     authUserId: number
+  *   }
+  * } - Generated authUserId to indicate the function worked.
+*/
 function adminAuthRegister(email, password, nameFirst, nameLast) {
   let newdata = getData();
 
@@ -108,10 +130,11 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
     authUserId: id,
   }
 }
-/* Gets the authUserId and if that matches a user updates their email or first name or last name
-* parameter @ {int} authUserId - the id of the user we want to change 
-* @returns  {string} if there is an error occurs error string returned
-* @returns  {user:} returns the user: object with the necessary values of the details returned.
+/**
+  * Gets the authUserId and if that matches a user updates their email or first name or last name
+  * parameter @ {int} authUserId - the id of the user we want to change 
+  * @returns  {string} if there is an error occurs error string returned
+  * @returns  {user:} returns the user: object with the necessary values of the details returned.
 */
 function adminUserDetails(authUserId) {
 
@@ -132,13 +155,14 @@ function adminUserDetails(authUserId) {
   }
   return { error: 'authUserId not a valid Id' };
 }
-/* Gets the authUserId and if that matches a user updates their email or first name or last name
-* parameter @ {int} authUserId - the id of the user we want to change 
-* parameter @ { string } email - the email we want to update or keep
-* parameter @ { string } nameFirst - the first name of the user we want to change or  keep the same
-* parameter @ { string } nameLast - the last name of the user we want to change or keep the same
-* @returns  {string} if there is an error occurs error string returned
-* @returns  { } if function is succesful returns empty object
+/**
+  * Gets the authUserId and if that matches a user updates their email or first name or last name
+  * parameter @ {int} authUserId - the id of the user we want to change 
+  * parameter @ { string } email - the email we want to update or keep
+  * parameter @ { string } nameFirst - the first name of the user we want to change or  keep the same
+  * parameter @ { string } nameLast - the last name of the user we want to change or keep the same
+  * @returns  {string} if there is an error occurs error string returned
+  * @returns  { } if function is succesful returns empty object
 */
 function adminUserDetailsUpdate(authUserId, email, nameFirst, nameLast ) {
   let data = getData();
@@ -241,7 +265,7 @@ function passwordChecker(userDetails, oldPassword, newPassword) {
   }
 }
 
-/*
+/**
   * adminUserPasswordUpdate takes in the user's Id, current password and the
   * password they want to change it to. If the current and new password passes 
   * a series of error checks, their password will be changed and updated
@@ -263,7 +287,6 @@ function passwordChecker(userDetails, oldPassword, newPassword) {
   * } Empty Object to indicidate that everything worked.
   * 
 */
-
 function adminUserPasswordUpdate(authUserId, oldPassword, newPassword) {
   let data = getData();
   if (authUserId < 1 || authUserId > data.user.length) {
