@@ -149,6 +149,16 @@ describe('adminUserDetails', () => {
       }
     });
   });
+  describe('adminUserDetails', () => {
+    test('correct return type when userid is wrong', () => {
+      let admin = adminAuthRegister('Dilhanm@gmail.com', 'abCdddD123', 'Dilhan', 'Mert');
+      expect(adminUserDetails(admin.authUserId + 1)).toStrictEqual({"error": "authUserId not a valid Id"});
+    })});
+    describe('adminUserDetails', () => {
+      test('correct return type when userid is wrong', () => {
+        let admin = adminAuthRegister('Dilhanm@gmail.com', 'abCdddD123', 'Dilhan', 'Mert');
+        expect(adminUserDetails(admin.authUserId - 2)).toStrictEqual({"error": "authUserId not a valid Id"});
+      })});
 
   test('name and email functionality', () => {
     let admin = adminAuthRegister('dilhanmr@gmail.com', 'abCdddD123', 'Dilhan', 'Mert');
@@ -223,7 +233,10 @@ test('Admin updates user details successfully', () => {
     }
   });
 });
-
+test('Admin fails to update succesfully', () => {
+  let admin = adminAuthRegister('dilhanmr@gmail.com', 'abCdddD123', 'Dilhan', 'Mert');
+  expect(adminUserDetailsUpdate(admin.authUserId + 1, 'dilhanmert@gmail.com','Dun Yao','Foo')).toEqual({"error": "User not found."});
+});
 test('Admin updates user details with invalid email format', () => {
   let admin = adminAuthRegister('admin@example.com', 'abCdddD123', 'John', 'Doe');
 
