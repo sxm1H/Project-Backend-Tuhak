@@ -342,18 +342,26 @@ describe('adminQuizInfo', () => {
 });
 
 describe('adminQuizDescriptionUpdate', () => {
-	test('Test Successful Quiz Description Update', () => {
+	test('Comprehensive Test Successful: Using Quiz Info to check whether the desc has been updated', () => {
 		let adminId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
 		let quizId = adminQuizCreate(adminId.authUserId, 'Australian Cities', 'lorem ipsum');
-		expect(adminQuizDescriptionUpdate(adminId.authUserId, quizId.quizId, 'lorem ipsum decorum')).toStrictEqual({});
+		adminQuizDescriptionUpdate(adminId.authUserId, quizId.quizId, 'lorem ipsum decorum');
+		expect(adminQuizInfo(adminId.authUserId, quizId.quizId).description).toStrictEqual('lorem ipsum decorum');
 	});
 
-	test('Test Successful: Quiz Description Updated when the user has multiple quizzes.', () => {
+	test('Comprehensive Test Successful: Using Quiz Info to check updated desc when the user has multiple quizzes.', () => {
 		let adminId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
 		adminQuizCreate(adminId.authUserId, 'Australian Tourist Attractions', 'lorem ipsum');
 		adminQuizCreate(adminId.authUserId, 'Australian Beaches', 'lorem ipsum');
 		let quizId = adminQuizCreate(adminId.authUserId, 'Australian Cities', 'lorem ipsum');
 		adminQuizCreate(adminId.authUserId, 'Australian States', 'lorem ipsum');
+		expect(adminQuizDescriptionUpdate(adminId.authUserId, quizId.quizId, 'lorem ipsum decorum')).toStrictEqual({});
+		expect(adminQuizInfo(adminId.authUserId, quizId.quizId).description).toStrictEqual('lorem ipsum decorum');
+	});
+
+	test('Test Successful Quiz Description Update', () => {
+		let adminId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
+		let quizId = adminQuizCreate(adminId.authUserId, 'Australian Cities', 'lorem ipsum');
 		expect(adminQuizDescriptionUpdate(adminId.authUserId, quizId.quizId, 'lorem ipsum decorum')).toStrictEqual({});
 	});
 
