@@ -292,6 +292,7 @@ function adminQuizCreate(authUserId, name, description) {
 
 function adminQuizDescriptionUpdate(authUserId, quizId, description) {
 	let data = getData();
+	let date = Date.now();
 
 	if (data.user.findIndex(Ids => Ids.userId === authUserId) === -1) {
 		return {
@@ -318,6 +319,7 @@ function adminQuizDescriptionUpdate(authUserId, quizId, description) {
 		return { error: 'Description Too Long' };
 	} else {
 		quizInfo.description = description;
+		quizInfo.timeLastEdited = date;
 		return {};
 	}
 }
