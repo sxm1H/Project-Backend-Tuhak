@@ -1,8 +1,16 @@
 import { getData, setData } from './dataStore.js'
 import validator from 'validator';
 
-// Sample stub for the authLoginV1 function
-// Return stub value matches table below
+/**
+  * <Given a registered user's email and password returns their authUserId value>.
+  * 
+  * @param {string} email - User email which may or not be registered
+  * @param {string} password - Password that may or may not be correlated with specified email
+  * 
+  * @returns {object {authUserId: number}} returned ID if email and password correlates to registered user.
+  * @returns {object {error: string}} returns specified error message
+*/
+
 function adminAuthLogin(email, password) {
 
   const newData = getData();
