@@ -103,6 +103,16 @@ function adminQuizRemove(authUserId, quizId) {
 	return { } // Empty object
 }
 
+/**
+ * The function will return a list of quizes in the datastore containing information about 
+ * its quizId and its name, given a valid User Id.
+ * It should return an error if the user Id is not valid.
+ * @param {Int} authUserId - the user Id created from adminAuthRegister
+ * @return {string} - If an error is occurs, it will return an error object with a string
+ * @return {Object: Array} - an Array of quizzes ojects that have quizId and name
+ * 
+ */
+
 function adminQuizList(authUserId) {
   let newdata = getData()
   let serachUserId = newdata.user.findIndex(ids => ids.userId === authUserId);
@@ -148,6 +158,21 @@ function adminQuizInfo(authUserId, quizId) {
 		description: quizMatch.description,
 	}
 }
+
+/**
+ * adminQuizCreate will create a new quiz and push all of its information (quizId, name, description, 
+ * user Id, time create, last time edited) into dataStore it will return a unique quizId.
+ * 
+ * @param {Int} authUserId - user id for the person creating the quiz
+ * @param {string} name - The name of the quiz that is being created
+ * @param {string} description - the description of the quiz being created
+ * 
+ * @return {object {error: string}} - returns an error string if an the correct error
+ * is encountered
+ * 
+ * @return {object: int} - returns a quiz Id object that contains the unique quiz Id relating
+ * to the created quiz.
+ */
 
 function adminQuizCreate(authUserId, name, description) {
 	let newdata = getData();
