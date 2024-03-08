@@ -59,6 +59,15 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
 	return { } // Empty object
 }
 
+/**
+  * <Given a registered userId and quizId, delete the quiz from data storage.>
+  * 
+  * @param {number} authUserId - userId which may or may not be registered in the data
+  * @param {number} quizId - quizId which may or may not be registered in the data
+  * 
+  * @returns {object { }} returns empty object if function went successful
+  * @returns {object {error: string}} returns specified error message
+*/
 function adminQuizRemove(authUserId, quizId) {
 
 	let newdata = getData();
@@ -123,6 +132,28 @@ function adminQuizList(authUserId) {
 	}
 }
 
+/**
+  * Function allows user to view information about a specified quiz, unless the inputted ID's, user
+  * and quiz respectively, are invalid, then returns an error message.
+  * 
+  * @param {number} authUserId - ID of user trying to access quiz information.
+  * @param {number} quizId - ID of quiz user is trying to access.
+  * 
+  * @returns {
+*   object {
+  *     error: string
+  *   }	
+  * } - Error object with information regarding error.
+  * @returns {
+  *   return {
+  *     quizId: number,
+  *     name: string,
+  *     timeCreated: number,
+  *     timeLastEdited: number,
+  *     description: string,
+  *   }
+  * } - Returns the quiz information user wants to access.
+*/
 function adminQuizInfo(authUserId, quizId) {
 	let data = getData();
 	let searchUserId = data.user.findIndex(Ids => Ids.userId === authUserId);
@@ -211,6 +242,35 @@ function adminQuizCreate(authUserId, name, description) {
 		quizId: quizIdcounter,
 	}
 }
+
+/**
+ * Function takes in UserId, QuizId and New Description and returns 
+ * an empty object if it passes all the error checks.
+ * Otherwise, an error object will be returned containing the specific 
+ * error.
+ * 
+ * Before changing the Quiz Description, the function checks for whether:
+ * 	 1. Is Auth Id Valid
+ *   2. Is Quiz Id Valid
+ *   3. Does the Quiz Belong to the user
+ *   4. Is the Desc Under 100 words
+ *
+ * @param {integer} authUserId - This is the user's id.
+ * @param {string} quizId - This is the quiz id.
+ * @param {string} description - This is the new description for the quiz.
+ * 
+ * @returns {
+ *   object {
+ *     error: string
+ *   }
+ * } Error Object with information regarding the error.
+ * @returns {
+ *   object { 
+ * 
+ *   }
+ * } Empty Object to indicidate that everything worked.
+ * 
+*/
 
 function adminQuizDescriptionUpdate(authUserId, quizId, description) {
 	let data = getData();

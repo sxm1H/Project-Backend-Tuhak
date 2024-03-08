@@ -167,7 +167,6 @@ describe('adminUserDetails', () => {
   });
   test('correct numSuccessfulLogins', () => {
     let admin = adminAuthRegister('dilhanm@gmail.com', 'abCddddD123', 'Dilhan', 'Mert');
-    // login 4 times
     for (let i = 0; i < 4; i++) {
       adminAuthLogin('dilhanm@gmail.com', 'abCddddD123');
     }
@@ -177,7 +176,6 @@ describe('adminUserDetails', () => {
           userId: expect.any(Number),
           name: expect.any(String),
           email: expect.any(String),
-          // num of successful logins should be 5 (logins + registration)
           numSuccessfulLogins: 5,
           numFailedPasswordsSinceLastLogin: expect.any(Number),
         }
@@ -186,7 +184,6 @@ describe('adminUserDetails', () => {
   });
   test('correct numFailedPasswordsSinceLastLogin', () => {
     let admin = adminAuthRegister('dilhanmr@gmail.com', 'abCdddD123', 'Dilhan', 'Mert');
-    // fail password 3 times
     for (let i = 0; i < 3; i++) {
       adminAuthLogin('dilhanmr@gmail.com', 'abCddddD1232')
     }
@@ -199,7 +196,6 @@ describe('adminUserDetails', () => {
         numFailedPasswordsSinceLastLogin: 3,
       }
     });
-    // correct password
     adminAuthLogin('dilhanmr@gmail.com', 'abCdddD123');
     expect(adminUserDetails(admin.authUserId)).toStrictEqual({
       user: {
