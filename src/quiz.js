@@ -190,6 +190,21 @@ function adminQuizInfo(authUserId, quizId) {
 	}
 }
 
+/**
+ * adminQuizCreate will create a new quiz and push all of its information (quizId, name, description, 
+ * user Id, time create, last time edited) into dataStore it will return a unique quizId.
+ * 
+ * @param {Int} authUserId - user id for the person creating the quiz
+ * @param {string} name - The name of the quiz that is being created
+ * @param {string} description - the description of the quiz being created
+ * 
+ * @return {object {error: string}} - returns an error string if an the correct error
+ * is encountered
+ * 
+ * @return {object {quizId: number}} - returns a quiz Id object that contains the unique quiz Id relating
+ * to the created quiz.
+ */
+
 function adminQuizCreate(authUserId, name, description) {
 	let newdata = getData();
 	let userData = newdata.user;
