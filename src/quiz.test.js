@@ -1,6 +1,6 @@
 import {expect, jest, test} from '@jest/globals';
 import {adminAuthRegister} from './auth.js';
-import {adminQuizNameUpdate, adminQuizRemove, adminQuizList, adminQuizInfo, adminAuizCreate, adminQuizDescriptionUpdate, adminQuizCreate} from './quiz.js';
+import {adminQuizNameUpdate, adminQuizRemove, adminQuizList, adminQuizInfo, adminQuizDescriptionUpdate, adminQuizCreate} from './quiz.js';
 import {clear} from './other.js';
 import {getData, setData} from './dataStore.js';
 
