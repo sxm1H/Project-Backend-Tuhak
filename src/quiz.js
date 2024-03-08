@@ -122,6 +122,14 @@ function adminQuizRemove(authUserId, quizId) {
 	return { } // Empty object
 }
 
+/**
+ * The function will return a list of quizes in the datastore containing information about 
+ * its quizId and its name, given a valid User Id.
+ * It should return an error if the user Id is not valid.
+ * @param {Number} authUserId - the user Id created from adminAuthRegister
+ * @return {Object {error: string}} - If an error is occurs, it will return an error object with a string
+ * @return {Object {quizzes: Array}} - an Array of quizzes ojects that have quizId and name
+ */
 function adminQuizList(authUserId) {
   let newdata = getData()
   let serachUserId = newdata.user.findIndex(ids => ids.userId === authUserId);
