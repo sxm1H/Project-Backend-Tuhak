@@ -59,6 +59,15 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
 	return { } // Empty object
 }
 
+/**
+  * <Given a registered user's email and password returns their authUserId value>.
+  * 
+  * @param {number} authUserId - userId which may or may not be registered in the data
+  * @param {number} quizId - quizId which may or may not be registered in the data
+  * 
+  * @returns {object { }} returns empty object if function went successful
+  * @returns {object {error: string}} returns specified error message
+*/
 function adminQuizRemove(authUserId, quizId) {
 
 	let newdata = getData();
