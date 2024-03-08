@@ -233,6 +233,222 @@ test('Admin updates user details successfully', () => {
     }
   });
 });
+test('Admin updates user details successfully with multiple users', () => {
+  let admin = adminAuthRegister('dilhanmr@gmail.com', 'abCdddD123', 'Dilhan', 'Mert');
+  let admin2 = adminAuthRegister('DunYao@hotmail.com', 'abCdddD123', 'DunYao', 'Foo');
+  let admin3 = adminAuthRegister('SamiHossaini@hotmail.com', 'abCdddD123', 'Samuel', 'Jeong');
+  expect(adminUserDetailsUpdate(admin.authUserId, 'dilhanmert@gmail.com','Dun Yao','Foo')).toEqual({});
+  expect(adminUserDetailsUpdate(admin2.authUserId, 'dilhanzekeriyya@gmail.com','Nicholas','Sebastian')).toEqual({});
+  expect(adminUserDetailsUpdate(admin3.authUserId, 'SamiHossaini@hotmail.com','Samuel','Jeong')).toEqual({});
+  expect(adminUserDetails(admin.authUserId)).toEqual({
+    user: {
+      userId: admin.authUserId,
+      name: 'Dun Yao Foo',
+      email: 'dilhanmert@gmail.com',
+      numSuccessfulLogins: expect.any(Number),
+      numFailedPasswordsSinceLastLogin: 0,
+    }
+  });
+  expect(adminUserDetails(admin2.authUserId)).toEqual({
+    user: {
+      userId: admin2.authUserId,
+      name: 'Nicholas Sebastian',
+      email: 'dilhanzekeriyya@gmail.com',
+      numSuccessfulLogins: expect.any(Number),
+      numFailedPasswordsSinceLastLogin: 0,
+    }
+  });
+  expect(adminUserDetails(admin3.authUserId)).toEqual({
+    user: {
+      userId: admin3.authUserId,
+      name: 'Samuel Jeong',
+      email: 'SamiHossaini@hotmail.com',
+      numSuccessfulLogins: expect.any(Number),
+      numFailedPasswordsSinceLastLogin: 0,
+    }
+  });
+});
+test('Admin fails to update multiple users', () => {
+  let admin = adminAuthRegister('dilhanmr@gmail.com', 'abCdddD123', 'Dilhan', 'Mert');
+  let admin2 = adminAuthRegister('DunYao@hotmail.com', 'abCdddD123', 'Dun Yao', 'Foo');
+  let admin3 = adminAuthRegister('SamiHossain@hotmail.com', 'abCdddD123', 'Samuel', 'Jeong');
+  expect(adminUserDetailsUpdate(admin.authUserId, 'dilhanmert@gmail','Dun Yao','Foo')).toEqual({error: 'Invalid email.'});
+  expect(adminUserDetailsUpdate(admin2.authUserId, 'dilhanzekeriyya@.com','Nicholas','Sebastian')).toEqual({error: 'Invalid email.'});
+  expect(adminUserDetailsUpdate(admin3.authUserId, 'SamiHossain@.com','Samuel','Jeong')).toEqual({error: 'Invalid email.'});
+  expect(adminUserDetails(admin.authUserId)).toEqual({
+    user: {
+      userId: admin.authUserId,
+      name: 'Dilhan Mert',
+      email: 'dilhanmr@gmail.com',
+      numSuccessfulLogins: expect.any(Number),
+      numFailedPasswordsSinceLastLogin: 0,
+    }
+  });
+  expect(adminUserDetails(admin2.authUserId)).toEqual({
+    user: {
+      userId: admin2.authUserId,
+      name: 'Dun Yao Foo',
+      email: 'DunYao@hotmail.com',
+      numSuccessfulLogins: expect.any(Number),
+      numFailedPasswordsSinceLastLogin: 0,
+    }
+  });
+  expect(adminUserDetails(admin3.authUserId)).toEqual({
+    user: {
+      userId: admin3.authUserId,
+      name: 'Samuel Jeong',
+      email: 'SamiHossain@hotmail.com',
+      numSuccessfulLogins: expect.any(Number),
+      numFailedPasswordsSinceLastLogin: 0,
+    }
+  });
+});
+test('Admin fails to update multiple users then logs in', () => {
+  let admin = adminAuthRegister('dilhanmr@gmail.com', 'abCdddD123', 'Dilhan', 'Mert');
+  let admin2 = adminAuthRegister('DunYao@hotmail.com', 'abCdddD123', 'Dun Yao', 'Foo');
+  let admin3 = adminAuthRegister('SamiHossain@hotmail.com', 'abCdddD123', 'Samuel', 'Jeong');
+  expect(adminUserDetailsUpdate(admin.authUserId, 'dilhanmert@gmail','Dun Yao','Foo')).toEqual({error: 'Invalid email.'});
+  expect(adminUserDetailsUpdate(admin2.authUserId, 'dilhanzekeriyya@.com','Nicholas','Sebastian')).toEqual({error: 'Invalid email.'});
+  expect(adminUserDetailsUpdate(admin3.authUserId, 'SamiHossain@.com','Samuel','Jeong')).toEqual({error: 'Invalid email.'});
+  expect(adminAuthLogin('dilhanmr@gmail.com','abCdddD123')).toEqual( {'authUserId': admin.authUserId});
+  expect(adminUserDetails(admin.authUserId)).toEqual({
+    user: {
+      userId: admin.authUserId,
+      name: 'Dilhan Mert',
+      email: 'dilhanmr@gmail.com',
+      numSuccessfulLogins: 2,
+      numFailedPasswordsSinceLastLogin: 0,
+    }
+  });
+  expect(adminAuthLogin('DunYao@hotmail.com','abCdddD123')).toEqual( {'authUserId': admin2.authUserId});
+  expect(adminUserDetails(admin2.authUserId)).toEqual({
+    user: {
+      userId: admin2.authUserId,
+      name: 'Dun Yao Foo',
+      email: 'DunYao@hotmail.com',
+      numSuccessfulLogins: 2,
+      numFailedPasswordsSinceLastLogin: 0,
+    }
+  });
+  expect(adminUserDetails(admin3.authUserId)).toEqual({
+    user: {
+      userId: admin3.authUserId,
+      name: 'Samuel Jeong',
+      email: 'SamiHossain@hotmail.com',
+      numSuccessfulLogins: expect.any(Number),
+      numFailedPasswordsSinceLastLogin: 0,
+    }
+  });
+  
+
+});
+test('Admin fails to update multiple users then unsuccesfully tries to log in', () => {
+  let admin = adminAuthRegister('dilhanmr@gmail.com', 'abCdddD123', 'Dilhan', 'Mert');
+  let admin2 = adminAuthRegister('DunYao@hotmail.com', 'abCdddD123', 'Dun Yao', 'Foo');
+  let admin3 = adminAuthRegister('SamiHossain@hotmail.com', 'abCdddD123', 'Samuel', 'Jeong');
+  expect(adminUserDetailsUpdate(admin.authUserId, 'dilhanmert@gmail','Dun Yao','Foo')).toEqual({error: 'Invalid email.'});
+  expect(adminUserDetailsUpdate(admin2.authUserId, 'dilhanzekeriyya@.com','Nicholas','Sebastian')).toEqual({error: 'Invalid email.'});
+  expect(adminUserDetailsUpdate(admin3.authUserId, 'SamiHossain@.com','Samuel','Jeong')).toEqual({error: 'Invalid email.'});
+  expect(adminAuthLogin('dilhanmr@gmail.com','abCdddD12322')).toEqual( {error: 'Password is not correct for the given email.'});
+  expect(adminUserDetails(admin.authUserId)).toEqual({
+    user: {
+      userId: admin.authUserId,
+      name: 'Dilhan Mert',
+      email: 'dilhanmr@gmail.com',
+      numSuccessfulLogins: 1,
+      numFailedPasswordsSinceLastLogin: 1,
+    }
+  });
+  expect(adminAuthLogin('DunYao@hotmail.com','abCdddD12322')).toEqual( {error: 'Password is not correct for the given email.'});
+  expect(adminUserDetails(admin2.authUserId)).toEqual({
+    user: {
+      userId: admin2.authUserId,
+      name: 'Dun Yao Foo',
+      email: 'DunYao@hotmail.com',
+      numSuccessfulLogins: 1,
+      numFailedPasswordsSinceLastLogin: 1,
+    }
+  });
+  expect(adminUserDetails(admin3.authUserId)).toEqual({
+    user: {
+      userId: admin3.authUserId,
+      name: 'Samuel Jeong',
+      email: 'SamiHossain@hotmail.com',
+      numSuccessfulLogins: expect.any(Number),
+      numFailedPasswordsSinceLastLogin: 0,
+    }
+  });
+  
+
+});
+test('Admin fails to update multiple users then unsuccesfully tries to log in and then a demonstration fo succesfully changing password and logging in', () => {
+  let admin = adminAuthRegister('dilhanmr@gmail.com', 'abCdddD123', 'Dilhan', 'Mert');
+  let admin2 = adminAuthRegister('DunYao@hotmail.com', 'abCdddD123', 'Dun Yao', 'Foo');
+  let admin3 = adminAuthRegister('SamiHossain@hotmail.com', 'abCdddD123', 'Samuel', 'Jeong');
+  expect(adminUserDetailsUpdate(admin.authUserId, 'dilhanmert@gmail','Dun Yao','Foo')).toEqual({error: 'Invalid email.'});
+  expect(adminUserDetailsUpdate(admin2.authUserId, 'dilhanzekeriyya@.com','Nicholas','Sebastian')).toEqual({error: 'Invalid email.'});
+  expect(adminUserDetailsUpdate(admin3.authUserId, 'SamiHossain@.com','Samuel','Jeong')).toEqual({error: 'Invalid email.'});
+  expect(adminAuthLogin('dilhanmr@gmail.com','abCdddD12322')).toEqual( {error: 'Password is not correct for the given email.'});
+  expect(adminUserDetails(admin.authUserId)).toEqual({
+    user: {
+      userId: admin.authUserId,
+      name: 'Dilhan Mert',
+      email: 'dilhanmr@gmail.com',
+      numSuccessfulLogins: 1,
+      numFailedPasswordsSinceLastLogin: 1,
+    }
+  });
+  expect(adminAuthLogin('DunYao@hotmail.com','abCdddD12322')).toEqual( {error: 'Password is not correct for the given email.'});
+  expect(adminAuthLogin('DunYao@hotmail.com','abCdddD12322')).toEqual( {error: 'Password is not correct for the given email.'});
+  expect(adminAuthLogin('DunYao@hotmail.com','abCdddD12322')).toEqual( {error: 'Password is not correct for the given email.'});
+  expect(adminAuthLogin('DunYao@hotmail.com','abCdddD12322')).toEqual( {error: 'Password is not correct for the given email.'});
+  expect(adminAuthLogin('DunYao@hotmail.com','abCdddD12322')).toEqual( {error: 'Password is not correct for the given email.'});
+  expect(adminUserDetails(admin2.authUserId)).toEqual({
+    user: {
+      userId: admin2.authUserId,
+      name: 'Dun Yao Foo',
+      email: 'DunYao@hotmail.com',
+      numSuccessfulLogins: 1,
+      numFailedPasswordsSinceLastLogin: 5,
+    }
+  });
+  expect(adminUserPasswordUpdate(admin3.authUserId, 'abCdddD123','abCdddD12322')).toEqual({});
+  expect(adminAuthLogin('SamiHossain@hotmail.com','abCdddD12322')).toEqual( {'authUserId': admin3.authUserId});
+  expect(adminUserDetails(admin3.authUserId)).toEqual({
+    user: {
+      userId: admin3.authUserId,
+      name: 'Samuel Jeong',
+      email: 'SamiHossain@hotmail.com',
+      numSuccessfulLogins: 2,
+      numFailedPasswordsSinceLastLogin: 0,
+    }
+  });
+  
+
+});
+
+test('Test Successful Password Update', () => {
+  clear();
+  let adminId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
+  let passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'efgh5678');
+  expect(passwordChange).toStrictEqual({});
+});
+
+test('Test Successful: Changing Passwords a bunch of times and checking if it works', () => {
+  clear();
+  let adminId = adminAuthRegister('abcd.efgh@gmaik.com', 'abcd1234', 'abcd', 'efgh');
+  let passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'efgh5678');
+  expect(passwordChange).toStrictEqual({});
+  passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'efgh5678', 'password1234');
+  expect(passwordChange).toStrictEqual({});
+  passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'password1234', 'fortress9871');
+  expect(passwordChange).toStrictEqual({});
+  passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'fortress9871', 'columbus1071');
+  expect(passwordChange).toStrictEqual({});
+  passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'columbus1071', 'pirate981');
+  expect(passwordChange).toStrictEqual({});
+});
+  
 test('Admin fails to update succesfully', () => {
   let admin = adminAuthRegister('dilhanmr@gmail.com', 'abCdddD123', 'Dilhan', 'Mert');
   expect(adminUserDetailsUpdate(admin.authUserId + 1, 'dilhanmert@gmail.com','Dun Yao','Foo')).toEqual({'error': 'User not found.'});
