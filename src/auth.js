@@ -231,7 +231,8 @@ function adminUserDetailsUpdate(authUserId, email, nameFirst, nameLast ) {
   *   1. Is the new password the same as the old password (If the same then new password invalid)
   *   2. Has the password been used before (If it has then new password invalid)
   *   3. Password length (If less than 8 characters then new password invalid)
-  *   4. Is there at least one letter and one number (If there is no letter or/and no number then new password invalid)
+  *   4. Is there at least one letter and one number (If there is no letter or/and no number 
+  *     then new password invalid)
   * Afterwards, the function returns an error object containing the relevant error message.
   * Note: The function returns an error object even if no errors have been detected.
   * However, the error message is 'No Error'.
