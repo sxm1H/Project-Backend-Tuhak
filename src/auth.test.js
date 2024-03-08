@@ -272,7 +272,46 @@ test.each([
   user1 = adminUserDetailsUpdate(email, password, nameFirst, nameLast);
   expect(user1.error).toEqual(expect.any(String));
 });
-
+test.each([
+  ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', '1984'],
+  ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', '?+-/*)(*&^%$#@!~`:><,.={}\|'],
+  ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Dun Yao123'],
+]) ('blank last name', (email, password, nameFirst, nameLast) => {
+  clear();
+  let user1 = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo');
+  user1 = adminUserDetailsUpdate(email, password, nameFirst, );
+  expect(user1.error).toEqual(expect.any(String));
+});
+test.each([
+  ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', '1984'],
+  ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', '?+-/*)(*&^%$#@!~`:><,.={}\|'],
+  ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Dun Yao123'],
+]) ('blank first name', (email, password, nameFirst, nameLast) => {
+  clear();
+  let user1 = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo');
+  user1 = adminUserDetailsUpdate(email, password, ' ', nameLast);
+  expect(user1.error).toEqual(expect.any(String));
+});
+test.each([
+  ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', '1984'],
+  ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', '?+-/*)(*&^%$#@!~`:><,.={}\|'],
+  ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Dun Yao123'],
+]) ('blank password', (email, password, nameFirst, nameLast) => {
+  clear();
+  let user1 = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo');
+  user1 = adminUserDetailsUpdate(email, '', nameFirst, nameLast);
+  expect(user1.error).toEqual(expect.any(String));
+});
+test.each([
+  ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', '1984'],
+  ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', '?+-/*)(*&^%$#@!~`:><,.={}\|'],
+  ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Dun Yao123'],
+]) ('blank email', (email, password, nameFirst, nameLast) => {
+  clear();
+  let user1 = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo');
+  user1 = adminUserDetailsUpdate('', password, nameFirst, nameLast);
+  expect(user1.error).toEqual(expect.any(String));
+});
 test.each([
   ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'a'],
   ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'abcdefghijklmnopqrstu'],
