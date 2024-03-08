@@ -221,6 +221,43 @@ function adminUserDetailsUpdate(authUserId, email, nameFirst, nameLast ) {
 
 }
 
+/**
+  * The helper function passwordChecker is assisting the function
+  * adminUserPasswordUpdate. PasswordChecker takes in an object containing
+  * the User's Details, their old Password, and the password they want to change
+  * it to. 
+  * 
+  * This function does the main error checking for the new password
+  *   1. Is the new password the same as the old password (If the same then new password invalid)
+  *   2. Has the password been used before (If it has then new password invalid)
+  *   3. Password length (If less than 8 characters then new password invalid)
+  *   4. Is there at least one letter and one number (If there is no letter or/and no number then new password invalid)
+  * Afterwards, the function returns an error object containing the relevant error message.
+  * Note: The function returns an error object even if no errors have been detected.
+  * However, the error message is 'No Error'.
+  * 
+  * @param {
+  *   object {
+  *     email: string,
+  *     password: string,
+  *     nameFirst: string,
+  *     nameLast: string,
+  *     userId: integer,
+  *     passwordHistory: array of strings,
+  *     numSuccessfulLogins: integer,
+  *     numFailedPasswordSinceLastLogin: integer,
+  *   }
+  * } userDetails - This object contains all of the user's data
+  * @param {string} oldPassword - User's current password.
+  * @param {string} newPassword - User's new password.
+  * 
+  * @returns {
+  *   object {
+  *      error: string
+  *   }
+  * } Error Object with information regarding the error.
+*/
+
 function passwordChecker(userDetails, oldPassword, newPassword) {
   if (oldPassword === newPassword) {
     return {
@@ -270,6 +307,12 @@ function passwordChecker(userDetails, oldPassword, newPassword) {
   * password they want to change it to. If the current and new password passes 
   * a series of error checks, their password will be changed and updated
   * and pushed onto the passwordHistory.
+  * 
+  * This function does some preliminary error checking for 
+  *   1. Is the authId Valid
+  *   2. Check if the inputted oldPassword is their correct current password
+  * Afterwards, error checking for the new password is done in the helper function
+  * passwordChecker.
   * 
   * @param {integer} authUserId - This is the user's id.
   * @param {string} oldPassword - User's current password.
