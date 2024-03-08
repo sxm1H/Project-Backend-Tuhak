@@ -228,7 +228,8 @@ function adminQuizCreate(authUserId, name, description) {
 
 function adminQuizDescriptionUpdate(authUserId, quizId, description) {
 	let data = getData();
-	if (authUserId < 1 || authUserId > data.user.length) {
+
+	if (userData.findIndex(Ids => Ids.userId === authUserId) === -1) {
 		return {
 			error: 'Auth User ID invalid'
 		}
