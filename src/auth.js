@@ -147,8 +147,8 @@ function adminUserDetails(authUserId) {
           userId: j.userId,
           name: j.nameFirst + ' ' + j.nameLast,
           email: j.email,
-          numSuccessfulLogins: j.numSuccessfulLogins  || 0,
-          numFailedPasswordsSinceLastLogin: j.numFailedPasswordsSinceLastLogin ||  0,
+          numSuccessfulLogins: j.numSuccessfulLogins,
+          numFailedPasswordsSinceLastLogin: j.numFailedPasswordsSinceLastLogin,
         }
       };
     }
