@@ -1,5 +1,30 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW ONLY
-let data = {
+interface DataStore {
+  user: User[];
+  quizzes: Quiz[];
+}
+
+interface User {
+  email: string;
+  password: string;
+  nameFirst: string;
+  nameLast: string;
+  userId: number;
+  passwordHistory: string[];
+  numSuccessfulLogins: number;
+  numFailedPasswordsSinceLastLogin: number;
+}
+
+interface Quiz {
+  quizId: number;
+  name: string;
+  description: string;
+  authUserId: number;
+  timeCreated: number;
+  timeLastEdited: number;
+}
+
+let data: DataStore = {
   user: [],
   quizzes: [],
 };
@@ -23,12 +48,12 @@ Example usage
 */
 
 // Use get() to access the data
-function getData() {
+function getData(): DataStore {
   return data;
 }
 
 // Use set(newData) to pass in the entire data object, with modifications made
-function setData(newData) {
+function setData(newData: DataStore): void {
   data = newData;
 }
 

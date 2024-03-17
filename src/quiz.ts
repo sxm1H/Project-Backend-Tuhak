@@ -1,6 +1,35 @@
 import { isAlpha } from 'validator';
-import { getData, setData } from './dataStore.js';
+import { getData, setData } from './dataStore';
 let quizIdcounter = 0;
+
+interface ErrorObject {
+  error: string;
+}
+
+interface EmptyObject {
+
+}
+
+interface QuizListReturObject {
+  quizzes: QuizListInfo[];
+}
+
+interface QuizListInfo {
+  quizId: number;
+  name: string;
+}
+
+interface QuizInfoReturn {
+  quizId: number;
+  name: string;
+  timeCreated: number;
+  timeLastEdited: number;
+  description: string;
+}
+
+interface QuizId {
+  quizId: number;
+}
 
 /**
   * <Given a registered user's id, a quizId that is valid, and a name that matches specified 
@@ -13,7 +42,7 @@ let quizIdcounter = 0;
   * @returns {object { }} returns empty object if no error and parameters match specified criteria.
   * @returns {object {error: string}} returns specified error message
 */
-function adminQuizNameUpdate(authUserId, quizId, name) {
+function adminQuizNameUpdate(authUserId: number, quizId: number, name: string): ErrorObject | EmptyObject {
 
   let newdata = getData();
   let userData = newdata.user;
@@ -78,7 +107,7 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
   * @returns {object { }} returns empty object if function went successful
   * @returns {object {error: string}} returns specified error message
 */
-function adminQuizRemove(authUserId, quizId) {
+function adminQuizRemove(authUserId: number, quizId: number): ErrorObject | EmptyObject {
 
   let newdata = getData();
 
@@ -130,7 +159,7 @@ function adminQuizRemove(authUserId, quizId) {
  * @return {Object {error: string}} - If an error is occurs, it will return an error object with a string
  * @return {Object {quizzes: Array}} - an Array of quizzes ojects that have quizId and name
  */
-function adminQuizList(authUserId) {
+function adminQuizList(authUserId: number): ErrorObject | QuizListReturObject {
   let newdata = getData();
   let serachUserId = newdata.user.findIndex(ids => ids.userId === authUserId);
   
@@ -172,7 +201,7 @@ function adminQuizList(authUserId) {
   *   }
   * } - Returns the quiz information user wants to access.
 */
-function adminQuizInfo(authUserId, quizId) {
+function adminQuizInfo(authUserId: number, quizId: number): ErrorObject | QuizInfoReturn {
   let data = getData();
   let searchUserId = data.user.findIndex(Ids => Ids.userId === authUserId);
   let searchquizId = data.quizzes.findIndex(Ids => Ids.quizId === quizId);
@@ -213,7 +242,7 @@ function adminQuizInfo(authUserId, quizId) {
  * to the created quiz.
  */
 
-function adminQuizCreate(authUserId, name, description) {
+function adminQuizCreate(authUserId: number, name: string, description: string): ErrorObject | QuizId {
   let newdata = getData();
   let userData = newdata.user;
   let searchUserId = userData.findIndex(Ids => Ids.userId === authUserId);
@@ -290,7 +319,7 @@ function adminQuizCreate(authUserId, name, description) {
  * 
 */
 
-function adminQuizDescriptionUpdate(authUserId, quizId, description) {
+function adminQuizDescriptionUpdate(authUserId: number, quizId: number, description: string): ErrorObject | EmptyObject {
   let data = getData();
   let date = Date.now();
 
@@ -300,18 +329,20 @@ function adminQuizDescriptionUpdate(authUserId, quizId, description) {
     };
   }
 
-  let quizInfo = false;
+  let quizInfo;
+  let flag = false;
 
   for (let i = 0; i < data.quizzes.length; i++) {
     if (data.quizzes[i].quizId === quizId) {
       quizInfo = data.quizzes[i];
+      flag = true;
       if (quizInfo.authUserId !== authUserId) {
         return { error: 'Quiz Does Not Belong to User' };
       }
     }
   }
 
-  if (quizInfo === false) {
+  if (flag === false) {
     return { error: 'Quiz ID Invalid' };
   }
 
