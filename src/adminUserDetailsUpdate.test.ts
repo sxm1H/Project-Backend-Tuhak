@@ -1,11 +1,11 @@
-import { clear } from './other.js';
+import { clear } from './other';
 import {
   adminAuthLogin, 
   adminAuthRegister,
   adminUserDetails,
   adminUserDetailsUpdate,
   adminUserPasswordUpdate
-} from './auth.js';
+} from './auth';
 
 beforeEach(() => {
   clear();
