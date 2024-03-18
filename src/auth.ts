@@ -1,5 +1,13 @@
 import { getData, setData } from './dataStore';
 import validator from 'validator';
+import {
+  ErrorObject,
+  EmptyObject,
+  AdminId,
+  UserDetails,
+  UserDetailsReturnObject,
+  UserData
+} from './interfaces';
 
 /**
   * <Given a registered user's email and password returns their authUserId value>.
@@ -10,41 +18,6 @@ import validator from 'validator';
   * @returns {object {authUserId: number}} returned ID if email and password correlates to registered user.
   * @returns {object {error: string}} returns specified error message
 */
-
-interface ErrorObject {
-  error: string;
-} 
-
-interface AdminId {
-  authUserId: number;
-}
-
-interface UserDetails {
-  userId: number;
-  name: string;
-  email: string;
-  numSuccessfulLogins: number;
-  numFailedPasswordsSinceLastLogin: number;
-}
-
-interface UserDetailsReturnObject {
-  user: UserDetails;
-}
-
-interface EmptyObject {
-
-}
-
-interface UserData {
-  email: string;
-  password: string;
-  nameFirst: string;
-  nameLast: string;
-  userId: number;
-  passwordHistory: string[];
-  numSuccessfulLogins: number;
-  numFailedPasswordsSinceLastLogin: number;
-}
 
 function adminAuthLogin(email: string, password: string): ErrorObject | AdminId {
 
