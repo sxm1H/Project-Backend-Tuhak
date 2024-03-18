@@ -1,0 +1,126 @@
+import request, { HttpVerb } from 'sync-request-curl';
+import { port, url } from './config.json';
+
+const SERVER_URL = `${url}:${port}`;
+
+// The 'RequestHelperReturnType' inteface and 'requestHelper' have been referenced from the file 
+// 'wrapper.test.ts' in the week5-server-example respository.
+interface RequestHelperReturnType {
+    statusCode: number;
+    jsonBody?: Record<string, any>;
+    error?: string;
+}
+
+const requestHelper = (
+    method: HttpVerb,
+    path: string,
+    payload: object = {}
+  ): RequestHelperReturnType => {
+    let qs = {};
+    let json = {};
+    if (['GET', 'DELETE'].includes(method)) {
+      qs = payload;
+    } else {
+      // PUT/POST
+      json = payload;
+    }
+    const res = request(method, SERVER_URL + path, { qs, json, timeout: 20000 });
+    const bodyString = res.body.toString();
+    let bodyObject: RequestHelperReturnType;
+    try {
+      // Return if valid JSON, in our own custom format
+      bodyObject = {
+        jsonBody: JSON.parse(bodyString),
+        statusCode: res.statusCode,
+      };
+    } catch (error: any) {
+      bodyObject = {
+        error: `\
+  Server responded with ${res.statusCode}, but body is not JSON!
+  
+  GIVEN:
+  ${bodyString}.
+  
+  REASON:
+  ${error.message}.
+  
+  HINT:
+  Did you res.json(undefined)?`,
+        statusCode: res.statusCode,
+      };
+    }
+    if ('error' in bodyObject) {
+      // Return the error in a custom structure for testing later
+      return { statusCode: res.statusCode, error: bodyObject.error };
+    }
+    return bodyObject;
+  };
+  
+///////////////////////////////////////WRAPPER FUNCTIONS////////////////////////////////////////////
+// ============================================================================================== //
+  
+const clear = () => {
+  return requestHelper('DELETE', '/v1/clear');
+};
+  
+const adminAuthRegister = (email: string, password: string, nameFirst: string, nameLast: string) => {
+  return requestHelper('POST', '/v1/admin/auth/register', { email, password, nameFirst, nameLast});
+};
+
+const adminAuthLogin = (email: string, password: string) => {
+  return requestHelper('POST', '/v1/admin/auth/login', { email, password });
+};
+
+const adminUserDetails = (authUserId: number) => {
+  return requestHelper('GET', `/v1/admin/user/details`, { authUserId });
+};
+
+const adminUserDetailsUpdate = (authUserId: number, email: string, nameFirst: string, nameLast: string) => {
+  return requestHelper('PUT', `/v1/admin/user/details`, { authUserId, email, nameFirst, nameLast});
+};
+
+const adminUserPasswordUpdate = (authUserId: number, oldPassword: string, newPassword: string) => {
+  return requestHelper('PUT', `/v1/admin/user/password`, { authUserId, oldPassword, newPassword });
+};
+
+const adminQuizList = (authUserId: number) => {
+  return requestHelper('GET', '/v1/admin/quiz/list', { authUserId });
+};
+
+const adminQuizCreate = (authUserId: number, name: string, description: string) => {
+  return requestHelper('POST', '/v1/admin/quiz', { authUserId, name, description });
+};
+
+const adminQuizRemove = (authUserId: number, quizId: number) => {
+  return requestHelper('DELETE', `/v1/admin/quiz/${quizId}`, { authUserId, quizId });
+};
+
+const adminQuizInfo = (authUserId: number, quizId: number) => {
+  return requestHelper('GET', `/v1/admin/quiz/${quizId}`, { authUserId, quizId });
+};
+
+const adminQuizNameUpdate = (authUserId: number, quizId: number, name: string) => {
+  return requestHelper('PUT', `v1/admin/quiz/${quizId}/name`, { authUserId, quizId, name });
+};
+
+const adminQuizDescriptionUpdate = (authUserId: number, quizId: number, description: string) => {
+  return requestHelper('PUT', `v1/admin/quiz/${quizId}/description`, { authUserId, quizId, description});
+};
+
+// ============================================================================================== //
+
+export {
+  requestHelper,
+  clear,
+  adminAuthRegister,
+  adminAuthLogin,
+  adminUserDetails,
+  adminUserDetailsUpdate,
+  adminUserPasswordUpdate,
+  adminQuizList,
+  adminQuizCreate,
+  adminQuizRemove,
+  adminQuizInfo,
+  adminQuizNameUpdate,
+  adminQuizDescriptionUpdate
+}

@@ -1,4 +1,5 @@
-import {adminAuthRegister} from './auth';
+import { clear } from './other';
+import { adminAuthRegister } from './auth';
 import {
   adminQuizNameUpdate,
   adminQuizRemove,
@@ -7,7 +8,21 @@ import {
   adminQuizDescriptionUpdate,
   adminQuizCreate
 } from './quiz';
-import {clear} from './other';
+import {
+  requestHelper,
+  clear,
+  adminAuthRegister,
+  adminAuthLogin,
+  adminUserDetails,
+  adminUserDetailsUpdate,
+  adminUserPasswordUpdate,
+  adminQuizList,
+  adminQuizCreate,
+  adminQuizRemove,
+  adminQuizInfo,
+  adminQuizNameUpdate,
+  adminQuizDescriptionUpdate
+} from './testHelpers';
 
 beforeEach(() => {
   clear();
