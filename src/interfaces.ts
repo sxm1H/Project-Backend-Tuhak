@@ -54,6 +54,12 @@ interface QuizId {
   quizId: number;
 }
 
+interface RequestHelperReturnType {
+  statusCode: number;
+  jsonBody?: Record<string, any>;
+  error?: string;
+}
+
 export {
   ErrorObject,
   EmptyObject,
@@ -64,5 +70,6 @@ export {
   QuizListReturnObject,
   QuizListInfo,
   QuizInfoReturn,
-  QuizId
+  QuizId,
+  RequestHelperReturnType
 }
