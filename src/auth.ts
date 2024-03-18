@@ -145,7 +145,6 @@ function adminAuthRegister(email: string, password: string, nameFirst: string, n
   * @returns  {user:} returns the user: object with the necessary values of the details returned.
 */
 function adminUserDetails(authUserId: number): ErrorObject | UserDetailsReturnObject {
-
   let data = getData();
  
   for (const j of data.user) {
@@ -175,7 +174,13 @@ function adminUserDetails(authUserId: number): ErrorObject | UserDetailsReturnOb
 function adminUserDetailsUpdate(authUserId: number, email: string, nameFirst: string, nameLast: string): ErrorObject | EmptyObject {
   let data = getData();
 
-  
+  for (let i = 0; i < data.user.length; i++) {
+    if (data.user[i].email === email) {
+      return {
+        error: 'Email is already in use.', 
+      };
+    }
+  }
   
   let indexToUpdate = data.user.findIndex(user => user.userId === authUserId);
  
@@ -215,16 +220,11 @@ function adminUserDetailsUpdate(authUserId: number, email: string, nameFirst: st
     };
   }
   
-
   data.user[indexToUpdate].email = email;
   data.user[indexToUpdate].nameFirst = nameFirst;
   data.user[indexToUpdate].nameLast = nameLast;
   
-
-  return {
-
-  };
-
+  return {};
 }
 
 /**
