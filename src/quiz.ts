@@ -1,35 +1,14 @@
 import { isAlpha } from 'validator';
 import { getData, setData } from './dataStore';
+import {
+  ErrorObject,
+  EmptyObject,
+  QuizListReturnObject,
+  QuizListInfo,
+  QuizInfoReturn,
+  QuizId
+} from './interfaces';
 let quizIdcounter = 0;
-
-interface ErrorObject {
-  error: string;
-}
-
-interface EmptyObject {
-
-}
-
-interface QuizListReturObject {
-  quizzes: QuizListInfo[];
-}
-
-interface QuizListInfo {
-  quizId: number;
-  name: string;
-}
-
-interface QuizInfoReturn {
-  quizId: number;
-  name: string;
-  timeCreated: number;
-  timeLastEdited: number;
-  description: string;
-}
-
-interface QuizId {
-  quizId: number;
-}
 
 /**
   * <Given a registered user's id, a quizId that is valid, and a name that matches specified 
@@ -159,7 +138,7 @@ function adminQuizRemove(authUserId: number, quizId: number): ErrorObject | Empt
  * @return {Object {error: string}} - If an error is occurs, it will return an error object with a string
  * @return {Object {quizzes: Array}} - an Array of quizzes ojects that have quizId and name
  */
-function adminQuizList(authUserId: number): ErrorObject | QuizListReturObject {
+function adminQuizList(authUserId: number): ErrorObject | QuizListReturnObject {
   let newdata = getData();
   let serachUserId = newdata.user.findIndex(ids => ids.userId === authUserId);
   
