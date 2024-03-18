@@ -1,4 +1,4 @@
-import { getData, setData } from './dataStore.js';
+import { getData, setData } from './dataStore';
 import validator from 'validator';
 
 /**
@@ -11,7 +11,42 @@ import validator from 'validator';
   * @returns {object {error: string}} returns specified error message
 */
 
-function adminAuthLogin(email, password) {
+interface ErrorObject {
+  error: string;
+} 
+
+interface AdminId {
+  authUserId: number;
+}
+
+interface UserDetails {
+  userId: number;
+  name: string;
+  email: string;
+  numSuccessfulLogins: number;
+  numFailedPasswordsSinceLastLogin: number;
+}
+
+interface UserDetailsReturnObject {
+  user: UserDetails;
+}
+
+interface EmptyObject {
+
+}
+
+interface UserData {
+  email: string;
+  password: string;
+  nameFirst: string;
+  nameLast: string;
+  userId: number;
+  passwordHistory: string[];
+  numSuccessfulLogins: number;
+  numFailedPasswordsSinceLastLogin: number;
+}
+
+function adminAuthLogin(email: string, password: string): ErrorObject | AdminId {
 
   const newData = getData();
 
@@ -59,7 +94,7 @@ function adminAuthLogin(email, password) {
   *   }
   * } - Generated authUserId to indicate the function worked.
 */
-function adminAuthRegister(email, password, nameFirst, nameLast) {
+function adminAuthRegister(email: string, password: string, nameFirst: string, nameLast: string): ErrorObject | AdminId {
   let newdata = getData();
 
   for (let i = 0; i < newdata.user.length; i++) {
@@ -136,7 +171,7 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
   * @returns  {string} if there is an error occurs error string returned
   * @returns  {user:} returns the user: object with the necessary values of the details returned.
 */
-function adminUserDetails(authUserId) {
+function adminUserDetails(authUserId: number): ErrorObject | UserDetailsReturnObject {
 
   let data = getData();
  
@@ -164,7 +199,7 @@ function adminUserDetails(authUserId) {
   * @returns  {string} if there is an error occurs error string returned
   * @returns  { } if function is succesful returns empty object
 */
-function adminUserDetailsUpdate(authUserId, email, nameFirst, nameLast ) {
+function adminUserDetailsUpdate(authUserId: number, email: string, nameFirst: string, nameLast: string): ErrorObject | EmptyObject {
   let data = getData();
 
   
@@ -257,7 +292,7 @@ function adminUserDetailsUpdate(authUserId, email, nameFirst, nameLast ) {
   * } Error Object with information regarding the error.
 */
 
-function passwordChecker(userDetails, oldPassword, newPassword) {
+function passwordChecker(userDetails: UserData, oldPassword: string, newPassword: string): ErrorObject {
   if (oldPassword === newPassword) {
     return {
       error: 'New Password is the same as old passward.'
@@ -329,7 +364,7 @@ function passwordChecker(userDetails, oldPassword, newPassword) {
   * } Empty Object to indicidate that everything worked.
   * 
 */
-function adminUserPasswordUpdate(authUserId, oldPassword, newPassword) {
+function adminUserPasswordUpdate(authUserId: number, oldPassword: string, newPassword: string): ErrorObject | EmptyObject {
   let data = getData();
   if (data.user.findIndex(Ids => Ids.userId === authUserId) === -1) {
     return {
