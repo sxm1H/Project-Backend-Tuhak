@@ -25,7 +25,7 @@ describe('Testing POST /v1/admin/auth/register', () => {
     expect(adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo')).toStrictEqual(
       {
         statusCode: 200,
-        jsonBody: { adminAuthId: expect.any(Number) }
+        jsonBody: { authUserId: expect.any(Number) }
       }
     );
   });
