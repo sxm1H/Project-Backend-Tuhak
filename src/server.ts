@@ -8,6 +8,7 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
+import { adminAuthRegister } from './auth';
 
 // Set up web app
 const app = express();
@@ -33,6 +34,17 @@ const HOST: string = process.env.IP || 'localhost';
 app.get('/echo', (req: Request, res: Response) => {
   const data = req.query.echo as string;
   return res.json(echo(data));
+});
+
+app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
+  const { email, password, nameFirst, nameLast } = req.body;
+  const result = adminAuthRegister(email, password, nameFirst, nameLast);
+
+  if ('error' in result) {
+    return res.status(400).json(result);
+  }
+
+  res.json(result);
 });
 
 // ====================================================================
