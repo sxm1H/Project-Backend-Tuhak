@@ -1,27 +1,7 @@
-import { clear } from './other';
-import { adminAuthRegister } from './auth';
-/*import {
-  adminQuizNameUpdate,
-  adminQuizRemove,
-  adminQuizList,
-  adminQuizInfo,
-  adminQuizDescriptionUpdate,
-  adminQuizCreate
-} from './quiz';*/
 import {
-  requestHelper,
   clear,
   adminAuthRegister,
-  adminAuthLogin,
-  adminUserDetails,
-  adminUserDetailsUpdate,
-  adminUserPasswordUpdate,
-  adminQuizList,
   adminQuizCreate,
-  adminQuizRemove,
-  adminQuizInfo,
-  adminQuizNameUpdate,
-  adminQuizDescriptionUpdate
 } from './testHelpers';
 
 beforeEach(() => {
@@ -37,9 +17,6 @@ describe ('adminQuizCreate', () => {
       error: expect.any(String)
     });
     
-    /*let createQuiz2 = adminQuizCreate(90000000, 'better Quiz', 'User id doesn\'t exist in the array');
-    
-    expect(createQuiz2.error).toEqual(expect.any(String));*/
   });
 	
   test.each([
@@ -82,14 +59,14 @@ describe ('adminQuizCreate', () => {
     const {statusCode, jsonBody} = adminQuizCreate(authUserId, name, description)
     expect(statusCode).toStrictEqual(400);
     expect(jsonBody).toStrictEqual({
-      error: expect.any(string)
+      error: expect.any(String)
     });
   });
 	
   test('Check if Quiz Name already exists', () => {
     const{jsonBody: {authUserId}} = adminAuthRegister('cool@gmail.com', 'Thebestpassword123', 'Isaac', 'Newton');
     adminQuizCreate(authUserId, 'Cool Quiz', 'The best quiz in the world');
-    const{statusCode, jsonBody } = adminQuizCreate(userId1.authUserId, 'Cool Quiz', 'Another cool quiz');
+    const{statusCode, jsonBody } = adminQuizCreate(authUserId, 'Cool Quiz', 'Another cool quiz');
     expect(statusCode).toStrictEqual(400);
     expect(jsonBody).toStrictEqual({
       error: expect.any(String)
