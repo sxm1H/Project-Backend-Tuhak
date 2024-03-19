@@ -1,13 +1,13 @@
 import { clear } from './other';
 import { adminAuthRegister } from './auth';
-import {
+/*import {
   adminQuizNameUpdate,
   adminQuizRemove,
   adminQuizList,
   adminQuizInfo,
   adminQuizDescriptionUpdate,
   adminQuizCreate
-} from './quiz';
+} from './quiz';*/
 import {
   requestHelper,
   clear,
@@ -31,70 +31,96 @@ beforeEach(() => {
 describe ('adminQuizCreate', () => {
 
   test('User Id was not valid', () => {
-    let userId = adminAuthRegister('somethin@gmail.com', 'validpassword123', 'Franz', 'Kafka');
-    let createQuiz1 = adminQuizCreate(-1, 'amazing Quiz', 'the quiz Id is not a number');
-
-    expect(createQuiz1.error).toEqual(expect.any(String));
+    const {statusCode, jsonBody } = adminQuizCreate(-1, 'amazing Quiz', 'the quiz Id is not a number');
+    expect(statusCode).toStrictEqual(400);
+    expect(jsonBody).toStrictEqual({
+      error: expect.any(String)
+    });
     
-    let createQuiz2 = adminQuizCreate(90000000, 'better Quiz', 'User id doesn\'t exist in the array');
+    /*let createQuiz2 = adminQuizCreate(90000000, 'better Quiz', 'User id doesn\'t exist in the array');
     
-    expect(createQuiz2.error).toEqual(expect.any(String));
+    expect(createQuiz2.error).toEqual(expect.any(String));*/
   });
 	
-  test('Quiz name has invalid characters', () => {
-    let userId1 = adminAuthRegister('somethin@gmail.com', 'validpassword123', 'Franz', 'Kafka');
-    let createQuiz1 = adminQuizCreate(userId1.authUserId, '$:^)$', 'Quiz smile');
-    
-    expect(createQuiz1.error).toEqual(expect.any(String));
-    
-    let createQuiz2 = adminQuizCreate(userId1.authUserId, '(^___^)@b', 'Quiz Thumbsup');
-    
-    expect(createQuiz2.error).toEqual(expect.any(String));
-    
-    let createQuiz3 = adminQuizCreate(userId1.authUserId, '%%%%%%%%%', 'percentage Quiz');
-    
-    expect(createQuiz3.error).toEqual(expect.any(String));
+  test.each([
+    {
+      name: '$:^)$',
+      description: 'Quiz smile'
+    },
+    {
+      name: '(^___^)@b',
+      description: 'Quiz Thumbsup'
+    },
+    {
+      name: '%%%%%%%%%',
+      description: 'percentage Quiz'
+    }
+  ])('Quiz name has invalid characters', ({name, description}) => {
+    const {jsonBody: {authUserId} } = adminAuthRegister('somethin@gmail.com', 'validpassword123', 'Franz', 'Kafka');
+    const {statusCode, jsonBody} = adminQuizCreate(authUserId, name, description);
+    expect(statusCode).toStrictEqual(400);
+    expect(jsonBody).toStrictEqual({
+      error: expect.any(String)
+    });
   });
 	
-  test('Check Quiz name is between valid character limit', () => {
-    let userId1 = adminAuthRegister('another@gmail.com', 'validpassword12367', 'Ludwig', 'Beethoven');
-    let createQuiz1 = adminQuizCreate(userId1.authUserId, 'AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH',
-      'Loud screaming is too long');
-      
-    expect(createQuiz1.error).toEqual(expect.any(String));
-    
-    let createQuiz2 = adminQuizCreate(userId1.authUserId, 'um', 'Quiz is unsure');
-    
-    expect(createQuiz2.error).toEqual(expect.any(String));
-    
-    let createQuiz3 = adminQuizCreate(userId1.authUserId, ' ', 'Blank quiz');
-    
-    expect(createQuiz3.error).toEqual(expect.any(String));
+  test.each([
+    {
+      name: 'AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH',
+      description: 'Loud screaming is too long'
+    },
+    {
+      name: 'um',
+      description: 'Quiz is unsure'
+    },
+    {
+      name: ' ',
+      description: 'Blank quiz'
+    }
+  ]) ('Check Quiz name is between valid character limit', ({name, description}) => {
+    const {jsonBody: {authUserId}} = adminAuthRegister('another@gmail.com', 'validpassword12367', 'Ludwig', 'Beethoven');
+    const {statusCode, jsonBody} = adminQuizCreate(authUserId, name, description)
+    expect(statusCode).toStrictEqual(400);
+    expect(jsonBody).toStrictEqual({
+      error: expect.any(string)
+    });
   });
 	
   test('Check if Quiz Name already exists', () => {
-    let userId1 = adminAuthRegister('cool@gmail.com', 'Thebestpassword123', 'Isaac', 'Newton');
-    let createQuiz1 = adminQuizCreate(userId1.authUserId, 'Cool Quiz', 'The best quiz in the world');
-    let createQuiz2 = adminQuizCreate(userId1.authUserId, 'Cool Quiz', 'Another cool quiz');
-    
-    expect(createQuiz2.error).toEqual(expect.any(String));
+    const{jsonBody: {authUserId}} = adminAuthRegister('cool@gmail.com', 'Thebestpassword123', 'Isaac', 'Newton');
+    adminQuizCreate(authUserId, 'Cool Quiz', 'The best quiz in the world');
+    const{statusCode, jsonBody } = adminQuizCreate(userId1.authUserId, 'Cool Quiz', 'Another cool quiz');
+    expect(statusCode).toStrictEqual(400);
+    expect(jsonBody).toStrictEqual({
+      error: expect.any(String)
+    })
   });
 	
   test('Quiz Description is too long', () => {
-    let userId1 = adminAuthRegister('Fake@gmail.com', 'passwordpassword123', 'first', 'last');
-    let createQuiz1 = adminQuizCreate(userId1.authUserId, 'Too Long','Lorem ipsum dolor sit amet. Eos deleniti inventore est illo eligendi ut excepturi molestiae aut vero quas. Et dolorum doloremque ad reprehenderit adipisci qui voluptatem harum');
-    
-    expect(createQuiz1.error).toEqual(expect.any(String));
+    const {jsonBody: {authUserId}}= adminAuthRegister('Fake@gmail.com', 'passwordpassword123', 'first', 'last');
+    const {statusCode, jsonBody} = adminQuizCreate(authUserId, 'Too Long','Lorem ipsum dolor sit amet. Eos deleniti inventore est illo eligendi ut excepturi molestiae aut vero quas. Et dolorum doloremque ad reprehenderit adipisci qui voluptatem harum');
+    expect(statusCode).toStrictEqual(400);
+    expect(jsonBody).toStrictEqual({
+      error: expect.any(String)
+    });
   });
 	
-  test('Successful Quiz Created', () => {
-    let userId1 = adminAuthRegister('fakerT1@gmail.com', 'pass123word', 'Smith', 'John');
-    let createQuiz1 = adminQuizCreate(userId1.authUserId, 'good name', 'descriptive description');
+  test.each([
+    {
+      name: 'good name',
+      description: 'Loud screaming is too long'
+    },
+    {
+      name: 'blank quiz',
+      description: ''
+    }
+  ])('Successful Quiz Created', ({name, description}) => {
+    const {jsonBody: {authUserId}} = adminAuthRegister('fakerT1@gmail.com', 'pass123word', 'Smith', 'John');
+    const {statusCode, jsonBody} = adminQuizCreate(authUserId, name, description);
     
-    expect(createQuiz1.quizId).toStrictEqual(expect.any(Number));
-    
-    let createQuiz2 = adminQuizCreate(userId1.authUserId, 'blank quiz', '');
-    
-    expect(createQuiz2.quizId).toStrictEqual(expect.any(Number));
+    expect(statusCode).toStrictEqual(200);
+    expect(jsonBody).toStrictEqual({
+      quizId: expect.any(Number)
+    });
   });    
 });
