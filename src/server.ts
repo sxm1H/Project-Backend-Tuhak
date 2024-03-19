@@ -8,6 +8,22 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
+import { clear } from './other';
+import {
+  adminAuthLogin, 
+  adminAuthRegister,
+  adminUserDetails,
+  adminUserDetailsUpdate,
+  adminUserPasswordUpdate
+} from './auth';
+import {
+  adminQuizNameUpdate,
+  adminQuizRemove,
+  adminQuizList,
+  adminQuizInfo,
+  adminQuizDescriptionUpdate,
+  adminQuizCreate
+} from './quiz';
 
 // Set up web app
 const app = express();
