@@ -5,7 +5,8 @@ function clear(): EmptyObject {
   setData({
     user: [],
     quizzes: [],
-    sessions: [],
+    tokens: [],
+    trash: [],
   });
 
   return {};
