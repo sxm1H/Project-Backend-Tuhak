@@ -8,6 +8,22 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
+import { clear } from './other';
+import {
+  adminAuthLogin, 
+  adminAuthRegister,
+  adminUserDetails,
+  adminUserDetailsUpdate,
+  adminUserPasswordUpdate
+} from './auth';
+export {
+  adminQuizNameUpdate,
+  adminQuizRemove,
+  adminQuizList,
+  adminQuizInfo,
+  adminQuizCreate,
+  adminQuizDescriptionUpdate,
+} from './quiz';
 
 // Set up web app
 const app = express();
@@ -33,6 +49,10 @@ const HOST: string = process.env.IP || 'localhost';
 app.get('/echo', (req: Request, res: Response) => {
   const data = req.query.echo as string;
   return res.json(echo(data));
+});
+
+app.delete('/v1/clear', (req: Request, res: Response) => {
+  res.json(clear());
 });
 
 // ====================================================================
