@@ -1,8 +1,5 @@
 import { getData, setData } from './dataStore';
-
-interface EmptyObject {
-
-}
+import { EmptyObject } from './interfaces';
 
 function clear(): EmptyObject {
 
