@@ -29,7 +29,6 @@ beforeEach(() => {
 });
 
 describe('adminQuizInfo', () => {
-
   let authUserId;
   let quizId;
   beforeEach(() => {
@@ -50,18 +49,18 @@ describe('adminQuizInfo', () => {
   });
 
   test('Invalid AuthUserId', () => {
-    let info = adminQuizInfo(-2, quizId.quizId);
+    const info = adminQuizInfo(-2, quizId.quizId);
     expect(info.error).toStrictEqual(expect.any(String));
   });
 
   test('Invalid quizId)', () => {
-    let info = adminQuizInfo(authUserId.authUserId, -2);
+    const info = adminQuizInfo(authUserId.authUserId, -2);
     expect(info.error).toStrictEqual(expect.any(String));
   });
 
   test('User does not own quiz', () => {
-    let authUserId2 = adminAuthRegister('sami@unsw.edu.au', '1234abcd', 'Sami', 'Hossain');
-    let info = adminQuizInfo(authUserId2.authUserId, quizId.quizId);
+    const authUserId2 = adminAuthRegister('sami@unsw.edu.au', '1234abcd', 'Sami', 'Hossain');
+    const info = adminQuizInfo(authUserId2.authUserId, quizId.quizId);
     expect(info.error).toStrictEqual(expect.any(String));
   });
 });

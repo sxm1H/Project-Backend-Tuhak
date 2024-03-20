@@ -72,4 +72,4 @@ export {
   QuizInfoReturn,
   QuizId,
   RequestHelperReturnType
-}
+};
