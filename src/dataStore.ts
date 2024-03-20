@@ -2,6 +2,8 @@
 interface DataStore {
   user: User[];
   quizzes: Quiz[];
+  tokens: Token[];
+  trash: Quiz[];
 }
 
 interface User {
@@ -24,9 +26,16 @@ interface Quiz {
   timeLastEdited: number;
 }
 
+interface Token {
+  userId: number;
+  sessionId: number;
+}
+
 let data: DataStore = {
   user: [],
   quizzes: [],
+  tokens: [],
+  trash: [],
 };
 
 // YOU SHOULD MODIFY THIS OBJECT ABOVE ONLY

@@ -1,14 +1,12 @@
-import { getData, setData } from './dataStore';
-
-interface EmptyObject {
-
-}
+import { setData } from './dataStore';
+import { EmptyObject } from './interfaces';
 
 function clear(): EmptyObject {
-
   setData({
     user: [],
     quizzes: [],
+    tokens: [],
+    trash: [],
   });
 
   return {};
