@@ -11,42 +11,41 @@ import {
 let quizIdcounter = 0;
 
 /**
-  * <Given a registered user's id, a quizId that is valid, and a name that matches specified 
+  * <Given a registered user's id, a quizId that is valid, and a name that matches specified
 	* criteria, the quizId specified will have their name changed to the name parameter>
-  * 
+  *
   * @param {number} authUserId - UserId which may or not be registered in the data
   * @param {number} quizId - quizId that may or may not correlate with a quiz in the data.
 	* @param {string} name - string that User wants the specified quizId to change the name to
-  * 
+  *
   * @returns {object { }} returns empty object if no error and parameters match specified criteria.
   * @returns {object {error: string}} returns specified error message
 */
 function adminQuizNameUpdate(authUserId: number, quizId: number, name: string): ErrorObject | EmptyObject {
-
-  let newdata = getData();
-  let userData = newdata.user;
-  let searchUserId = userData.findIndex(Ids => Ids.userId === authUserId);
-  let isAlphanumeric = /^[a-zA-Z0-9 ]+$/.test(name);
-  let date = Date.now();
+  const newdata = getData();
+  const userData = newdata.user;
+  const searchUserId = userData.findIndex(Ids => Ids.userId === authUserId);
+  const isAlphanumeric = /^[a-zA-Z0-9 ]+$/.test(name);
+  const date = Date.now();
 
   if (searchUserId === -1) {
-    return {error: 'User Id is not valid'};
+    return { error: 'User Id is not valid' };
   }
 
   if (!isAlphanumeric) {
-    return {error: 'Quiz Name contains invalid characters',};
+    return { error: 'Quiz Name contains invalid characters' };
   }
 
-  if (name.length < 3 || name.length > 30 ) {
-    return {error: 'Quiz Name must be more than 2 chracters and less than 31 characters long'};
+  if (name.length < 3 || name.length > 30) {
+    return { error: 'Quiz Name must be more than 2 chracters and less than 31 characters long' };
   }
 
-  let courseData = newdata.quizzes;
+  const courseData = newdata.quizzes;
 
-  for (let i of courseData) {
+  for (const i of courseData) {
     if (i.authUserId === authUserId) {
       if (i.name === name) {
-        return {error: 'Quiz name already in use'};
+        return { error: 'Quiz name already in use' };
       }
     }
   }
@@ -79,16 +78,15 @@ function adminQuizNameUpdate(authUserId: number, quizId: number, name: string): 
 
 /**
   * <Given a registered userId and quizId, delete the quiz from data storage.>
-  * 
+  *
   * @param {number} authUserId - userId which may or may not be registered in the data
   * @param {number} quizId - quizId which may or may not be registered in the data
-  * 
+  *
   * @returns {object { }} returns empty object if function went successful
   * @returns {object {error: string}} returns specified error message
 */
 function adminQuizRemove(authUserId: number, quizId: number): ErrorObject | EmptyObject {
-
-  let newdata = getData();
+  const newdata = getData();
 
   let flag = 0;
 
@@ -131,7 +129,7 @@ function adminQuizRemove(authUserId: number, quizId: number): ErrorObject | Empt
 }
 
 /**
- * The function will return a list of quizes in the datastore containing information about 
+ * The function will return a list of quizes in the datastore containing information about
  * its quizId and its name, given a valid User Id.
  * It should return an error if the user Id is not valid.
  * @param {Number} authUserId - the user Id created from adminAuthRegister
@@ -139,16 +137,16 @@ function adminQuizRemove(authUserId: number, quizId: number): ErrorObject | Empt
  * @return {Object {quizzes: Array}} - an Array of quizzes ojects that have quizId and name
  */
 function adminQuizList(authUserId: number): ErrorObject | QuizListReturnObject {
-  let newdata = getData();
-  let serachUserId = newdata.user.findIndex(ids => ids.userId === authUserId);
-  
+  const newdata = getData();
+  const serachUserId = newdata.user.findIndex(ids => ids.userId === authUserId);
+
   if (serachUserId === -1) {
     return {
       error: 'invalid user Id'
     };
   }
 
-  let quizList =  newdata.quizzes.map(quizes => ({
+  const quizList = newdata.quizzes.map(quizes => ({
     quizId: quizes.quizId,
     name: quizes.name,
   }));
@@ -161,14 +159,14 @@ function adminQuizList(authUserId: number): ErrorObject | QuizListReturnObject {
 /**
   * Function allows user to view information about a specified quiz, unless the inputted ID's, user
   * and quiz respectively, are invalid, then returns an error message.
-  * 
+  *
   * @param {number} authUserId - ID of user trying to access quiz information.
   * @param {number} quizId - ID of quiz user is trying to access.
-  * 
+  *
   * @returns {
 *   object {
   *     error: string
-  *   }	
+  *   }
   * } - Error object with information regarding error.
   * @returns {
   *   return {
@@ -181,17 +179,17 @@ function adminQuizList(authUserId: number): ErrorObject | QuizListReturnObject {
   * } - Returns the quiz information user wants to access.
 */
 function adminQuizInfo(authUserId: number, quizId: number): ErrorObject | QuizInfoReturn {
-  let data = getData();
-  let searchUserId = data.user.findIndex(Ids => Ids.userId === authUserId);
-  let searchquizId = data.quizzes.findIndex(Ids => Ids.quizId === quizId);
+  const data = getData();
+  const searchUserId = data.user.findIndex(Ids => Ids.userId === authUserId);
+  const searchquizId = data.quizzes.findIndex(Ids => Ids.quizId === quizId);
 
   if (searchUserId === -1) {
     return { error: 'User Id is not valid.' };
-  } else if ( searchquizId === -1) {
+  } else if (searchquizId === -1) {
     return { error: 'Quiz Id is not valid.' };
   }
 
-  let quizMatch = data.quizzes[searchquizId];
+  const quizMatch = data.quizzes[searchquizId];
 
   if (authUserId !== quizMatch.authUserId) {
     return { error: 'User does not own this quiz.' };
@@ -207,51 +205,51 @@ function adminQuizInfo(authUserId: number, quizId: number): ErrorObject | QuizIn
 }
 
 /**
- * adminQuizCreate will create a new quiz and push all of its information (quizId, name, description, 
+ * adminQuizCreate will create a new quiz and push all of its information (quizId, name, description,
  * user Id, time create, last time edited) into dataStore it will return a unique quizId.
- * 
+ *
  * @param {Int} authUserId - user id for the person creating the quiz
  * @param {string} name - The name of the quiz that is being created
  * @param {string} description - the description of the quiz being created
- * 
+ *
  * @return {object {error: string}} - returns an error string if an the correct error
  * is encountered
- * 
+ *
  * @return {object {quizId: number}} - returns a quiz Id object that contains the unique quiz Id relating
  * to the created quiz.
  */
 
 function adminQuizCreate(authUserId: number, name: string, description: string): ErrorObject | QuizId {
-  let newdata = getData();
-  let userData = newdata.user;
-  let searchUserId = userData.findIndex(Ids => Ids.userId === authUserId);
-  let isAlphanumeric = /^[a-zA-Z0-9 ]+$/.test(name);
-  let date = Date.now();
+  const newdata = getData();
+  const userData = newdata.user;
+  const searchUserId = userData.findIndex(Ids => Ids.userId === authUserId);
+  const isAlphanumeric = /^[a-zA-Z0-9 ]+$/.test(name);
+  const date = Date.now();
 
   if (searchUserId === -1) {
-    return {error: 'User Id is not valid'};
+    return { error: 'User Id is not valid' };
   }
 
   if (!isAlphanumeric) {
-    return {error: 'Quiz Name contains invalid characters',};
+    return { error: 'Quiz Name contains invalid characters' };
   }
 
-  if (name.length < 3 || name.length > 30 ) {
-    return {error: 'Quiz Name must be more than 2 chracters and less than 31 characters long'};
+  if (name.length < 3 || name.length > 30) {
+    return { error: 'Quiz Name must be more than 2 chracters and less than 31 characters long' };
   }
 
-  let courseData = newdata.quizzes;
+  const courseData = newdata.quizzes;
 
-  for (let i of courseData) {
+  for (const i of courseData) {
     if (i.authUserId === authUserId) {
       if (i.name === name) {
-        return {error: 'Quiz name already in use'};
+        return { error: 'Quiz name already in use' };
       }
     }
   }
 
   if (description.length > 100) {
-    return {error: 'Description is more than 100 characters'};
+    return { error: 'Description is more than 100 characters' };
   }
 
   quizIdcounter++;
@@ -270,11 +268,11 @@ function adminQuizCreate(authUserId: number, name: string, description: string):
 }
 
 /**
- * Function takes in UserId, QuizId and New Description and returns 
+ * Function takes in UserId, QuizId and New Description and returns
  * an empty object if it passes all the error checks.
- * Otherwise, an error object will be returned containing the specific 
+ * Otherwise, an error object will be returned containing the specific
  * error.
- * 
+ *
  * Before changing the Quiz Description, the function checks for whether:
  * 	 1. Is Auth Id Valid
  *   2. Is Quiz Id Valid
@@ -284,23 +282,23 @@ function adminQuizCreate(authUserId: number, name: string, description: string):
  * @param {integer} authUserId - This is the user's id.
  * @param {string} quizId - This is the quiz id.
  * @param {string} description - This is the new description for the quiz.
- * 
+ *
  * @returns {
  *   object {
  *     error: string
  *   }
  * } Error Object with information regarding the error.
  * @returns {
- *   object { 
- * 
+ *   object {
+ *
  *   }
  * } Empty Object to indicidate that everything worked.
- * 
+ *
 */
 
 function adminQuizDescriptionUpdate(authUserId: number, quizId: number, description: string): ErrorObject | EmptyObject {
-  let data = getData();
-  let date = Date.now();
+  const data = getData();
+  const date = Date.now();
 
   if (data.user.findIndex(Ids => Ids.userId === authUserId) === -1) {
     return {
@@ -334,7 +332,6 @@ function adminQuizDescriptionUpdate(authUserId: number, quizId: number, descript
   }
 }
 
-
 export {
   adminQuizNameUpdate,
   adminQuizRemove,
@@ -343,4 +340,3 @@ export {
   adminQuizCreate,
   adminQuizDescriptionUpdate,
 };
-

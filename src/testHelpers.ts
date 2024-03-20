@@ -3,7 +3,7 @@ import { port, url } from './config.json';
 
 const SERVER_URL = `${url}:${port}`;
 
-// The 'RequestHelperReturnType' inteface and 'requestHelper' have been referenced from the file 
+// The 'RequestHelperReturnType' inteface and 'requestHelper' have been referenced from the file
 // 'wrapper.test.ts' in the week5-server-example respository.
 interface RequestHelperReturnType {
     statusCode: number;
@@ -12,30 +12,30 @@ interface RequestHelperReturnType {
 }
 
 const requestHelper = (
-    method: HttpVerb,
-    path: string,
-    payload: object = {}
-  ): RequestHelperReturnType => {
-    let qs = {};
-    let json = {};
-    if (['GET', 'DELETE'].includes(method)) {
-      qs = payload;
-    } else {
-      // PUT/POST
-      json = payload;
-    }
-    const res = request(method, SERVER_URL + path, { qs, json, timeout: 20000 });
-    const bodyString = res.body.toString();
-    let bodyObject: RequestHelperReturnType;
-    try {
-      // Return if valid JSON, in our own custom format
-      bodyObject = {
-        jsonBody: JSON.parse(bodyString),
-        statusCode: res.statusCode,
-      };
-    } catch (error: any) {
-      bodyObject = {
-        error: `\
+  method: HttpVerb,
+  path: string,
+  payload: object = {}
+): RequestHelperReturnType => {
+  let qs = {};
+  let json = {};
+  if (['GET', 'DELETE'].includes(method)) {
+    qs = payload;
+  } else {
+    // PUT/POST
+    json = payload;
+  }
+  const res = request(method, SERVER_URL + path, { qs, json, timeout: 20000 });
+  const bodyString = res.body.toString();
+  let bodyObject: RequestHelperReturnType;
+  try {
+    // Return if valid JSON, in our own custom format
+    bodyObject = {
+      jsonBody: JSON.parse(bodyString),
+      statusCode: res.statusCode,
+    };
+  } catch (error: any) {
+    bodyObject = {
+      error: `\
   Server responded with ${res.statusCode}, but body is not JSON!
   
   GIVEN:
@@ -46,25 +46,25 @@ const requestHelper = (
   
   HINT:
   Did you res.json(undefined)?`,
-        statusCode: res.statusCode,
-      };
-    }
-    if ('error' in bodyObject) {
-      // Return the error in a custom structure for testing later
-      return { statusCode: res.statusCode, error: bodyObject.error };
-    }
-    return bodyObject;
-  };
-  
-///////////////////////////////////////WRAPPER FUNCTIONS////////////////////////////////////////////
+      statusCode: res.statusCode,
+    };
+  }
+  if ('error' in bodyObject) {
+    // Return the error in a custom structure for testing later
+    return { statusCode: res.statusCode, error: bodyObject.error };
+  }
+  return bodyObject;
+};
+
+/// ////////////////////////////////////WRAPPER FUNCTIONS////////////////////////////////////////////
 // ============================================================================================== //
-  
+
 const clear = () => {
   return requestHelper('DELETE', '/v1/clear');
 };
-  
+
 const adminAuthRegister = (email: string, password: string, nameFirst: string, nameLast: string) => {
-  return requestHelper('POST', '/v1/admin/auth/register', { email, password, nameFirst, nameLast});
+  return requestHelper('POST', '/v1/admin/auth/register', { email, password, nameFirst, nameLast });
 };
 
 const adminAuthLogin = (email: string, password: string) => {
@@ -72,15 +72,15 @@ const adminAuthLogin = (email: string, password: string) => {
 };
 
 const adminUserDetails = (authUserId: number) => {
-  return requestHelper('GET', `/v1/admin/user/details`, { authUserId });
+  return requestHelper('GET', '/v1/admin/user/details', { authUserId });
 };
 
 const adminUserDetailsUpdate = (authUserId: number, email: string, nameFirst: string, nameLast: string) => {
-  return requestHelper('PUT', `/v1/admin/user/details`, { authUserId, email, nameFirst, nameLast});
+  return requestHelper('PUT', '/v1/admin/user/details', { authUserId, email, nameFirst, nameLast });
 };
 
 const adminUserPasswordUpdate = (authUserId: number, oldPassword: string, newPassword: string) => {
-  return requestHelper('PUT', `/v1/admin/user/password`, { authUserId, oldPassword, newPassword });
+  return requestHelper('PUT', '/v1/admin/user/password', { authUserId, oldPassword, newPassword });
 };
 
 const adminQuizList = (authUserId: number) => {
@@ -123,4 +123,4 @@ export {
   adminQuizInfo,
   adminQuizNameUpdate,
   adminQuizDescriptionUpdate
-}
+};

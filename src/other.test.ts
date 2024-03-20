@@ -5,7 +5,6 @@ beforeEach(() => {
 });
 
 describe('Testing DELETE /v1/clear', () => {
-
   test('Successful login after clear of same id', () => {
     expect(adminAuthRegister('nick@gmail.com', 'nick12345', 'Nicholas', 'Sebastian')).toStrictEqual(
       {
@@ -24,5 +23,4 @@ describe('Testing DELETE /v1/clear', () => {
       }
     );
   });
-  
 });
