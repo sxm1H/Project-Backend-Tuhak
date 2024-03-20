@@ -16,7 +16,7 @@ import {
   adminUserDetailsUpdate,
   adminUserPasswordUpdate
 } from './auth';
-export {
+import {
   adminQuizNameUpdate,
   adminQuizRemove,
   adminQuizList,
@@ -39,7 +39,7 @@ app.get('/', (req: Request, res: Response) => res.redirect('/docs'));
 app.use('/docs', sui.serve, sui.setup(YAML.parse(file), { swaggerOptions: { docExpansion: config.expandDocs ? 'full' : 'list' } }));
 
 const PORT: number = parseInt(process.env.PORT || config.port);
-const HOST: string = process.env.IP || 'localhost';
+const HOST: string = process.env.IP || '127.0.0.1';
 
 // ====================================================================
 //  ================= WORK IS DONE BELOW THIS LINE ===================
@@ -65,6 +65,17 @@ app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
 
   res.json(result);
 });
+
+app.post('/v1/admin/quiz', (req: Request, res: Response) => {
+  const {authUserId, name, description} = req.body;
+  const result = adminQuizCreate(authUserId, name, description);
+
+  if ('error' in result) {
+    return res.status(400).json(result);
+  }
+
+  res.json(result);
+})
 
 app.put('/v1/admin/user/password', (req: Request, res: Response) => {
   const { authUserId, oldPassword, newPassword } = req.body;
