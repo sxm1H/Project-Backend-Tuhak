@@ -81,7 +81,6 @@ describe('Testing PUT v1/admin/quiz/:quizid/description', () => {
     const adminId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody;
     const quizId = adminQuizCreate(adminId.authUserId, 'Australian Cities', 'lorem ipsum').jsonBody;
     const valid = adminQuizDescriptionUpdate(adminId.authUserId, 1234, 'lorem ipsum decorum'); // 1234 being an obvious not authorised quizId.
-    console.log('')
     expect(valid).toStrictEqual({
       jsonBody: {
         error: expect.any(String)
