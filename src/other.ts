@@ -13,4 +13,3 @@ function clear(): EmptyObject {
 }
 
 export { clear };
-

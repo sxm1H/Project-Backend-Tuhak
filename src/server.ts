@@ -10,7 +10,7 @@ import path from 'path';
 import process from 'process';
 import { clear } from './other';
 import {
-  adminAuthLogin, 
+  adminAuthLogin,
   adminAuthRegister,
   adminUserDetails,
   adminUserDetailsUpdate,
@@ -76,6 +76,17 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
 
   res.json(result);
 })
+
+app.put('/v1/admin/user/password', (req: Request, res: Response) => {
+  const { authUserId, oldPassword, newPassword } = req.body;
+  const response = adminUserPasswordUpdate(parseInt(authUserId), oldPassword, newPassword);
+
+  if ('error' in response) {
+    return res.status(400).json(response);
+  }
+
+  res.json(response);
+});
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
