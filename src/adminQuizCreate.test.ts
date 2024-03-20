@@ -8,7 +8,7 @@ beforeEach(() => {
   clear();
 });
 
-describe ('adminQuizCreate', () => {
+describe ('Testing POST /v1/admin/quiz', () => {
 
   test('User Id was not valid', () => {
     const {statusCode, jsonBody } = adminQuizCreate(-1, 'amazing Quiz', 'the quiz Id is not a number');
@@ -16,7 +16,6 @@ describe ('adminQuizCreate', () => {
     expect(jsonBody).toStrictEqual({
       error: expect.any(String)
     });
-    
   });
 	
   test.each([
