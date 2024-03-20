@@ -67,14 +67,14 @@ app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
 });
 
 app.put('/v1/admin/user/password', (req: Request, res: Response) => {
-  const { token, oldPassword, newPassword } = req.body;
-  const response = adminUserPasswordUpdate( token, oldPassword, newPassword );
+  const { authUserId, oldPassword, newPassword } = req.body;
+  const response = adminUserPasswordUpdate( parseInt(authUserId), oldPassword, newPassword );
 
-  if ('error' in result) {
-    return res.status(400).json(result);
+  if ('error' in response) {
+    return res.status(400).json(response);
   }
 
-  res.json(result);
+  res.json(response);
 })
 
 // ====================================================================

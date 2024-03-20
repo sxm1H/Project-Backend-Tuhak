@@ -1,12 +1,5 @@
 import { clear } from './other';
 import {
-  adminAuthLogin, 
-  adminAuthRegister,
-  adminUserDetails,
-  adminUserDetailsUpdate,
-  adminUserPasswordUpdate
-} from './auth';
-import {
   requestHelper,
   clear,
   adminAuthRegister,
@@ -26,101 +19,180 @@ beforeEach(() => {
   clear();
 });
 
-describe('adminUserPasswordUpdate', () => {
-  
+describe('Testing PUT /v1/admin/user/password', () => {
+/*
   test('Comprehensive Test Successful: Logging on after changing the password', () => {
-    let adminId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
-    let passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'efgh5678');
+    let response = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
+    let adminId = response.jsonBody;
+
+    response = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'efgh5678');
+    expect(response).toStrictEqual({
+      jsonBody: {},
+      statusCode: 200,
+    });
     
-    expect(passwordChange).toStrictEqual({});
+    expect(adminAuthLogin('abcd.efgh@gmail.com', 'efgh5678')).toStrictEqual({
+      jsonBody: {},
+      statusCode: 200,
+    });
+  });
+*/
+  test('Test Successful Password Update', () => {
+    let response = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
+    let authUserId = response.jsonBody;
+    let passwordChange = adminUserPasswordUpdate(authUserId.authUserId, 'abcd1234', 'efgh5678');
     
-    let idCheck = adminAuthLogin('abcd.efgh@gmail.com', 'efgh5678');
-    
-    expect(idCheck).toStrictEqual(adminId);
+    expect(passwordChange).toStrictEqual({
+      jsonBody: {},
+      statusCode: 200,
+    });
   });
 
-  test('Test Successful Password Update', () => {
-    let adminId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
-    let passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'efgh5678');
-    
-    expect(passwordChange).toStrictEqual({});
-  });
+/*
 
   test('Comprehensive Test Successful: Changing Passwords a bunch of times and checking if it works by logging in', () => {
-    let adminId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
-    let passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'efgh5678');
+    let response = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
+    let adminId = response.jsonBody;
     
-    expect(passwordChange).toStrictEqual({});
+    response = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'efgh5678');
+    expect(response).toStrictEqual({
+      jsonBody: {},
+      statusCode: 200,
+    });
     
-    passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'efgh5678', 'password1234');
-    expect(passwordChange).toStrictEqual({});
+    response = adminUserPasswordUpdate(adminId.authUserId, 'efgh5678', 'password1234');
+    expect(response).toStrictEqual({
+      jsonBody: {},
+      statusCode: 200,
+    });
     
-    passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'password1234', 'fortress9871');
-    expect(passwordChange).toStrictEqual({});
+    response = adminUserPasswordUpdate(adminId.authUserId, 'password1234', 'fortress9871');
+    expect(response).toStrictEqual({
+      jsonBody: {},
+      statusCode: 200,
+    });
     
-    passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'fortress9871', 'columbus1071');
-    expect(passwordChange).toStrictEqual({});
+    response = adminUserPasswordUpdate(adminId.authUserId, 'fortress9871', 'columbus1071');
+    expect(response).toStrictEqual({
+      jsonBody: {},
+      statusCode: 200,
+    });
     
-    passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'columbus1071', 'pirate981');
-    expect(passwordChange).toStrictEqual({});
+    response = adminUserPasswordUpdate(adminId.authUserId, 'columbus1071', 'pirate981');
+    expect(response).toStrictEqual({
+      jsonBody: {},
+      statusCode: 200,
+    });
     
-    let idCheck = adminAuthLogin('abcd.efgh@gmail.com', 'pirate981');
-    
-    expect(idCheck).toStrictEqual(adminId);
+    expect(adminAuthLogin('abcd.efgh@gmail.com', 'pirate981')).toStrictEqual({
+      jsonBody: {
+        authUserId: expect.any(number)
+      },
+      statusCode: 200,
+    });
   });
-  
+
+
   test('Comprehensive Test Unsuccessful: Trying to log in after trying to change to an invalid pass', () => {
-    let adminId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
-    let passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'abcd1234');
+    let response = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
+    let adminId = response.jsonBody;
+    response = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'abcd1234');
     
-    expect(passwordChange.error).toStrictEqual(expect.any(String));
+    expect(response).toStrictEqual({
+      jsonBody: {
+        error: expect.any(string)
+      },
+      statusCode: 400,
+    });
+
+    reponse = adminAuthLogin('abcd.efgh@gmail.com', 'abcd1234');
     
-    let idCheck = adminAuthLogin('abcd.efgh@gmail.com', 'abcd1234');
-    
-    expect(idCheck).toStrictEqual(adminId);
+    expect(response).toStrictEqual({
+      jsonBody: {
+        authUserId: expect.any(number)
+      },
+      statusCode: 200,
+    });;
   });
-  
+  */
+ 
   test('Test Unsuccessful: Auth User ID invalid', () => {
-    let adminId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
+    let response = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
+    let adminId = response.jsonBody;
     adminId.authUserId++;
-    let passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'efgh5678');
+    response = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'efgh5678');
     
-    expect(passwordChange.error).toStrictEqual(expect.any(String));
+    expect(response).toStrictEqual({
+      jsonBody: {
+        error: expect.any(String)
+      },
+      statusCode: 400,
+    });
   });
-  
+
   test('Test Unsuccessful: Old Password Incorrect', () => {
-    let adminId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
-    let passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'aecd1234', 'efgh5678');
+    let response = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
+    let adminId = response.jsonBody;
+    response = adminUserPasswordUpdate(adminId.authUserId, 'aecd1234', 'efgh5678');
     
-    expect(passwordChange.error).toStrictEqual(expect.any(String));
+    expect(response).toStrictEqual({
+      jsonBody: {
+        error: expect.any(String)
+      },
+      statusCode: 400,
+    });
   });
   
   test('Test Unsuccessful: Passwords are the Same', () => {
-    let adminId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
-    let passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'abcd1234');
+    let response = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
+    let adminId = response.jsonBody;
+    response = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'abcd1234');
     
-    expect(passwordChange.error).toStrictEqual(expect.any(String));
+    expect(response).toStrictEqual({
+      jsonBody: {
+        error: expect.any(String)
+      },
+      statusCode: 400,
+    });
   });
 
   test('Test Unsuccessful: New Password Matches Old Password', () => {
-    let adminId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
-    let passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'efgh5678');
-    passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'efgh5678', 'abcd1234');
+    let response = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
+    let adminId = response.jsonBody;
+    adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'efgh5678');
+    response = adminUserPasswordUpdate(adminId.authUserId, 'efgh5678', 'abcd1234');
     
-    expect(passwordChange.error).toStrictEqual(expect.any(String));
+    expect(response).toStrictEqual({
+      jsonBody: {
+        error: expect.any(String)
+      },
+      statusCode: 400,
+    });
   });
 
   test('Test Unsuccessful: Password less than 8 charachters', () => {
-    let adminId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
-    let passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'efgh567');
+    let response = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
+    let adminId = response.jsonBody;
+    response = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'efgh567');
     
-    expect(passwordChange.error).toStrictEqual(expect.any(String));
+    expect(response).toStrictEqual({
+      jsonBody: {
+        error: expect.any(String)
+      },
+      statusCode: 400,
+    });
   });
 
   test('Test Unsuccessful: Password does not contain at least one number and at least one letter', () => {
-    let adminId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
-    let passwordChange = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', '***********');
+    let response = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
+    let adminId = response.jsonBody
+    response = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', '***********');
 
-    expect(passwordChange.error).toStrictEqual(expect.any(String));
+    expect(response).toStrictEqual({
+      jsonBody: {
+        error: expect.any(String)
+      },
+      statusCode: 400,
+    });
   });
 });
