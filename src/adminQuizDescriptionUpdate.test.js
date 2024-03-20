@@ -1,13 +1,3 @@
-import { clear } from './other';
-import { adminAuthRegister } from './auth';
-import {
-  adminQuizNameUpdate,
-  adminQuizRemove,
-  adminQuizList,
-  adminQuizInfo,
-  adminQuizDescriptionUpdate,
-  adminQuizCreate
-} from './quiz';
 import {
   requestHelper,
   clear,
@@ -28,16 +18,23 @@ beforeEach(() => {
   clear();
 });
 
-describe('adminQuizDescriptionUpdate', () => {
+describe('Testing PUT v1/admin/quiz/:quizid/description', () => {
 
   test('Comprehensive Test Successful: Using Quiz Info to check whether the desc has been updated', () => {
-    let adminId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
-    let quizId = adminQuizCreate(adminId.authUserId, 'Australian Cities', 'lorem ipsum');
+    console.log('hello');
+    let response = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
+    let adminId = response.jsonBody;
+    response = adminQuizCreate(adminId.authUserId, 'Australian Cities', 'lorem ipsum');
+    let quizId = response.jsonBody;
+    console.log('hello');
+    console.log(quizId.quizId);
     adminQuizDescriptionUpdate(adminId.authUserId, quizId.quizId, 'lorem ipsum decorum');
 
-    expect(adminQuizInfo(adminId.authUserId, quizId.quizId).description).toStrictEqual('lorem ipsum decorum');
+    response = adminQuizInfo(adminId.authUserId, quizId.quizId);
+    console.log(response);
+    expect(response.jsonBody.description).toStrictEqual('lorem ipsum decorum');
+    expect(response.statusCode).toStrictEqual(200);
   });
-
   test('Comprehensive Test Successful: Using Quiz Info to check updated desc when the user has multiple quizzes.', () => {
     let adminId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
     adminQuizCreate(adminId.authUserId, 'Australian Tourist Attractions', 'lorem ipsum');

@@ -51,6 +51,18 @@ app.get('/echo', (req: Request, res: Response) => {
   return res.json(echo(data));
 });
 
+app.put('v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const { authUserId, description } = req.body;
+
+  const response = adminQuizDescriptionUpdate(authUserId, quizId, description);
+
+  if ('error' in response) {
+    return res.status(400).json(response);
+  }
+  res.json(response);
+})
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
