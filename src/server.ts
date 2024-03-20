@@ -7,7 +7,7 @@ import YAML from 'yaml';
 import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
-import process from 'process';
+import process, { ppid } from 'process';
 import { clear } from './other';
 import {
   adminAuthLogin,
@@ -75,6 +75,28 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   }
 
   res.json(result);
+})
+
+app.get('/v1/admin/user/details', (req: Request, res: Response) => {
+  const { authUserId } = req.body;
+  const response = adminUserDetails(parseInt(authUserId));
+
+  if ('error' in response) {
+    return res.status(400).json(response);
+  }
+
+  res.json(response);
+})
+
+app.put('/v1/admin/user/details', (req: Request, res: Response) => {
+  const  { authUserId, email, nameFirst, nameLast } = req.body;
+  const response = adminUserDetailsUpdate(parseInt(authUserId), email, nameFirst, nameLast);
+
+  if ('error' in response) {
+    return res.status(400).json(response);
+  }
+
+  res.json(response);
 })
 
 app.put('/v1/admin/user/password', (req: Request, res: Response) => {
