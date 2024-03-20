@@ -50,10 +50,10 @@ describe('adminUserDetails', () => {
       {
         user: {
           userId: expect.any(Number),
-          name: expect.any(String),
-          email: expect.any(String),
-          numSuccessfulLogins: expect.any(Number),
-          numFailedPasswordsSinceLastLogin: expect.any(Number),
+          name: 'Dun Yao Foo',
+          email: 'DunYao@hotmail.com',
+          numSuccessfulLogins: 1,
+          numFailedPasswordsSinceLastLogin: 0,
         }
       }
     );
