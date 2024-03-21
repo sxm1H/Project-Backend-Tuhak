@@ -25,6 +25,7 @@ import {
   adminQuizDescriptionUpdate,
 } from './quiz';
 
+
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -88,6 +89,28 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   }
 
   res.json(result);
+})
+
+app.get('/v1/admin/user/details', (req: Request, res: Response) => {
+  const authUserId  = req.query.authUserId as string
+  const response = adminUserDetails(parseInt(authUserId));
+  
+  if ('error' in response) {
+    return res.status(400).json(response);
+  }
+
+  res.json(response);
+})
+
+app.put('/v1/admin/user/details', (req: Request, res: Response) => {
+  const  { authUserId, email, nameFirst, nameLast } = req.body;
+  const response = adminUserDetailsUpdate(parseInt(authUserId), email, nameFirst, nameLast);
+
+  if ('error' in response) {
+    return res.status(400).json(response);
+  }
+
+  res.json(response);
 })
 
 app.put('/v1/admin/user/password', (req: Request, res: Response) => {

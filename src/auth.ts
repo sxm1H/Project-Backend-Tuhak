@@ -159,6 +159,7 @@ function adminUserDetails(authUserId: number): ErrorObject | UserDetailsReturnOb
       };
     }
   }
+ 
   return { error: 'authUserId not a valid Id' };
 }
 /**
