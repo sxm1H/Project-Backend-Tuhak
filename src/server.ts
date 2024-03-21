@@ -77,6 +77,26 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   res.json(result);
 })
 
+app.put('/v1/admin/quiz/:quizId/name', (req: Request, res: Response) => {
+  const {authUserId, name} = req.body;
+  const quizId = parseInt(req.params.quizId)
+
+  const result = adminQuizNameUpdate(authUserId, quizId, name);
+
+  if ('error' in result) {
+    if (result.error === 'Quiz ID does not refer to a quiz that this user owns.' ||
+        result.error === 'Quiz ID does not refer to a valid quiz') {
+     return res.status(403).json(result);
+    } else if (result.error === 'User Id is not valid') {
+      return res.status(401).json(result);
+    } else {
+      return res.status(400).json(result);
+    }
+  }
+
+  res.json(result);
+})
+
 app.put('/v1/admin/user/password', (req: Request, res: Response) => {
   const { authUserId, oldPassword, newPassword } = req.body;
   const response = adminUserPasswordUpdate(parseInt(authUserId), oldPassword, newPassword);

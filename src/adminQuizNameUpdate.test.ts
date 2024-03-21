@@ -174,7 +174,5 @@ describe('adminQuizNameUpdate', () => {
         error: expect.any(String)
       }
     });
-
-    expect(error.error).toEqual(expect.any(String));
   });
 });
