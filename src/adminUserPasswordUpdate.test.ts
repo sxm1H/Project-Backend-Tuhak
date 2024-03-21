@@ -1,4 +1,3 @@
-import { clear } from './other';
 import {
   requestHelper,
   clear,
