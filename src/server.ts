@@ -52,6 +52,19 @@ app.get('/echo', (req: Request, res: Response) => {
   return res.json(echo(data));
 });
 
+
+app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const { authUserId, description } = req.body;
+
+  const response = adminQuizDescriptionUpdate(authUserId, quizId, description);
+
+  if ('error' in response) {
+    return res.status(400).json(response);
+  }
+  res.json(response);
+});
+
 app.delete('/v1/clear', (req: Request, res: Response) => {
   res.json(clear());
 });
@@ -108,6 +121,24 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
     return res.status(400).json(response);
   }
 
+  res.json(response);
+});
+
+app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const authUserId = parseInt(req.query.authUserId as string);
+  const response = adminQuizInfo(authUserId, quizId);
+  
+  if ('error' in response) {
+    if (response.error === 'User Id is not valid.') {
+      return res.status(401).json(response);
+    } else if (response.error === 'Quiz Id is not valid.') {
+      return res.status(400).json(response);
+    } else if (response.error === 'User does not own this quiz.') {
+      return res.status(403).json(response);
+    }
+  }
+  
   res.json(response);
 });
 
