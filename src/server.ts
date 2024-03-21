@@ -104,8 +104,8 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
 app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const authUserId = parseInt(req.query.authUserId as string);
-  
   const response = adminQuizInfo(authUserId, quizId);
+  
   if ('error' in response) {
     if (response.error === 'User Id is not valid.') {
       return res.status(401).json(response);
