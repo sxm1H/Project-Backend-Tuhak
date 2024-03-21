@@ -1,41 +1,9 @@
-// import { clear } from './other';
-// import { adminAuthRegister } from './auth';
-// import {
-//   adminQuizNameUpdate,
-//   adminQuizRemove,
-//   adminQuizList,
-//   adminQuizInfo,
-//   adminQuizDescriptionUpdate,
-//   adminQuizCreate
-// } from './quiz';
 import {
-  requestHelper,
   clear,
   adminAuthRegister,
-  adminAuthLogin,
-  adminUserDetails,
-  adminUserDetailsUpdate,
-  adminUserPasswordUpdate,
-  adminQuizList,
   adminQuizCreate,
-  adminQuizRemove,
   adminQuizInfo,
-  adminQuizNameUpdate,
-  adminQuizDescriptionUpdate
 } from './testHelpers';
-import {
-  ErrorObject,
-  EmptyObject,
-  AdminId,
-  UserDetails,
-  UserDetailsReturnObject,
-  UserData,
-  QuizListReturnObject,
-  QuizListInfo,
-  QuizInfoReturn,
-  QuizId,
-  RequestHelperReturnType
-} from './interfaces';
 
 beforeEach(() => {
   clear();
