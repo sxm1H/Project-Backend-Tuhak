@@ -46,12 +46,14 @@ describe('Testing GET /v1/admin/quiz/:quizid', () => {
   let quizId: number;
   let time: number;
   beforeEach(() => {
-    const { jsonBody: { authUserId } } = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo');
-    const { jsonBody: { quizId } } = adminQuizCreate(authUserId, 'quiz1', 'lorem ipsum');
+    const { jsonBody: reg} = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo');
+    const { jsonBody: create } = adminQuizCreate(reg.authUserId, 'quiz1', 'lorem ipsum');
+    authUserId = reg.authUserId;
+    quizId = create.quizId;
     time = Math.floor(Date.now() / 1000);
   });
 
-  test('Successfully retrieves info', () => {
+    test('Successfully retrieves info', () => {
     const { statusCode, jsonBody } = adminQuizInfo(authUserId, quizId);
 
     expect(jsonBody.timeCreated).toBeGreaterThanOrEqual(time);
