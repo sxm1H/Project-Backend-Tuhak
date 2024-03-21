@@ -7,7 +7,7 @@ import YAML from 'yaml';
 import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
-import process, { ppid } from 'process';
+import process from 'process';
 import { clear } from './other';
 import {
   adminAuthLogin,
