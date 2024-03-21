@@ -77,6 +77,23 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   res.json(result);
 })
 
+app.delete('/v1/admin/quiz/:quizId', (req: Request, res: Response) => {
+  const authUserId = parseInt(req.query.authUserId as string);
+  const quizId = parseInt(req.params.quizId);
+
+  const result = adminQuizRemove(authUserId, quizId);
+
+  if ('error' in result) {
+    if (result.error === 'authUserId is not a valid user.') {
+      return res.status(401).json(result);
+    } else {
+      return res.status(403).json(result);
+    }
+  }
+
+  res.json(result);
+})
+
 app.put('/v1/admin/user/password', (req: Request, res: Response) => {
   const { authUserId, oldPassword, newPassword } = req.body;
   const response = adminUserPasswordUpdate(parseInt(authUserId), oldPassword, newPassword);
