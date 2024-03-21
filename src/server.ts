@@ -143,8 +143,8 @@ app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
 });
 
 app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
-  const quizid = parseInt(req.query.quizId as string);
-  const response = adminQuizList(quizid);
+  const userId = parseInt(req.query.authUserId as string);
+  const response = adminQuizList(userId);
 
   if ('error' in response) {
     return res.status(401).json(response);

@@ -30,10 +30,9 @@ describe('Test GET /v1/admin/quiz/list', () => {
   
   test('User Id Quiz List successfully accessed', () => {
     const {jsonBody: {authUserId} } = adminAuthRegister('pogchamp@gmail.com', 'thisisvalidpassword1', 'Steve', 'Jobs');
-    const list1 = adminQuizList(authUserId); 
-
-    expect(list1.statusCode).toStrictEqual(200);
-    expect(list1.jsonBody).toStrictEqual({
+    const {statusCode, jsonBody} = adminQuizList(authUserId)
+    expect(statusCode).toStrictEqual(200);
+    expect(jsonBody).toStrictEqual({
       quizzes: []
     });
 
@@ -44,7 +43,7 @@ describe('Test GET /v1/admin/quiz/list', () => {
     expect(list2.jsonBody).toStrictEqual({
       quizzes: [
         {
-          quizId: quizId.quizId,
+          quizId: quizId,
           name: 'creative name'
         }
       ]
