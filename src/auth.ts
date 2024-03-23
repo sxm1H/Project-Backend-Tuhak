@@ -116,10 +116,10 @@ function adminAuthRegister(email: string, password: string, nameFirst: string, n
   * @param {string} email - User email which may or not be registered
   * @param {string} password - Password that may or may not be correlated with specified email
   *
-  * @returns {object {authUserId: number}} returned ID if email and password correlates to registered user.
+  * @returns {object {token: number}} returned token if email and password correlates to registered user.
   * @returns {object {error: string}} returns specified error message
 */
-function adminAuthLogin(email: string, password: string): ErrorObject | AdminId {
+function adminAuthLogin(email: string, password: string): ErrorObject | TokenReturn {
   const newData = getData();
 
   for (const data of newData.user) {
@@ -127,9 +127,22 @@ function adminAuthLogin(email: string, password: string): ErrorObject | AdminId 
       if (data.password === password) {
         data.numFailedPasswordsSinceLastLogin = 0;
         data.numSuccessfulLogins++;
-        return {
-          authUserId: data.userId,
-        };
+        for (const tokens of newData.sessions) {
+          if (tokens.userId === data.userId) {
+            sessionIdCounter++;
+            let token = sessionIdCounter.toString();
+
+            newData.sessions.push({
+              userId: tokens.userId,
+              token: tokens.token,
+            });
+
+            return {
+              token: tokens.token
+            };
+          }
+        }
+
       } else {
         data.numFailedPasswordsSinceLastLogin++;
         return {
@@ -318,7 +331,7 @@ function passwordChecker(userDetails: UserData, oldPassword: string, newPassword
 }
 
 /**
-  * adminUserPasswordUpdate takes in the user's Id, current password and the
+  * adminUserPasswordUpdate takes in the user's current token, current password and the
   * password they want to change it to. If the current and new password passes
   * a series of error checks, their password will be changed and updated
   * and pushed onto the passwordHistory.
@@ -329,7 +342,7 @@ function passwordChecker(userDetails: UserData, oldPassword: string, newPassword
   * Afterwards, error checking for the new password is done in the helper function
   * passwordChecker.
   *
-  * @param {integer} authUserId - This is the user's id.
+  * @param {integer} token - This is the user's token for their session.
   * @param {string} oldPassword - User's current password.
   * @param {string} newPassword - User's new password.
   *
@@ -345,23 +358,30 @@ function passwordChecker(userDetails: UserData, oldPassword: string, newPassword
   * } Empty Object to indicidate that everything worked.
   *
 */
-function adminUserPasswordUpdate(authUserId: number, oldPassword: string, newPassword: string): ErrorObject | EmptyObject {
+function adminUserPasswordUpdate(token: number, oldPassword: string, newPassword: string): ErrorObject | EmptyObject {
   const data = getData();
-  if (data.user.findIndex(Ids => Ids.userId === authUserId) === -1) {
+  //Finding the token.
+  const findToken = data.sessions.find(sessionId => sessionId.token === token);
+  if (!(findToken)) {
     return {
-      error: 'Auth User ID invalid'
+      error: 'Token invalid'
     };
   }
 
-  const userInfo = data.user[authUserId - 1];
+  //Getting the userInfo
+  const userInfo = data.user.find(id => id.userId === findToken.userId);
+
+  //Checking if the current pass was entered correctly.
   if (oldPassword !== userInfo.password) {
     return {
       error: 'Password Entered Is Incorrect.'
     };
   }
 
+  //Passing into Helper To Do The Rest of the Error Checks.  
   const newPassIsOk = passwordChecker(userInfo, oldPassword, newPassword);
 
+  //Now checking the contents of the return.
   if (newPassIsOk.error !== 'No Error') {
     return newPassIsOk;
   } else {

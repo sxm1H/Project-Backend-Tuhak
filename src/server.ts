@@ -92,10 +92,13 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
 });
 
 app.post('/v1/admin/quiz', (req: Request, res: Response) => {
-  const {authUserId, name, description} = req.body;
-  const result = adminQuizCreate(authUserId, name, description);
+  const {token, name, description} = req.body;
+  const result = adminQuizCreate(token, name, description);
 
   if ('error' in result) {
+    if (result.error === 'Token is not valid') {
+      return res.status(401).json(result);
+    }
     return res.status(400).json(result);
   }
 
@@ -163,8 +166,8 @@ app.put('/v1/admin/user/details', (req: Request, res: Response) => {
 })
 
 app.put('/v1/admin/user/password', (req: Request, res: Response) => {
-  const { authUserId, oldPassword, newPassword } = req.body;
-  const response = adminUserPasswordUpdate(parseInt(authUserId), oldPassword, newPassword);
+  const { token, oldPassword, newPassword } = req.body;
+  const response = adminUserPasswordUpdate(token, oldPassword, newPassword);
 
   if ('error' in response) {
     return res.status(400).json(response);
