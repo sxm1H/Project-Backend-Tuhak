@@ -87,8 +87,8 @@ const adminQuizList = (authUserId: number) => {
   return requestHelper('GET', '/v1/admin/quiz/list', { authUserId });
 };
 
-const adminQuizCreate = (authUserId: number, name: string, description: string) => {
-  return requestHelper('POST', '/v1/admin/quiz', { authUserId, name, description });
+const adminQuizCreate = (token: string, name: string, description: string) => {
+  return requestHelper('POST', '/v1/admin/quiz', { token, name, description });
 };
 
 const adminQuizRemove = (authUserId: number, quizId: number) => {
