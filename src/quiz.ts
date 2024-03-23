@@ -182,6 +182,8 @@ function adminQuizInfo(token: string, quizId: number): ErrorObject | QuizInfoRet
   const findToken = data.sessions.find(session => session.token === token);
   const findQuiz = data.quizzes.find(session => session.quizId === quizId);
 
+  console.log(token, quizId, findToken);
+
   if (!findToken) {
     return { error: 'Token invalid.' };
   } else if (!findQuiz) {

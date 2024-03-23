@@ -193,9 +193,9 @@ app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const response = adminQuizInfo(token, quizId);
   
   if ('error' in response) {
-    if (response.error === 'User Id is not valid.') {
+    if (response.error === 'Token invalid.') {
       return res.status(401).json(response);
-    } else if (response.error === 'Quiz Id is not valid.') {
+    } else if (response.error === 'Quiz Id invalid.') {
       return res.status(400).json(response);
     } else if (response.error === 'User does not own this quiz.') {
       return res.status(403).json(response);
