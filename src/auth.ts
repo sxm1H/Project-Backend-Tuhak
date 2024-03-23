@@ -159,28 +159,34 @@ function adminAuthLogin(email: string, password: string): ErrorObject | TokenRet
 
 /**
   * Gets the authUserId and if that matches a user updates their email or first name or last name
-  * parameter @ {int} authUserId - the id of the user we want to change
-  * @returns  {string} if there is an error occurs error string returned
-  * @returns  {user:} returns the user: object with the necessary values of the details returned.
+  * @param {string} token - The user's token for their session.
+  * 
+  * @returns {
+  *   object {
+  *      error: string
+  *   }
+  * } Error Object with information regarding the error.
+  * @returns {user:} returns the user: object with the necessary values of the details returned.
 */
-function adminUserDetails(authUserId: number): ErrorObject | UserDetailsReturnObject {
+function adminUserDetails(token: string): ErrorObject | UserDetailsReturnObject {
   const data = getData();
+  const findToken = data.sessions.find(sessions => sessions.token === token);
 
-  for (const j of data.user) {
-    if (j.userId === authUserId) {
-      return {
-        user: {
-          userId: j.userId,
-          name: j.nameFirst + ' ' + j.nameLast,
-          email: j.email,
-          numSuccessfulLogins: j.numSuccessfulLogins,
-          numFailedPasswordsSinceLastLogin: j.numFailedPasswordsSinceLastLogin,
-        }
-      };
-    }
+  if (!findToken) {
+    return { error: 'Token invalid' };
   }
- 
-  return { error: 'authUserId not a valid Id' };
+
+  const findUser = data.user.find(user => user.userId === findToken.userId);
+
+  return {
+    user: {
+      userId: findUser.userId,
+      name: findUser.nameFirst + ' ' + findUser.nameLast,
+      email: findUser.email,
+      numSuccessfulLogins: findUser.numSuccessfulLogins,
+      numFailedPasswordsSinceLastLogin: findUser.numFailedPasswordsSinceLastLogin,
+    }
+  };
 }
 
 /**
