@@ -147,7 +147,47 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
             },
             statusCode: 400,
         })
-
     })
 
+    test('Test Unsuccessful: User Does Not Own This Quiz', () => {
+        const sessionId2 = adminAuthRegister('glhf@gmail.com', 'glhf1234', 'abcd', 'efgh').jsonBody; 
+
+        const question = 'What is the best city in Australia';
+        const duration = 5;
+        const points = 1;
+        const answers = [{answer: 'Sydney', correct: false}, {answer: 'Sydney', correct: true}]
+        expect(adminQuizCreateQuestion(quizId.quizId, sessionId2.token, question, duration, points, answers)).toStrictEqual({
+            jsonBody: {
+                error: expect.any(error),
+            },
+            statusCode: 403,
+        })
+    })
+
+    test('Test Unsuccessful: No Correct Options', () => {
+        const sessionId2 = adminAuthRegister('glhf@gmail.com', 'glhf1234', 'abcd', 'efgh').jsonBody; 
+
+        const question = 'What is the best city in Australia';
+        const duration = 5;
+        const points = 1;
+        const answers = [{answer: 'Sydney', correct: false}, {answer: 'Sydney', correct: true}]
+        expect(adminQuizCreateQuestion(quizId.quizId, sessionId2.token, question, duration, points, answers)).toStrictEqual({
+            jsonBody: {
+                error: expect.any(error),
+            },
+            statusCode: 403,
+        })
+    })
+
+    test.each([
+        ['','What is the best city in Australia', 4, 1, [{answer: 'Sydney', correct: true}, {answer: 'Melbourne', correct: false}]],
+        ['000000','What is the best city in Australia', 4, 1, [{answer: 'Sydney', correct: true}, {answer: 'Melbourne', correct: false}]],
+    ])('Test Unsuccessful: Invalid Tokens', (token, question, duration, points, answers) => {
+        expect(adminQuizCreateQuestion(quizId.quizId, token, question, duration, points, answers)).toStrictEqual({
+            jsonBody: {
+                error: expect.any(error),
+            },
+            statusCode: 400,
+        })
+    })
 })
