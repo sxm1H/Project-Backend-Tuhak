@@ -26,7 +26,7 @@ function adminQuizNameUpdate(authUserId: number, quizId: number, name: string): 
   const userData = newdata.user;
   const searchUserId = userData.findIndex(Ids => Ids.userId === authUserId);
   const isAlphanumeric = /^[a-zA-Z0-9 ]+$/.test(name);
-  const date = Date.now();
+  const date = Date.now() / 1000;
 
   if (searchUserId === -1) {
     return { error: 'User Id is not valid' };
@@ -222,7 +222,7 @@ function adminQuizCreate(authUserId: number, name: string, description: string):
   const userData = newdata.user;
   const searchUserId = userData.findIndex(Ids => Ids.userId === authUserId);
   const isAlphanumeric = /^[a-zA-Z0-9 ]+$/.test(name);
-  const date = Date.now();
+  const date = Date.now() / 1000;
 
   if (searchUserId === -1) {
     return { error: 'User Id is not valid' };
@@ -296,7 +296,7 @@ function adminQuizCreate(authUserId: number, name: string, description: string):
 
 function adminQuizDescriptionUpdate(authUserId: number, quizId: number, description: string): ErrorObject | EmptyObject {
   const data = getData();
-  const date = Date.now();
+  const date = Date.now() / 1000;
 
   if (data.user.findIndex(Ids => Ids.userId === authUserId) === -1) {
     return {
