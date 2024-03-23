@@ -91,8 +91,8 @@ const adminQuizCreate = (token: string, name: string, description: string) => {
   return requestHelper('POST', '/v1/admin/quiz', { token, name, description });
 };
 
-const adminQuizRemove = (authUserId: number, quizId: number) => {
-  return requestHelper('DELETE', `/v1/admin/quiz/${quizId}`, { authUserId, quizId });
+const adminQuizRemove = (token: string, quizId: number) => {
+  return requestHelper('DELETE', `/v1/admin/quiz/${quizId}`, { token, quizId });
 };
 
 const adminQuizInfo = (token: string, quizId: number) => {
