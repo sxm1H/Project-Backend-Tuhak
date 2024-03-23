@@ -1,5 +1,4 @@
-import { isAlpha } from 'validator';
-import { getData, setData } from './dataStore';
+import { getData } from './dataStore';
 import {
   ErrorObject,
   EmptyObject,
@@ -160,7 +159,7 @@ function adminQuizList(authUserId: number): ErrorObject | QuizListReturnObject {
   * Function allows user to view information about a specified quiz, unless the inputted ID's, user
   * and quiz respectively, are invalid, then returns an error message.
   *
-  * @param {number} authUserId - ID of user trying to access quiz information.
+  * @param {string} token - token belonging to session of user trying to access quiz information.
   * @param {number} quizId - ID of quiz user is trying to access.
   *
   * @returns {
@@ -178,27 +177,27 @@ function adminQuizList(authUserId: number): ErrorObject | QuizListReturnObject {
   *   }
   * } - Returns the quiz information user wants to access.
 */
-function adminQuizInfo(authUserId: number, quizId: number): ErrorObject | QuizInfoReturn {
+function adminQuizInfo(token: string, quizId: number): ErrorObject | QuizInfoReturn {
   const data = getData();
-  const searchUserId = data.user.find(ids => ids.userId === authUserId);
-  const searchquizId = data.quizzes.find(ids => ids.quizId === quizId);
+  const findToken = data.sessions.find(session => session.token === token);
+  const findQuiz = data.quizzes.find(session => session.quizId === quizId);
 
-  if (!searchUserId) {
-    return { error: 'User Id is not valid.' };
-  } else if (!searchquizId) {
-    return { error: 'Quiz Id is not valid.' };
+  if (!findToken) {
+    return { error: 'Token invalid.' };
+  } else if (!findQuiz) {
+    return { error: 'Quiz Id invalid.' };
   }
 
-  if (authUserId !== searchquizId.authUserId) {
+  if (findToken.userId !== findQuiz.authUserId) {
     return { error: 'User does not own this quiz.' };
   }
 
   return {
-    quizId: searchquizId.quizId,
-    name: searchquizId.name,
-    timeCreated: searchquizId.timeCreated,
-    timeLastEdited: searchquizId.timeLastEdited,
-    description: searchquizId.description,
+    quizId: findQuiz.quizId,
+    name: findQuiz.name,
+    timeCreated: findQuiz.timeCreated,
+    timeLastEdited: findQuiz.timeLastEdited,
+    description: findQuiz.description,
   };
 }
 

@@ -186,8 +186,8 @@ app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
 
 app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
-  const authUserId = parseInt(req.query.authUserId as string);
-  const response = adminQuizInfo(authUserId, quizId);
+  const token = req.query.token as string;
+  const response = adminQuizInfo(token, quizId);
   
   if ('error' in response) {
     if (response.error === 'User Id is not valid.') {
