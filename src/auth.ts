@@ -116,10 +116,10 @@ function adminAuthRegister(email: string, password: string, nameFirst: string, n
   * @param {string} email - User email which may or not be registered
   * @param {string} password - Password that may or may not be correlated with specified email
   *
-  * @returns {object {authUserId: number}} returned ID if email and password correlates to registered user.
+  * @returns {object {token: number}} returned token if email and password correlates to registered user.
   * @returns {object {error: string}} returns specified error message
 */
-function adminAuthLogin(email: string, password: string): ErrorObject | AdminId {
+function adminAuthLogin(email: string, password: string): ErrorObject | TokenReturn {
   const newData = getData();
 
   for (const data of newData.user) {
@@ -127,9 +127,22 @@ function adminAuthLogin(email: string, password: string): ErrorObject | AdminId 
       if (data.password === password) {
         data.numFailedPasswordsSinceLastLogin = 0;
         data.numSuccessfulLogins++;
-        return {
-          authUserId: data.userId,
-        };
+        for (const tokens of newData.sessions) {
+          if (tokens.userId === data.userId) {
+            sessionIdCounter++;
+            let token = sessionIdCounter.toString();
+
+            newData.sessions.push({
+              userId: tokens.userId,
+              token: tokens.token,
+            });
+
+            return {
+              token: tokens.token
+            };
+          }
+        }
+
       } else {
         data.numFailedPasswordsSinceLastLogin++;
         return {
