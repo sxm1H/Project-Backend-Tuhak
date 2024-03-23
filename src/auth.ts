@@ -137,8 +137,6 @@ function adminAuthLogin(email: string, password: string): ErrorObject | TokenRet
               token: token
             });
 
-            console.log(newData);
-
             return {
               token: token
             };
