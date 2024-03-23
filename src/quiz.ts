@@ -91,7 +91,6 @@ function adminQuizRemove(token: string, quizId: number): ErrorObject | EmptyObje
   let currentUserId;
 
   for (const data of newdata.sessions) {
-    console.log(`hello, ${token}, ${data.token}`);
     if (token === data.token) {
       currentUserId = data.userId;
       flag = true;
