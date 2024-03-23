@@ -93,7 +93,6 @@ describe ('Testing POST /v1/admin/quiz', () => {
   ])('Successful Quiz Created', ({name, description}) => {
     const {jsonBody: {token}} = adminAuthRegister('fakerT1@gmail.com', 'pass123word', 'Smith', 'John');
     const {statusCode, jsonBody} = adminQuizCreate(token, name, description);
-    
     expect(statusCode).toStrictEqual(200);
     expect(jsonBody).toStrictEqual({
       quizId: expect.any(Number)
