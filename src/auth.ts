@@ -1,48 +1,15 @@
-import { getData, setData } from './dataStore';
+import { getData } from './dataStore';
 import validator from 'validator';
 import {
   ErrorObject,
   EmptyObject,
   AdminId,
-  UserDetails,
+  TokenReturn,
   UserDetailsReturnObject,
   UserData
 } from './interfaces';
 
-/**
-  * <Given a registered user's email and password returns their authUserId value>.
-  *
-  * @param {string} email - User email which may or not be registered
-  * @param {string} password - Password that may or may not be correlated with specified email
-  *
-  * @returns {object {authUserId: number}} returned ID if email and password correlates to registered user.
-  * @returns {object {error: string}} returns specified error message
-*/
-
-function adminAuthLogin(email: string, password: string): ErrorObject | AdminId {
-  const newData = getData();
-
-  for (const data of newData.user) {
-    if (data.email === email) {
-      if (data.password === password) {
-        data.numFailedPasswordsSinceLastLogin = 0;
-        data.numSuccessfulLogins++;
-        return {
-          authUserId: data.userId,
-        };
-      } else {
-        data.numFailedPasswordsSinceLastLogin++;
-        return {
-          error: 'Password is not correct for the given email.'
-        };
-      }
-    }
-  }
-
-  return {
-    error: 'Email address does not exist.',
-  };
-}
+let sessionIdCounter = 10000;
 
 /**
   * Registers a user with a given email, password, first name and last name. The function pushes
@@ -66,14 +33,12 @@ function adminAuthLogin(email: string, password: string): ErrorObject | AdminId 
   *   }
   * } - Generated authUserId to indicate the function worked.
 */
-function adminAuthRegister(email: string, password: string, nameFirst: string, nameLast: string): ErrorObject | AdminId {
-  const newdata = getData();
+function adminAuthRegister(email: string, password: string, nameFirst: string, nameLast: string): ErrorObject | TokenReturn {
+  const data = getData();
 
-  for (let i = 0; i < newdata.user.length; i++) {
-    if (newdata.user[i].email === email) {
-      return {
-        error: 'Email is already in use.',
-      };
+  for (let i = 0; i < data.user.length; i++) {
+    if (data.user[i].email === email) {
+      return { error: 'Email is already in use.' };
     }
   }
 
@@ -120,9 +85,16 @@ function adminAuthRegister(email: string, password: string, nameFirst: string, n
     };
   }
 
-  const id = newdata.user.length + 1;
+  const id = data.user.length + 1;
+  sessionIdCounter++;
+  let token = sessionIdCounter.toString();
+  
+  data.sessions.push({
+    userId: id,
+    token: token,
+  });
 
-  newdata.user.push({
+  data.user.push({
     email: email,
     password: password,
     nameFirst: nameFirst,
@@ -134,9 +106,44 @@ function adminAuthRegister(email: string, password: string, nameFirst: string, n
   });
 
   return {
-    authUserId: id,
+    token: token,
+  }
+}
+
+/**
+  * <Given a registered user's email and password returns their authUserId value>.
+  *
+  * @param {string} email - User email which may or not be registered
+  * @param {string} password - Password that may or may not be correlated with specified email
+  *
+  * @returns {object {authUserId: number}} returned ID if email and password correlates to registered user.
+  * @returns {object {error: string}} returns specified error message
+*/
+function adminAuthLogin(email: string, password: string): ErrorObject | AdminId {
+  const newData = getData();
+
+  for (const data of newData.user) {
+    if (data.email === email) {
+      if (data.password === password) {
+        data.numFailedPasswordsSinceLastLogin = 0;
+        data.numSuccessfulLogins++;
+        return {
+          authUserId: data.userId,
+        };
+      } else {
+        data.numFailedPasswordsSinceLastLogin++;
+        return {
+          error: 'Password is not correct for the given email.'
+        };
+      }
+    }
+  }
+
+  return {
+    error: 'Email address does not exist.',
   };
 }
+
 /**
   * Gets the authUserId and if that matches a user updates their email or first name or last name
   * parameter @ {int} authUserId - the id of the user we want to change
@@ -162,6 +169,7 @@ function adminUserDetails(authUserId: number): ErrorObject | UserDetailsReturnOb
  
   return { error: 'authUserId not a valid Id' };
 }
+
 /**
   * Gets the authUserId and if that matches a user updates their email or first name or last name
   * parameter @ {int} authUserId - the id of the user we want to change
