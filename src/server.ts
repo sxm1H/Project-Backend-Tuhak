@@ -55,9 +55,9 @@ app.get('/echo', (req: Request, res: Response) => {
 
 app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
-  const { authUserId, description } = req.body;
+  const { token, description } = req.body;
 
-  const response = adminQuizDescriptionUpdate(authUserId, quizId, description);
+  const response = adminQuizDescriptionUpdate(token, quizId, description);
 
   if ('error' in response) {
     return res.status(400).json(response);
@@ -189,13 +189,13 @@ app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
 
 app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
-  const authUserId = parseInt(req.query.authUserId as string);
-  const response = adminQuizInfo(authUserId, quizId);
+  const token = req.query.token as string;
+  const response = adminQuizInfo(token, quizId);
   
   if ('error' in response) {
-    if (response.error === 'User Id is not valid.') {
+    if (response.error === 'Token invalid.') {
       return res.status(401).json(response);
-    } else if (response.error === 'Quiz Id is not valid.') {
+    } else if (response.error === 'Quiz Id invalid.') {
       return res.status(400).json(response);
     } else if (response.error === 'User does not own this quiz.') {
       return res.status(403).json(response);

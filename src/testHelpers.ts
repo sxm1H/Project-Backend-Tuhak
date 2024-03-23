@@ -95,16 +95,16 @@ const adminQuizRemove = (authUserId: number, quizId: number) => {
   return requestHelper('DELETE', `/v1/admin/quiz/${quizId}`, { authUserId, quizId });
 };
 
-const adminQuizInfo = (authUserId: number, quizId: number) => {
-  return requestHelper('GET', `/v1/admin/quiz/${quizId}`, { authUserId, quizId });
+const adminQuizInfo = (token: string, quizId: number) => {
+  return requestHelper('GET', `/v1/admin/quiz/${quizId}`, { token, quizId });
 };
 
 const adminQuizNameUpdate = (authUserId: number, quizId: number, name: string) => {
   return requestHelper('PUT', `/v1/admin/quiz/${quizId}/name`, { authUserId, quizId, name });
 };
 
-const adminQuizDescriptionUpdate = (authUserId: number, quizId: number, description: string) => {
-  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/description`, { authUserId, quizId, description });
+const adminQuizDescriptionUpdate = (token: string, quizId: number, description: string) => {
+  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/description`, { token, quizId, description });
 };
 
 // ============================================================================================== //
