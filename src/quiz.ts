@@ -266,18 +266,18 @@ function adminQuizCreate(token: string, name: string, description: string): Erro
 }
 
 /**
- * Function takes in UserId, QuizId and New Description and returns
+ * Function takes in token, QuizId and New Description and returns
  * an empty object if it passes all the error checks.
  * Otherwise, an error object will be returned containing the specific
  * error.
  *
  * Before changing the Quiz Description, the function checks for whether:
- * 	 1. Is Auth Id Valid
+ * 	 1. Is Token Valid
  *   2. Is Quiz Id Valid
  *   3. Does the Quiz Belong to the user
  *   4. Is the Desc Under 100 words
  *
- * @param {integer} authUserId - This is the user's id.
+ * @param {integer} tokens - This is the user's current token for this session.
  * @param {string} quizId - This is the quiz id.
  * @param {string} description - This is the new description for the quiz.
  *
@@ -294,38 +294,28 @@ function adminQuizCreate(token: string, name: string, description: string): Erro
  *
 */
 
-function adminQuizDescriptionUpdate(authUserId: number, quizId: number, description: string): ErrorObject | EmptyObject {
+function adminQuizDescriptionUpdate(token: string, quizId: number, description: string): ErrorObject | EmptyObject {
   const data = getData();
   const date = Date.now() / 1000;
 
-  if (data.user.findIndex(Ids => Ids.userId === authUserId) === -1) {
-    return {
-      error: 'Auth User ID invalid'
-    };
+  const findToken = data.sessions.find(ids => ids.token === token);
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+
+  if (!findToken) {
+    return { error: 'Token is Not Valid.'}
   }
-
-  let quizInfo;
-  let flag = false;
-
-  for (let i = 0; i < data.quizzes.length; i++) {
-    if (data.quizzes[i].quizId === quizId) {
-      quizInfo = data.quizzes[i];
-      flag = true;
-      if (quizInfo.authUserId !== authUserId) {
-        return { error: 'Quiz Does Not Belong to User' };
-      }
-    }
+  if (!findQuiz) {
+    return { error: 'Quiz Id is invalid.'}
   }
-
-  if (flag === false) {
-    return { error: 'Quiz ID Invalid' };
+  if (findQuiz.authUserId !== findToken.userId) {
+    return { error: 'Quiz Does Not Belong to User' };
   }
 
   if (description.length > 100) {
     return { error: 'Description Too Long' };
   } else {
-    quizInfo.description = description;
-    quizInfo.timeLastEdited = date;
+    findQuiz.description = description;
+    findQuiz.timeLastEdited = date;
     return {};
   }
 }
