@@ -177,8 +177,8 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
 });
 
 app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
-  const userId = parseInt(req.query.authUserId as string);
-  const response = adminQuizList(userId);
+  const sessionId = req.query.token as string;
+  const response = adminQuizList(sessionId);
 
   if ('error' in response) {
     return res.status(401).json(response);

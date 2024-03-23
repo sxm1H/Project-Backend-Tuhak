@@ -83,8 +83,8 @@ const adminUserPasswordUpdate = (token: string, oldPassword: string, newPassword
   return requestHelper('PUT', '/v1/admin/user/password', { token, oldPassword, newPassword });
 };
 
-const adminQuizList = (authUserId: number) => {
-  return requestHelper('GET', '/v1/admin/quiz/list', { authUserId });
+const adminQuizList = (token: string) => {
+  return requestHelper('GET', '/v1/admin/quiz/list', { token });
 };
 
 const adminQuizCreate = (token: string, name: string, description: string) => {

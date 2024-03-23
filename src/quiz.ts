@@ -137,11 +137,12 @@ function adminQuizRemove(token: string, quizId: number): ErrorObject | EmptyObje
  * @return {Object {error: string}} - If an error is occurs, it will return an error object with a string
  * @return {Object {quizzes: Array}} - an Array of quizzes ojects that have quizId and name
  */
-function adminQuizList(authUserId: number): ErrorObject | QuizListReturnObject {
+function adminQuizList(token: string): ErrorObject | QuizListReturnObject {
   const newdata = getData();
-  const serachUserId = newdata.user.findIndex(ids => ids.userId === authUserId);
+  const activeTokens = newdata.sessions
+  const searchToken = activeTokens.findIndex(session => session.token  === token);
 
-  if (serachUserId === -1) {
+  if (searchToken === -1) {
     return {
       error: 'invalid user Id'
     };
