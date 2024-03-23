@@ -104,7 +104,7 @@ const adminQuizNameUpdate = (authUserId: number, quizId: number, name: string) =
 };
 
 const adminQuizDescriptionUpdate = (authUserId: number, quizId: number, description: string) => {
-  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/description`, { authUserId, quizId, description});
+  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/description`, { authUserId, quizId, description });
 };
 
 // ============================================================================================== //
