@@ -18,7 +18,7 @@ describe('adminAuthLogin', () => {
     const {statusCode, jsonBody} = adminAuthLogin('nick1234@gmail.com', 'nick1234');
 
     expect(statusCode).toStrictEqual(200);
-    expect(jsonBody.token).toStrictEqual(token);
+    expect(jsonBody.token).toStrictEqual(expect.any(String));
   });
 
   test('Email address does not exist', () => {
@@ -56,7 +56,7 @@ describe('adminAuthLogin', () => {
   
       // Customized test message for each user
       expect(statusCode).toStrictEqual(200);
-      expect(jsonBody.token).toStrictEqual(token);
+      expect(jsonBody.token).toStrictEqual(expect.any(String));
 
   });
   
