@@ -217,48 +217,48 @@ function adminQuizInfo(authUserId: number, quizId: number): ErrorObject | QuizIn
  * to the created quiz.
  */
 
-function adminQuizCreate(authUserId: number, name: string, description: string): ErrorObject | QuizId {
-  const newdata = getData();
-  const userData = newdata.user;
-  const searchUserId = userData.findIndex(Ids => Ids.userId === authUserId);
-  const isAlphanumeric = /^[a-zA-Z0-9 ]+$/.test(name);
-  const date = Date.now() / 1000;
+function adminQuizCreate(token: string, name: string, description: string): ErrorObject | QuizId {
+  // const newdata = getData();
+  // const userData = newdata.user;
+  // const searchUserId = userData.findIndex(Ids => Ids.userId === authUserId);
+  // const isAlphanumeric = /^[a-zA-Z0-9 ]+$/.test(name);
+  // const date = Date.now() / 1000;
 
-  if (searchUserId === -1) {
-    return { error: 'User Id is not valid' };
-  }
+  // if (searchUserId === -1) {
+  //   return { error: 'User Id is not valid' };
+  // }
 
-  if (!isAlphanumeric) {
-    return { error: 'Quiz Name contains invalid characters' };
-  }
+  // if (!isAlphanumeric) {
+  //   return { error: 'Quiz Name contains invalid characters' };
+  // }
 
-  if (name.length < 3 || name.length > 30) {
-    return { error: 'Quiz Name must be more than 2 chracters and less than 31 characters long' };
-  }
+  // if (name.length < 3 || name.length > 30) {
+  //   return { error: 'Quiz Name must be more than 2 chracters and less than 31 characters long' };
+  // }
 
-  const courseData = newdata.quizzes;
+  // const courseData = newdata.quizzes;
 
-  for (const i of courseData) {
-    if (i.authUserId === authUserId) {
-      if (i.name === name) {
-        return { error: 'Quiz name already in use' };
-      }
-    }
-  }
+  // for (const i of courseData) {
+  //   if (i.authUserId === authUserId) {
+  //     if (i.name === name) {
+  //       return { error: 'Quiz name already in use' };
+  //     }
+  //   }
+  // }
 
-  if (description.length > 100) {
-    return { error: 'Description is more than 100 characters' };
-  }
+  // if (description.length > 100) {
+  //   return { error: 'Description is more than 100 characters' };
+  // }
 
-  quizIdcounter++;
-  newdata.quizzes.push({
-    quizId: quizIdcounter,
-    name: name,
-    description: description,
-    authUserId: authUserId,
-    timeCreated: date,
-    timeLastEdited: date,
-  });
+  // quizIdcounter++;
+  // newdata.quizzes.push({
+  //   quizId: quizIdcounter,
+  //   name: name,
+  //   description: description,
+  //   authUserId: authUserId,
+  //   timeCreated: date,
+  //   timeLastEdited: date,
+  // });
 
   return {
     quizId: quizIdcounter,
