@@ -267,18 +267,18 @@ function adminQuizCreate(token: string, name: string, description: string): Erro
 }
 
 /**
- * Function takes in UserId, QuizId and New Description and returns
+ * Function takes in token, QuizId and New Description and returns
  * an empty object if it passes all the error checks.
  * Otherwise, an error object will be returned containing the specific
  * error.
  *
  * Before changing the Quiz Description, the function checks for whether:
- * 	 1. Is Auth Id Valid
+ * 	 1. Is Token Valid
  *   2. Is Quiz Id Valid
  *   3. Does the Quiz Belong to the user
  *   4. Is the Desc Under 100 words
  *
- * @param {integer} authUserId - This is the user's id.
+ * @param {integer} tokens - This is the user's current token for this session.
  * @param {string} quizId - This is the quiz id.
  * @param {string} description - This is the new description for the quiz.
  *
@@ -308,7 +308,7 @@ function adminQuizDescriptionUpdate(token: string, quizId: number, description: 
   if (!findQuiz) {
     return { error: 'Quiz Id is invalid.'}
   }
-  if (findQuiz.authUserId === findToken.userId) {
+  if (findQuiz.authUserId !== findToken.userId) {
     return { error: 'Quiz Does Not Belong to User' };
   }
 
