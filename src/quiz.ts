@@ -294,38 +294,28 @@ function adminQuizCreate(authUserId: number, name: string, description: string):
  *
 */
 
-function adminQuizDescriptionUpdate(authUserId: number, quizId: number, description: string): ErrorObject | EmptyObject {
+function adminQuizDescriptionUpdate(token: string, quizId: number, description: string): ErrorObject | EmptyObject {
   const data = getData();
   const date = Date.now() / 1000;
 
-  if (data.user.findIndex(Ids => Ids.userId === authUserId) === -1) {
-    return {
-      error: 'Auth User ID invalid'
-    };
+  const findToken = data.sessions.find(ids => ids.token === token);
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+
+  if (!findToken) {
+    return { error: 'Token is Not Valid.'}
   }
-
-  let quizInfo;
-  let flag = false;
-
-  for (let i = 0; i < data.quizzes.length; i++) {
-    if (data.quizzes[i].quizId === quizId) {
-      quizInfo = data.quizzes[i];
-      flag = true;
-      if (quizInfo.authUserId !== authUserId) {
-        return { error: 'Quiz Does Not Belong to User' };
-      }
-    }
+  if (!findQuiz) {
+    return { error: 'Quiz Id is invalid.'}
   }
-
-  if (flag === false) {
-    return { error: 'Quiz ID Invalid' };
+  if (findQuiz.authUserId === findToken.userId) {
+    return { error: 'Quiz Does Not Belong to User' };
   }
 
   if (description.length > 100) {
     return { error: 'Description Too Long' };
   } else {
-    quizInfo.description = description;
-    quizInfo.timeLastEdited = date;
+    findQuiz.description = description;
+    findQuiz.timeLastEdited = date;
     return {};
   }
 }
