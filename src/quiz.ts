@@ -217,15 +217,15 @@ function adminQuizInfo(authUserId: number, quizId: number): ErrorObject | QuizIn
  * to the created quiz.
  */
 
-function adminQuizCreate(authUserId: number, name: string, description: string): ErrorObject | QuizId {
+function adminQuizCreate(token: string, name: string, description: string): ErrorObject | QuizId {
   const newdata = getData();
-  const userData = newdata.user;
-  const searchUserId = userData.findIndex(Ids => Ids.userId === authUserId);
+  const activeTokens = newdata.sessions;
+  const searchToken = activeTokens.findIndex(session => session.token  === token);
   const isAlphanumeric = /^[a-zA-Z0-9 ]+$/.test(name);
   const date = Date.now() / 1000;
 
-  if (searchUserId === -1) {
-    return { error: 'User Id is not valid' };
+  if (searchToken === -1) {
+    return { error: 'Token is not valid' };
   }
 
   if (!isAlphanumeric) {
@@ -237,7 +237,8 @@ function adminQuizCreate(authUserId: number, name: string, description: string):
   }
 
   const courseData = newdata.quizzes;
-
+  let authUserId = activeTokens[searchToken].userId;
+  
   for (const i of courseData) {
     if (i.authUserId === authUserId) {
       if (i.name === name) {
