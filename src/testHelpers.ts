@@ -99,8 +99,8 @@ const adminQuizInfo = (token: string, quizId: number) => {
   return requestHelper('GET', `/v1/admin/quiz/${quizId}`, { token, quizId });
 };
 
-const adminQuizNameUpdate = (authUserId: number, quizId: number, name: string) => {
-  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/name`, { authUserId, quizId, name });
+const adminQuizNameUpdate = (token: string, quizId: number, name: string) => {
+  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/name`, { token, quizId, name });
 };
 
 const adminQuizDescriptionUpdate = (token: string, quizId: number, description: string) => {
