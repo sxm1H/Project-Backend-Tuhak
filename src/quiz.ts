@@ -180,27 +180,25 @@ function adminQuizList(authUserId: number): ErrorObject | QuizListReturnObject {
 */
 function adminQuizInfo(authUserId: number, quizId: number): ErrorObject | QuizInfoReturn {
   const data = getData();
-  const searchUserId = data.user.findIndex(Ids => Ids.userId === authUserId);
-  const searchquizId = data.quizzes.findIndex(Ids => Ids.quizId === quizId);
+  const searchUserId = data.user.find(ids => ids.userId === authUserId);
+  const searchquizId = data.quizzes.find(ids => ids.quizId === quizId);
 
-  if (searchUserId === -1) {
+  if (!searchUserId) {
     return { error: 'User Id is not valid.' };
-  } else if (searchquizId === -1) {
+  } else if (!searchquizId) {
     return { error: 'Quiz Id is not valid.' };
   }
 
-  const quizMatch = data.quizzes[searchquizId];
-
-  if (authUserId !== quizMatch.authUserId) {
+  if (authUserId !== searchquizId.authUserId) {
     return { error: 'User does not own this quiz.' };
   }
 
   return {
-    quizId: quizMatch.quizId,
-    name: quizMatch.name,
-    timeCreated: quizMatch.timeCreated,
-    timeLastEdited: quizMatch.timeLastEdited,
-    description: quizMatch.description,
+    quizId: searchquizId.quizId,
+    name: searchquizId.name,
+    timeCreated: searchquizId.timeCreated,
+    timeLastEdited: searchquizId.timeLastEdited,
+    description: searchquizId.description,
   };
 }
 
