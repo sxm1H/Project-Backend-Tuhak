@@ -106,13 +106,13 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
 })
 
 app.delete('/v1/admin/quiz/:quizId', (req: Request, res: Response) => {
-  const token = req.query.token as string;
+  const authUserId = parseInt(req.query.authUserId as string);
   const quizId = parseInt(req.params.quizId);
 
-  const result = adminQuizRemove(token, quizId);
+  const result = adminQuizRemove(authUserId, quizId);
 
   if ('error' in result) {
-    if (result.error === 'does not refer to valid logged in user session') {
+    if (result.error === 'authUserId is not a valid user.') {
       return res.status(401).json(result);
     } else {
       return res.status(403).json(result);
