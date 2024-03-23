@@ -10,6 +10,10 @@ interface AdminId {
   authUserId: number;
 }
 
+interface TokenReturn {
+  token: string;
+}
+
 interface UserDetails {
   userId: number;
   name: string;
@@ -64,6 +68,7 @@ export {
   ErrorObject,
   EmptyObject,
   AdminId,
+  TokenReturn,
   UserDetails,
   UserDetailsReturnObject,
   UserData,
