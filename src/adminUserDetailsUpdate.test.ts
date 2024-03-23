@@ -12,7 +12,6 @@ beforeEach(() => {
 describe('adminUserDetailsUpdate', () => {
   test('Admin updates user details successfully', () => {
     const {jsonBody: {authUserId} } = adminAuthRegister('dilhanmr@gmail.com', 'abCdddD123', 'Dilhan', 'Mert');
-    console.log(authUserId);
     adminUserDetailsUpdate(authUserId, 'dilhanmert@gmail.com', 'Dun Yao', 'Foo');
     const {statusCode, jsonBody} = adminUserDetails(authUserId);
     expect(statusCode).toStrictEqual(200);
