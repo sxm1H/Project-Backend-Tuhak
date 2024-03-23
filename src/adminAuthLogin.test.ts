@@ -1,17 +1,7 @@
 import {
-  requestHelper,
   clear,
   adminAuthRegister,
   adminAuthLogin,
-  adminUserDetails,
-  adminUserDetailsUpdate,
-  adminUserPasswordUpdate,
-  adminQuizList,
-  adminQuizCreate,
-  adminQuizRemove,
-  adminQuizInfo,
-  adminQuizNameUpdate,
-  adminQuizDescriptionUpdate
 } from './testHelpers';
 
 beforeEach(() => {
