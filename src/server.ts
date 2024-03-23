@@ -124,16 +124,16 @@ app.delete('/v1/admin/quiz/:quizId', (req: Request, res: Response) => {
 
 
 app.put('/v1/admin/quiz/:quizId/name', (req: Request, res: Response) => {
-  const {authUserId, name} = req.body;
+  const {token, name} = req.body;
   const quizId = parseInt(req.params.quizId)
 
-  const result = adminQuizNameUpdate(authUserId, quizId, name);
+  const result = adminQuizNameUpdate(token, quizId, name);
 
   if ('error' in result) {
     if (result.error === 'Quiz ID does not refer to a quiz that this user owns.' ||
         result.error === 'Quiz ID does not refer to a valid quiz') {
      return res.status(403).json(result);
-    } else if (result.error === 'User Id is not valid') {
+    } else if (result.error === 'does not refer to valid logged in user session') {
       return res.status(401).json(result);
     } else {
       return res.status(400).json(result);

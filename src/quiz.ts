@@ -20,15 +20,26 @@ let quizIdcounter = 0;
   * @returns {object { }} returns empty object if no error and parameters match specified criteria.
   * @returns {object {error: string}} returns specified error message
 */
-function adminQuizNameUpdate(authUserId: number, quizId: number, name: string): ErrorObject | EmptyObject {
+function adminQuizNameUpdate(token: string, quizId: number, name: string): ErrorObject | EmptyObject {
   const newdata = getData();
-  const userData = newdata.user;
-  const searchUserId = userData.findIndex(Ids => Ids.userId === authUserId);
+  let searchUserId;
   const isAlphanumeric = /^[a-zA-Z0-9 ]+$/.test(name);
   const date = Date.now() / 1000;
+  let flag = false;
 
-  if (searchUserId === -1) {
-    return { error: 'User Id is not valid' };
+
+  for (const data of newdata.sessions) {
+    if (token === data.token) {
+      searchUserId = data.userId;
+      flag = true;
+      break;
+    }
+  }
+
+  if (!flag) {
+    return {
+      error: 'does not refer to valid logged in user session',
+    };
   }
 
   if (!isAlphanumeric) {
@@ -42,19 +53,19 @@ function adminQuizNameUpdate(authUserId: number, quizId: number, name: string): 
   const courseData = newdata.quizzes;
 
   for (const i of courseData) {
-    if (i.authUserId === authUserId) {
+    if (i.authUserId === searchUserId) {
       if (i.name === name) {
         return { error: 'Quiz name already in use' };
       }
     }
   }
 
-  let flag = 0;
+  flag = false;
   for (let i = 0; i < newdata.quizzes.length; i++) {
     const data = newdata.quizzes[i];
     if (quizId === data.quizId) {
-      if (data.authUserId === authUserId) {
-        flag = 1;
+      if (data.authUserId === searchUserId) {
+        flag = true;
         data.name = name;
         data.timeLastEdited = date;
         break;
