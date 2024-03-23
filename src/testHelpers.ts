@@ -71,8 +71,8 @@ const adminAuthLogin = (email: string, password: string) => {
   return requestHelper('POST', '/v1/admin/auth/login', { email, password });
 };
 
-const adminUserDetails = (authUserId: number) => {
-  return requestHelper('GET', '/v1/admin/user/details', { authUserId });
+const adminUserDetails = (token: string) => {
+  return requestHelper('GET', '/v1/admin/user/details', { token });
 };
 
 const adminUserDetailsUpdate = (authUserId: number, email: string, nameFirst: string, nameLast: string) => {

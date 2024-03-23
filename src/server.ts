@@ -144,11 +144,11 @@ app.put('/v1/admin/quiz/:quizId/name', (req: Request, res: Response) => {
 })
 
 app.get('/v1/admin/user/details', (req: Request, res: Response) => {
-  const authUserId  = req.query.authUserId as string
-  const response = adminUserDetails(parseInt(authUserId));
+  const token = req.query.token as string
+  const response = adminUserDetails(token);
   
   if ('error' in response) {
-    return res.status(400).json(response);
+    return res.status(401).json(response);
   }
 
   res.json(response);
