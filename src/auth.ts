@@ -358,7 +358,7 @@ function passwordChecker(userDetails: UserData, oldPassword: string, newPassword
   * } Empty Object to indicidate that everything worked.
   *
 */
-function adminUserPasswordUpdate(token: number, oldPassword: string, newPassword: string): ErrorObject | EmptyObject {
+function adminUserPasswordUpdate(token: string, oldPassword: string, newPassword: string): ErrorObject | EmptyObject {
   const data = getData();
   //Finding the token.
   const findToken = data.sessions.find(sessionId => sessionId.token === token);
