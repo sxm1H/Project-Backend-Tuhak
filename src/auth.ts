@@ -134,11 +134,11 @@ function adminAuthLogin(email: string, password: string): ErrorObject | TokenRet
 
             newData.sessions.push({
               userId: tokens.userId,
-              token: tokens.token,
+              token: token
             });
 
             return {
-              token: tokens.token
+              token: token
             };
           }
         }

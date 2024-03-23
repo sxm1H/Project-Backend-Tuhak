@@ -84,30 +84,32 @@ function adminQuizNameUpdate(authUserId: number, quizId: number, name: string): 
   * @returns {object { }} returns empty object if function went successful
   * @returns {object {error: string}} returns specified error message
 */
-function adminQuizRemove(authUserId: number, quizId: number): ErrorObject | EmptyObject {
+function adminQuizRemove(token: string, quizId: number): ErrorObject | EmptyObject {
   const newdata = getData();
 
-  let flag = 0;
+  let flag = false;
+  let currentUserId;
 
-  for (const data of newdata.user) {
-    if (authUserId === data.userId) {
-      flag = 1;
+  for (const data of newdata.sessions) {
+    if (token === data.token) {
+      currentUserId = data.userId;
+      flag = true;
       break;
     }
   }
 
   if (!flag) {
     return {
-      error: 'authUserId is not a valid user.',
+      error: 'does not refer to valid logged in user session',
     };
   }
 
-  flag = 0;
+  flag = false;
   for (let i = 0; i < newdata.quizzes.length; i++) {
     const data = newdata.quizzes[i];
     if (quizId === data.quizId) {
-      if (data.authUserId === authUserId) {
-        flag = 1;
+      if (data.authUserId === currentUserId) {
+        flag = true;
         newdata.quizzes.splice(i, 1);
         break;
       } else {
@@ -135,11 +137,12 @@ function adminQuizRemove(authUserId: number, quizId: number): ErrorObject | Empt
  * @return {Object {error: string}} - If an error is occurs, it will return an error object with a string
  * @return {Object {quizzes: Array}} - an Array of quizzes ojects that have quizId and name
  */
-function adminQuizList(authUserId: number): ErrorObject | QuizListReturnObject {
+function adminQuizList(token: string): ErrorObject | QuizListReturnObject {
   const newdata = getData();
-  const serachUserId = newdata.user.findIndex(ids => ids.userId === authUserId);
+  const activeTokens = newdata.sessions
+  const searchToken = activeTokens.findIndex(session => session.token  === token);
 
-  if (serachUserId === -1) {
+  if (searchToken === -1) {
     return {
       error: 'invalid user Id'
     };
