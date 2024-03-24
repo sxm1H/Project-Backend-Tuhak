@@ -121,6 +121,7 @@ function adminQuizRemove(token: string, quizId: number): ErrorObject | EmptyObje
     if (quizId === data.quizId) {
       if (data.authUserId === currentUserId) {
         flag = true;
+        newdata.trash.push(data);
         newdata.quizzes.splice(i, 1);
         break;
       } else {
