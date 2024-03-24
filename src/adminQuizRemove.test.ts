@@ -3,6 +3,7 @@ import {
   adminAuthRegister,
   adminQuizCreate,
   adminQuizRemove,
+  adminQuizList,
 } from './testHelpers';
 
 beforeEach(() => {
@@ -50,52 +51,56 @@ describe('adminQuizRemove', () => {
     });
   });
 
-  // commetning out because no adminQuizList
-
-  /*
   test('Successful quiz remove - comprehensive test', () => {
     const userId = adminAuthRegister('nick@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
-    const quiz = adminQuizCreate(userId.authUserId, 'Cities of Australia', 'good quiz');
-    let quizList = adminQuizList(userId.authUserId);
+    const quiz = adminQuizCreate(userId.jsonBody.token, 'Cities of Australia', 'good quiz');
 
-    expect(quizList).toStrictEqual({
-      quizzes: [
-        {
-          quizId: quiz.quizId,
-          name: 'Cities of Australia'
-        }
-      ]
+    expect(adminQuizList(userId.jsonBody.token)).toStrictEqual({
+      statusCode: 200,
+      jsonBody: {
+        quizzes: [
+          {
+            quizId: quiz.jsonBody.quizId,
+            name: 'Cities of Australia'
+          }
+        ]
+      }
     });
 
-    const quizToDelete = adminQuizCreate(userId.authUserId, 'i will be gone soon', 'goodbye');
-    quizList = adminQuizList(userId.authUserId);
+    const quizToDelete = adminQuizCreate(userId.jsonBody.token, 'i will be gone soon', 'goodbye');
 
-    expect(quizList).toStrictEqual({
-      quizzes: [
-        {
-          quizId: quiz.quizId,
-          name: 'Cities of Australia'
-        },
-        {
-          quizId: quizToDelete.quizId,
-          name: 'i will be gone soon'
-        }
-      ]
+    expect(adminQuizList(userId.jsonBody.token)).toStrictEqual({
+      statusCode: 200,
+      jsonBody: {
+        quizzes: [
+          {
+            quizId: quiz.jsonBody.quizId,
+            name: 'Cities of Australia'
+          },
+          {
+            quizId: quizToDelete.jsonBody.quizId,
+            name: 'i will be gone soon'
+          }
+        ]
+      }
     });
 
-    expect(adminQuizRemove(userId.authUserId, quizToDelete.quizId)).toStrictEqual({ });
+    expect(adminQuizRemove(userId.jsonBody.token, quizToDelete.jsonBody.quizId)).toStrictEqual({
+      statusCode: 200,
+      jsonBody: {}
+     });
 
-    quizList = adminQuizList(userId.authUserId);
-
-    expect(quizList).toStrictEqual({
-      quizzes: [
-        {
-          quizId: quiz.quizId,
-          name: 'Cities of Australia'
-        }
-      ]
+    expect(adminQuizList(userId.jsonBody.token)).toStrictEqual({
+      statusCode: 200,
+      jsonBody: {
+        quizzes: [
+          {
+            quizId: quiz.jsonBody.quizId,
+            name: 'Cities of Australia'
+          }
+        ]
+      }
     });
   });
-  */
 });
 

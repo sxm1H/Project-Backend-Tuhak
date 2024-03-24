@@ -24,7 +24,7 @@ function adminQuizNameUpdate(token: string, quizId: number, name: string): Error
   const newdata = getData();
   let searchUserId;
   const isAlphanumeric = /^[a-zA-Z0-9 ]+$/.test(name);
-  const date = Date.now() / 1000;
+  const date = Math.floor(Date.now() / 1000);
   let flag = false;
 
 
@@ -121,6 +121,8 @@ function adminQuizRemove(token: string, quizId: number): ErrorObject | EmptyObje
     if (quizId === data.quizId) {
       if (data.authUserId === currentUserId) {
         flag = true;
+        data.timeLastEdited = Math.floor(Date.now() / 1000);
+        newdata.trash.push(data);
         newdata.quizzes.splice(i, 1);
         break;
       } else {
@@ -235,7 +237,7 @@ function adminQuizCreate(token: string, name: string, description: string): Erro
   const activeTokens = newdata.sessions;
   const searchToken = activeTokens.findIndex(session => session.token  === token);
   const isAlphanumeric = /^[a-zA-Z0-9 ]+$/.test(name);
-  const date = Date.now() / 1000;
+  const date = Math.floor(Date.now() / 1000);
 
   if (searchToken === -1) {
     return { error: 'Token is not valid' };
@@ -312,7 +314,7 @@ function adminQuizCreate(token: string, name: string, description: string): Erro
 
 function adminQuizDescriptionUpdate(token: string, quizId: number, description: string): ErrorObject | EmptyObject {
   const data = getData();
-  const date = Date.now() / 1000;
+  const date = Math.floor(Date.now() / 1000);
 
   const findToken = data.sessions.find(ids => ids.token === token);
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
