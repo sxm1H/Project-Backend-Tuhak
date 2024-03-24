@@ -11,7 +11,8 @@ import {
     adminQuizRemove,
     adminQuizInfo,
     adminQuizNameUpdate,
-    adminQuizDescriptionUpdate
+    adminQuizDescriptionUpdate,
+    adminQuizQuestionCreate,
   } from './testHelpers';
   
 beforeEach(() => {
@@ -19,16 +20,18 @@ beforeEach(() => {
 });
 
 describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
+    let token: string;
+    let quizId: number;
     beforeEach(() => {
-        const sessionId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody;
-        const quizId = adminQuizCreate(sessionId.token, 'Australian Cities', 'lorem ipsum').jsonBody;
+        token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody.token;
+        quizId = adminQuizCreate(token, 'Australian Cities', 'lorem ipsum').jsonBody.quizId;
     })
 
     test.each([
         ['What is the best city in Australia', 4, 5, [{answer: 'Sydney', correct: true}, {answer: 'Melbourne', correct: false}]],
         ['What is the best city in Australia', 4, 5, [{answer: 'Sydney', correct: true}, {answer: 'Melbourne', correct: false}]],
-    ])('Test Successful: Creating a Question with One or More Answers', () => {
-        expect(adminQuizCreateQuestion(sessionId.token, duration, points, answers)).toStrictEqual({
+    ])('Test Successful: Creating a Question with One or More Answers', (question, duration, points, answers) => {
+        expect(adminQuizQuestionCreate(quizId, token, question, duration, points, answers)).toStrictEqual({
             jsonBody: {
                 questionId: expect.any(Number),
             },
@@ -38,11 +41,11 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
 
     test.each([
         ['Q?', 4, 5, [{answer: 'Sydney', correct: true}, {answer: 'Melbourne', correct: false}]],
-        ['lorem ' * 50, 4, 5, [{answer: 'Sydney', correct: true}, {answer: 'Melbourne', correct: false}]],
+        ['Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 4, 5, [{answer: 'Sydney', correct: true}, {answer: 'Melbourne', correct: false}]],
     ])('Test Unsuccessful: Question length is not between 5 and 50 characters', (question, duration, points, answers)=> {
-        expect(adminQuizCreateQuestion(quizId.quizId, sessionId.token, question, duration, points, answers)).toStrictEqual({
+        expect(adminQuizQuestionCreate(quizId, token, question, duration, points, answers)).toStrictEqual({
             jsonBody: {
-                error: expect.any(error),
+                error: expect.any(String),
             },
             statusCode: 400,
         })
@@ -60,9 +63,9 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
         ]],
         ['What is the best city in Australia', 4, 5, [{answer: 'Sydney', correct: true}]],
     ])('Test Unsuccessful: Number of Answers Not Between 2 and 6', (question, duration, points, answers)=> {
-        expect(adminQuizCreateQuestion(quizId.quizId, sessionId.token, question, duration, points, answers)).toStrictEqual({
+        expect(adminQuizQuestionCreate(quizId, token, question, duration, points, answers)).toStrictEqual({
             jsonBody: {
-                error: expect.any(error),
+                error: expect.any(String),
             },
             statusCode: 400,
         })
@@ -72,9 +75,9 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
         const question = 'What is the best city in Australia';
         const points = 1;
         const answers = [{answer: 'Sydney', correct: true}, {answer: 'Melbourne', correct: false}]
-        expect(adminQuizCreateQuestion(quizId.quizId, sessionId.token, question, -1, points, answers)).toStrictEqual({
+        expect(adminQuizQuestionCreate(quizId, token, question, -1, points, answers)).toStrictEqual({
             jsonBody: {
-                error: expect.any(error),
+                error: expect.any(String),
             },
             statusCode: 400,
         })
@@ -84,9 +87,9 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
         ['What is the best city in Australia', 4, -1, [{answer: 'Sydney', correct: true}, {answer: 'Melbourne', correct: false}]],
         ['What is the best city in Australia', 4, 11, [{answer: 'Sydney', correct: true}, {answer: 'Melbourne', correct: false}]],
     ])('Test Unsuccessful: Points are not between 1 and 10', (question, duration, points, answers) => {
-        expect(adminQuizCreateQuestion(quizId.quizId, sessionId.token, question, duration, points, answers)).toStrictEqual({
+        expect(adminQuizQuestionCreate(quizId, token, question, duration, points, answers)).toStrictEqual({
             jsonBody: {
-                error: expect.any(error),
+                error: expect.any(String),
             },
             statusCode: 400,
         })
@@ -94,11 +97,11 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
 
     test.each([
         ['What is the best city in Australia', 4, 1, [{answer: '', correct: true}, {answer: 'Melbourne', correct: false}]],
-        ['What is the best city in Australia', 4, 1, [{answer: 'Sydney', correct: true}, {answer: 'Melbourne' * 100, correct: false}]],
+        ['What is the best city in Australia', 4, 1, [{answer: 'Sydney', correct: true}, {answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', correct: false}]],
     ])('Test Unsuccessful: Length of answer is not between 1 and 30', (question, duration, points, answers) => {
-        expect(adminQuizCreateQuestion(quizId.quizId, sessionId.token, question, duration, points, answers)).toStrictEqual({
+        expect(adminQuizQuestionCreate(quizId, token, question, duration, points, answers)).toStrictEqual({
             jsonBody: {
-                error: expect.any(error),
+                error: expect.any(String),
             },
             statusCode: 400,
         })
@@ -109,9 +112,9 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
         const duration = 5;
         const points = 1;
         const answers = [{answer: 'Sydney', correct: true}, {answer: 'Sydney', correct: false}]
-        expect(adminQuizCreateQuestion(quizId.quizId, sessionId.token, question, duration, points, answers)).toStrictEqual({
+        expect(adminQuizQuestionCreate(quizId, token, question, duration, points, answers)).toStrictEqual({
             jsonBody: {
-                error: expect.any(error),
+                error: expect.any(String),
             },
             statusCode: 400,
         })
@@ -122,18 +125,18 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
         const duration = 5;
         const points = 1;
         const answers = [{answer: 'Sydney', correct: false}, {answer: 'Sydney', correct: true}]
-        expect(adminQuizCreateQuestion(quizId.quizId, sessionId.token, question, duration, points, answers)).toStrictEqual({
+        expect(adminQuizQuestionCreate(quizId, token, question, duration, points, answers)).toStrictEqual({
             jsonBody: {
-                error: expect.any(error),
+                error: expect.any(String),
             },
             statusCode: 400,
         })
     })
 
     test('Test Unsuccessful: Quiz Duration Exceed 3 Minutes.', () => {
-        let answers = [{answer: 'Sydney', correct: false}, {answer: 'Sydney', correct: true}];
+        let answers = [{answer: 'Sydney', correct: false}, {answer: 'Melbourne', correct: true}];
 
-        expect(adminQuizCreateQuestion(quizId.quizId, sessionId.token, 'Question1', 100, 1, answers)).toStrictEqual({
+        expect(adminQuizQuestionCreate(quizId, token, 'Question1', 100, 1, answers)).toStrictEqual({
             jsonBody: {
                 questionId: expect.any(Number),
             },
@@ -141,9 +144,9 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
         })
 
         answers = [{answer: 'Cricket', correct: false}, {answer: 'Football', correct: true}];
-        expect(adminQuizCreateQuestion(quizId.quizId, sessionId.token, 'Question2', 81, 2, answers)).toStrictEqual({
+        expect(adminQuizQuestionCreate(quizId, token, 'Question2', 81, 2, answers)).toStrictEqual({
             jsonBody: {
-                error: expect.any(error),
+                error: expect.any(String),
             },
             statusCode: 400,
         })
@@ -156,38 +159,36 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
         const duration = 5;
         const points = 1;
         const answers = [{answer: 'Sydney', correct: false}, {answer: 'Sydney', correct: true}]
-        expect(adminQuizCreateQuestion(quizId.quizId, sessionId2.token, question, duration, points, answers)).toStrictEqual({
+        expect(adminQuizQuestionCreate(quizId, sessionId2.token, question, duration, points, answers)).toStrictEqual({
             jsonBody: {
-                error: expect.any(error),
+                error: expect.any(String),
             },
             statusCode: 403,
         })
     })
 
     test('Test Unsuccessful: No Correct Options', () => {
-        const sessionId2 = adminAuthRegister('glhf@gmail.com', 'glhf1234', 'abcd', 'efgh').jsonBody; 
-
         const question = 'What is the best city in Australia';
         const duration = 5;
         const points = 1;
         const answers = [{answer: 'Sydney', correct: false}, {answer: 'Sydney', correct: true}]
-        expect(adminQuizCreateQuestion(quizId.quizId, sessionId2.token, question, duration, points, answers)).toStrictEqual({
+        expect(adminQuizQuestionCreate(quizId, token, question, duration, points, answers)).toStrictEqual({
             jsonBody: {
-                error: expect.any(error),
+                error: expect.any(String),
             },
-            statusCode: 403,
+            statusCode: 400,
         })
     })
 
     test.each([
         ['','What is the best city in Australia', 4, 1, [{answer: 'Sydney', correct: true}, {answer: 'Melbourne', correct: false}]],
         ['000000','What is the best city in Australia', 4, 1, [{answer: 'Sydney', correct: true}, {answer: 'Melbourne', correct: false}]],
-    ])('Test Unsuccessful: Invalid Tokens', (token, question, duration, points, answers) => {
-        expect(adminQuizCreateQuestion(quizId.quizId, token, question, duration, points, answers)).toStrictEqual({
+    ])('Test Unsuccessful: Invalid Tokens', (tokenTemp, question, duration, points, answers) => {
+        expect(adminQuizQuestionCreate(quizId, tokenTemp, question, duration, points, answers)).toStrictEqual({
             jsonBody: {
-                error: expect.any(error),
+                error: expect.any(String),
             },
-            statusCode: 400,
+            statusCode: 401,
         })
     })
 })
