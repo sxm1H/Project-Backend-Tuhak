@@ -1,5 +1,6 @@
 import request, { HttpVerb } from 'sync-request-curl';
 import { port, url } from './config.json';
+import { Answer } from './dataStore';
 
 const SERVER_URL = `${url}:${port}`;
 
@@ -107,9 +108,27 @@ const adminQuizDescriptionUpdate = (token: string, quizId: number, description: 
   return requestHelper('PUT', `/v1/admin/quiz/${quizId}/description`, { token, quizId, description });
 };
 
+
 const adminQuizQuestionMove = (quizid: number, questionid: number, token: string, newPosition: number) => {
   return requestHelper('PUT', `/v1/admin/quiz/${quizid}/question/${questionid}/move`, {token, newPosition});
 };
+
+const adminQuizQuestionCreate = (quizId: number, token: string, question: string, duration: number, points: number, answers: Answer[]) => {
+  let questionBody = {
+    questionBody: {
+      question: question,
+      duration: duration,
+      points: points,
+      answers: answers,
+    }
+  };
+  return requestHelper('POST', `/v1/admin/quiz/${quizId}/question`, { token, questionBody });
+}
+
+const adminAuthLogout = (token: string) => {
+  return requestHelper('POST', '/v1/admin/auth/logout', { token } );
+};
+
 // ============================================================================================== //
 
 export {
@@ -126,5 +145,7 @@ export {
   adminQuizInfo,
   adminQuizNameUpdate,
   adminQuizDescriptionUpdate,
-  adminQuizQuestionMove
+  adminQuizQuestionMove,
+  adminQuizQuestionCreate,
+  adminAuthLogout,
 };
