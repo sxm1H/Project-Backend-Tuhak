@@ -103,10 +103,10 @@ function adminQuizNameUpdate(token: string, quizId: number, name: string): Error
 */
 function adminQuizRemove(token: string, quizId: number): ErrorObject | EmptyObject {
   const newdata = getData();
-
+ 
   let flag = false;
   let currentUserId;
-
+ 
   for (const data of newdata.sessions) {
     if (token === data.token) {
       currentUserId = data.userId;
@@ -114,19 +114,21 @@ function adminQuizRemove(token: string, quizId: number): ErrorObject | EmptyObje
       break;
     }
   }
-
+ 
   if (!flag) {
     return {
       error: 'does not refer to valid logged in user session',
     };
   }
-
+ 
   flag = false;
   for (let i = 0; i < newdata.quizzes.length; i++) {
     const data = newdata.quizzes[i];
     if (quizId === data.quizId) {
       if (data.authUserId === currentUserId) {
         flag = true;
+        data.timeLastEdited = Math.floor(Date.now() / 1000);
+        newdata.trash.push(data);
         newdata.quizzes.splice(i, 1);
         break;
       } else {
@@ -136,13 +138,13 @@ function adminQuizRemove(token: string, quizId: number): ErrorObject | EmptyObje
       }
     }
   }
-
+ 
   if (!flag) {
     return {
       error: 'Quiz ID does not refer to a valid quiz',
     };
   }
-
+ 
   return { }; // Empty object
 }
 
