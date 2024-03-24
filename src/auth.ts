@@ -401,10 +401,15 @@ function adminUserPasswordUpdate(token: string, oldPassword: string, newPassword
   }
 }
 
+function adminAuthLogout(token: string) {
+  return {};
+}
+
 export {
   adminAuthLogin,
   adminAuthRegister,
   adminUserDetails,
   adminUserDetailsUpdate,
   adminUserPasswordUpdate,
+  adminAuthLogout
 };
