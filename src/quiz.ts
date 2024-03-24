@@ -10,9 +10,7 @@ import {
   getData,
   Question,
   Answer,
-  questionIdCounter,
-  answerIdCounter,
-  quizIdCounter,
+  counters,
 } from './dataStore';
 
 /**
@@ -272,9 +270,9 @@ function adminQuizCreate(token: string, name: string, description: string): Erro
     return { error: 'Description is more than 100 characters' };
   }
 
-  quizIdCounter++;
+  counters.quizIdCounter++;
   newdata.quizzes.push({
-    quizId: quizIdCounter,
+    quizId: counters.quizIdCounter,
     name: name,
     description: description,
     authUserId: authUserId,
@@ -285,7 +283,7 @@ function adminQuizCreate(token: string, name: string, description: string): Erro
   });
 
   return {
-    quizId: quizIdCounter,
+    quizId: counters.quizIdCounter,
   };
 }
 
@@ -411,15 +409,15 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody1: Q
   let answerBody = [];
   for (let answer of questionBody.answers) {
     answerBody.push({
-      answerId: answerIdCounter,
+      answerId: counters.answerIdCounter,
       answer: answer.answer,
       colour: getRandomColour(),
       correct: answer.correct,
     })
   };
-  answerIdCounter++;
+  counters.answerIdCounter++;
 
-  let questionId = questionIdCounter;
+  let questionId = counters.questionIdCounter;
 
   findQuiz.questions.push({
     questionId: questionId,
@@ -429,7 +427,7 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody1: Q
     answers: answerBody,
   })
 
-  questionIdCounter++;
+  counters.questionIdCounter++;
 
   findQuiz.duration += questionBody.duration;
   findQuiz.timeLastEdited = date;
