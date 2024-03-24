@@ -336,6 +336,10 @@ function adminQuizDescriptionUpdate(token: string, quizId: number, description: 
   }
 }
 
+function adminQuizTransfer(token: string, userEmail: string, quizId: number) {
+  return {};
+}
+
 export {
   adminQuizNameUpdate,
   adminQuizRemove,
@@ -343,4 +347,5 @@ export {
   adminQuizInfo,
   adminQuizCreate,
   adminQuizDescriptionUpdate,
+  adminQuizTransfer,
 };
