@@ -100,6 +100,10 @@ const adminQuizInfo = (token: string, quizId: number) => {
   return requestHelper('GET', `/v1/admin/quiz/${quizId}`, { token, quizId });
 };
 
+const adminQuizTrash = (token: string) => {
+  return requestHelper('GET','/v1/admin/quiz/trash',{ token })
+}
+
 const adminQuizNameUpdate = (token: string, quizId: number, name: string) => {
   return requestHelper('PUT', `/v1/admin/quiz/${quizId}/name`, { token, quizId, name });
 };
@@ -132,6 +136,10 @@ const adminQuizTransfer = (token: string, userEmail: string, quizId: number) => 
   return requestHelper('POST', `/v1/admin/quiz/${quizId}/transfer`, { token, userEmail });
 };
 
+const adminQuizQuestionUpdate = (quizId: number, questionId: number) => {
+  return requestHelper('POST', `/v1/admin/quiz/${quizId}/question/${questionId}`, {quizId, questionId})
+}
+
 // ============================================================================================== //
 
 export {
@@ -152,4 +160,6 @@ export {
   adminQuizQuestionDelete,
   adminQuizTransfer,
   adminQuizQuestionCreate,
+  adminQuizTrash,
+  adminQuizQuestionUpdate,
 };
