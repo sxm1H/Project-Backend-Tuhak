@@ -25,7 +25,8 @@ import {
   adminQuizCreate,
   adminQuizDescriptionUpdate,
   adminQuizTransfer,
-  adminQuizQuestionCreate
+  adminQuizQuestionCreate,
+  adminQuizQuestionMove
 } from './quiz';
 
 
@@ -214,7 +215,6 @@ app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
   const { token, questionBody } = req.body;
   const response = adminQuizQuestionCreate(quizId, token, questionBody);
 
-  console.log(response);
 
   if ('error' in response) {
     if (response.error === 'Token invalid.') {
@@ -258,6 +258,27 @@ app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
   
   res.json(response);
 });
+
+app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response)=> {
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const {token, newPosition} = req.body;
+
+  const response = adminQuizQuestionMove(quizId, questionId, token, newPosition);
+  
+  if ('error' in response) {
+    if (response.error === 'Token invalid.') {
+      return res.status(401).json(response);
+    } else if (response.error === 'User does not own this quiz') {
+      return res.status(403).json(response);
+    } else if (response.error === 'Quiz Id is invalid') {
+      return res.status(403).json(response);
+    } else {
+      return res.status(400).json(response);
+    }
+  }
+  res.json(response);
+})
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

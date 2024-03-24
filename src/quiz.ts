@@ -493,7 +493,52 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody1: Q
   }
 }
 
+function adminQuizQuestionMove(quizid: number, questionid: number, token: string, newPosition: number): EmptyObject | ErrorObject {
+  const data = getData();
+  const findToken = data.sessions.find(ids => ids.token === token);
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizid);
 
+  if (!findToken) {
+    return {error: 'Token invalid.'}
+  };
+
+  if (!findQuiz) {
+    return {error: 'Quiz Id is invalid'}
+  };
+
+  if (findToken.userId !== findQuiz.authUserId) {
+    return {error: 'User does not own this quiz'}
+  };
+
+  let questionsArray = findQuiz.questions;
+  const findQuestion = questionsArray.findIndex(ids => ids.questionId === questionid) 
+
+  if (findQuestion === -1) {
+    return {error: 'Question id is invalid'}
+  }
+
+  let quizlength = questionsArray.length;
+
+  if (newPosition < 0) {
+    return {error: 'New position cannot be negative'}
+  };
+
+  if (newPosition > (quizlength - 1)) {
+    return {error: 'New position cannot be greater than the length'}
+  };
+
+  if (newPosition === findQuestion) {
+    return {error: 'New position cannot be the same as current position'}
+  }
+
+  let movedquestion = questionsArray.splice(findQuestion, 1)[0];
+
+  questionsArray.splice(newPosition, 0, movedquestion);
+
+  const date = Math.floor(Date.now() / 1000);
+  findQuiz.timeLastEdited = date;
+  return {};
+}
 export {
   adminQuizNameUpdate,
   adminQuizRemove,
@@ -502,5 +547,6 @@ export {
   adminQuizCreate,
   adminQuizDescriptionUpdate,
   adminQuizTransfer,
-  adminQuizQuestionCreate
+  adminQuizQuestionCreate,
+  adminQuizQuestionMove
 };

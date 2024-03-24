@@ -13,7 +13,8 @@ beforeEach(() => {
 describe('Test PUT /v1/admin/quiz/{quizid}/question/{questionid}/move', () => {
   test('Question Id is does not refer to valid question', () => {
     const {jsonBody: {token}} = adminAuthRegister('pain@gmail.com', 'Wowowowow123', 'Alex', 'Hirsch');
-    const {statusCode, jsonBody} = adminQuizQuestionMove(1, 10, token, 1);
+    const {jsonBody: {quizId}} = adminQuizCreate(token, 'cool name', 'cool description');
+    const {statusCode, jsonBody} = adminQuizQuestionMove(quizId, 10, token, 1);
     expect(statusCode).toStrictEqual(400);
     expect(jsonBody).toStrictEqual({
       error: expect.any(String)
@@ -72,9 +73,19 @@ describe('Test PUT /v1/admin/quiz/{quizid}/question/{questionid}/move', () => {
     const {jsonBody: {questionId}} = adminQuizQuestionCreate(quizId, user2.jsonBody.token, 'cool question', 5, 5, [{answer: 'Correct', correct: true}, {answer: 'Wrong', correct: false}]);
     adminQuizQuestionCreate(quizId, user2.jsonBody.token, 'cool question', 5, 5, [{answer: 'Correct', correct: true}, {answer: 'Wrong', correct: false}]);
     const {statusCode, jsonBody} = adminQuizQuestionMove(quizId, questionId, user1.jsonBody.token, 1);
-    expect(statusCode).toStrictEqual(400);
+    expect(statusCode).toStrictEqual(403);
     expect(jsonBody).toStrictEqual({
       error: expect.any(String)
     });
+  })
+
+  test('Successful question move', () => {
+    const {jsonBody: {token}} = adminAuthRegister('pain@gmail.com', 'Wowowowow123', 'Alex', 'Hirsch');
+    const {jsonBody: {quizId}} = adminQuizCreate(token, 'cool name', 'cool description');
+    const {jsonBody: {questionId}} = adminQuizQuestionCreate(quizId, token, 'cool question', 5, 5, [{answer: 'Correct', correct: true}, {answer: 'Wrong', correct: false}]);
+    adminQuizQuestionCreate(quizId, token, 'cool question', 5, 5, [{answer: 'Correct', correct: true}, {answer: 'Wrong', correct: false}]);
+    const {statusCode, jsonBody} = adminQuizQuestionMove(quizId, questionId, token, 1);
+    expect(statusCode).toStrictEqual(200);
+    expect(jsonBody).toStrictEqual({})
   })
 })

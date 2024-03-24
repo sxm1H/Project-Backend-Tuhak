@@ -149,12 +149,8 @@ export {
   adminQuizInfo,
   adminQuizNameUpdate,
   adminQuizDescriptionUpdate,
-<<<<<<< HEAD
   adminQuizQuestionMove,
   adminQuizQuestionCreate,
-=======
->>>>>>> 269e585b535c6a02f387a00baf78651d4d4441b8
   adminAuthLogout,
   adminQuizTransfer,
-  adminQuizQuestionCreate,
 };
