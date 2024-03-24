@@ -1,13 +1,19 @@
-import { getData } from './dataStore';
 import {
   ErrorObject,
   EmptyObject,
   QuizListReturnObject,
   QuizListInfo,
   QuizInfoReturn,
-  QuizId
+  QuizId,
 } from './interfaces';
-let quizIdcounter = 0;
+import {
+  getData,
+  Question,
+  Answer,
+  questionIdCounter,
+  answerIdCounter,
+  quizIdCounter,
+} from './dataStore';
 
 /**
   * <Given a registered user's id, a quizId that is valid, and a name that matches specified
@@ -97,10 +103,10 @@ function adminQuizNameUpdate(token: string, quizId: number, name: string): Error
 */
 function adminQuizRemove(token: string, quizId: number): ErrorObject | EmptyObject {
   const newdata = getData();
-
+ 
   let flag = false;
   let currentUserId;
-
+ 
   for (const data of newdata.sessions) {
     if (token === data.token) {
       currentUserId = data.userId;
@@ -108,13 +114,13 @@ function adminQuizRemove(token: string, quizId: number): ErrorObject | EmptyObje
       break;
     }
   }
-
+ 
   if (!flag) {
     return {
       error: 'does not refer to valid logged in user session',
     };
   }
-
+ 
   flag = false;
   for (let i = 0; i < newdata.quizzes.length; i++) {
     const data = newdata.quizzes[i];
@@ -132,13 +138,13 @@ function adminQuizRemove(token: string, quizId: number): ErrorObject | EmptyObje
       }
     }
   }
-
+ 
   if (!flag) {
     return {
       error: 'Quiz ID does not refer to a valid quiz',
     };
   }
-
+ 
   return { }; // Empty object
 }
 
@@ -266,9 +272,9 @@ function adminQuizCreate(token: string, name: string, description: string): Erro
     return { error: 'Description is more than 100 characters' };
   }
 
-  quizIdcounter++;
+  quizIdCounter++;
   newdata.quizzes.push({
-    quizId: quizIdcounter,
+    quizId: quizIdCounter,
     name: name,
     description: description,
     authUserId: authUserId,
@@ -279,7 +285,7 @@ function adminQuizCreate(token: string, name: string, description: string): Erro
   });
 
   return {
-    quizId: quizIdcounter,
+    quizId: quizIdCounter,
   };
 }
 
@@ -338,6 +344,101 @@ function adminQuizDescriptionUpdate(token: string, quizId: number, description: 
   }
 }
 
+function getRandomColour(): string {
+  let random = Math.floor((Math.random() + 1) * 7);
+  if (random === 1) {
+    return 'red';
+  } else if (random === 2) {
+    return 'blue';
+  } else if (random === 3) {
+    return 'green';
+  } else if (random === 4) {
+    return 'yellow';
+  } else if (random === 5) {
+    return 'purple';
+  } else if (random === 6) {
+    return 'brown';
+  } else if (random === 7) {
+    return 'orange';
+  }
+}
+
+function adminQuizQuestionCreate(quizId: number, token: string, questionBody1: Question): QuizId | ErrorObject {
+  const data = getData();
+  const date = Math.floor(Date.now() / 1000);
+
+  const findToken = data.sessions.find(ids => ids.token === token);
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+
+  //Error Checks for Token and QuizID
+  if (!findToken) {
+    return { error: 'Token invalid.'}
+  }
+  if (!findQuiz) {
+    return { error: 'Quiz Id is invalid.'}
+  }
+  if (findQuiz.authUserId !== findToken.userId) {
+    return { error: 'User does not own this quiz.' };
+  }
+
+  let questionBody = questionBody1.questionBody;
+  //Error Checks for the Question.
+  if (questionBody.question.length > 50 || questionBody.question.length < 5) {
+    return { error: 'Question Length is not between 5 and 50.'};
+  } else if (questionBody.answers.length > 6 || questionBody.answers.length < 2) {
+    return { error: 'Number of Question Answers is not between 2 and 6.'};
+  } else if (questionBody.duration < 0) {
+    return { error: 'Question Duration is Not Positive.'};
+  } else if (questionBody.duration + findQuiz.duration > 180) {
+    return { error: 'Quiz Duration is Longer than 3 minutes.'};
+  } else if (questionBody.points > 10 || questionBody.points < 1) {
+    return { error: 'Quiz Points is Not Between 1 and 10.'};
+  }
+  for (let answer of questionBody.answers) {
+    if (answer.answer.length > 30 || answer.answer.length < 1) {
+      return { error: 'Question Answer Length is not Between 1 and 30.'};
+    }
+  }
+  for (let i = 0; i < questionBody.answers.length; i++) {
+    for (let j = i + 1; j < questionBody.answers.length; j++) {
+      if (questionBody.answers[i].answer === questionBody.answers[j].answer) {
+        return {error: 'There Are Duplicate '}
+      }
+    }
+  }
+
+  //Setting Up the Question and Answers to be Pushed Onto The Datastore
+  let answerBody = [];
+  for (let answer of questionBody.answers) {
+    answerBody.push({
+      answerId: answerIdCounter,
+      answer: answer.answer,
+      colour: getRandomColour(),
+      correct: answer.correct,
+    })
+  };
+  answerIdCounter++;
+
+  let questionId = questionIdCounter;
+
+  findQuiz.questions.push({
+    questionId: questionId,
+    question: questionBody.question,
+    duration: questionBody.duration,
+    points: questionBody.points,
+    answers: answerBody,
+  })
+
+  questionIdCounter++;
+
+  findQuiz.duration += questionBody.duration;
+  findQuiz.timeLastEdited = date;
+
+  return {
+    questionId: questionId,
+  }
+}
+
 export {
   adminQuizNameUpdate,
   adminQuizRemove,
@@ -345,4 +446,5 @@ export {
   adminQuizInfo,
   adminQuizCreate,
   adminQuizDescriptionUpdate,
+  adminQuizQuestionCreate,
 };
