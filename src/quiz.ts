@@ -231,7 +231,6 @@ function adminQuizInfo(token: string, quizId: number): ErrorObject | QuizInfoRet
  * @return {object {quizId: number}} - returns a quiz Id object that contains the unique quiz Id relating
  * to the created quiz.
  */
-
 function adminQuizCreate(token: string, name: string, description: string): ErrorObject | QuizId {
   const newdata = getData();
   const activeTokens = newdata.sessions;
@@ -309,9 +308,7 @@ function adminQuizCreate(token: string, name: string, description: string): Erro
  *
  *   }
  * } Empty Object to indicidate that everything worked.
- *
 */
-
 function adminQuizDescriptionUpdate(token: string, quizId: number, description: string): ErrorObject | EmptyObject {
   const data = getData();
   const date = Math.floor(Date.now() / 1000);
@@ -338,7 +335,26 @@ function adminQuizDescriptionUpdate(token: string, quizId: number, description: 
   }
 }
 
-function adminQuizTransfer(token: string, userEmail: string, quizId: number) {
+/**
+  * adminQuizTransfer takes in the user's token, the quizId of the quiz they wish to transfer ownership of, and
+  * the email of the target user. If successful, the logged in user will no longer own the quiz, replaced by 
+  * the user linked to the email.
+  *
+  * This function does some preliminary error checking for
+  *   1. Is the token valid
+  *   2. Is the email valid
+  *   3. Does the email belong to the logged in user
+  *   4. Does the user actually own the quiz
+  *   5. Does the  target user own a quiz of the same name.
+  *
+  * @param {string} token - This is the user's token for their session.
+  * @param {string} userEmail - Email belonging to the target user.
+  * @param {number} quizId - ID belonging to the quiz the logged in user wishes to transfer ownership of.
+  *
+  * @returns {object {error: string}} Error Object with information regarding the error.
+  * @returns {object {}} Empty Object to indicidate that everything worked.
+*/
+function adminQuizTransfer(token: string, userEmail: string, quizId: number): ErrorObject | EmptyObject {
   let data = getData();
 
   // Returns session object corresponding the given token.
