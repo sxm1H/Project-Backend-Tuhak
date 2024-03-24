@@ -24,6 +24,7 @@ import {
   adminQuizInfo,
   adminQuizCreate,
   adminQuizDescriptionUpdate,
+  adminQuizTransfer
 } from './quiz';
 
 
@@ -215,6 +216,10 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   }
 
   res.json(response);
+});
+
+app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
+  
 });
 
 // ====================================================================
