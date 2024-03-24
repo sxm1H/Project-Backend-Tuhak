@@ -126,5 +126,6 @@ export {
   adminQuizRemove,
   adminQuizInfo,
   adminQuizNameUpdate,
-  adminQuizDescriptionUpdate
+  adminQuizDescriptionUpdate,
+  adminAuthLogout
 };
