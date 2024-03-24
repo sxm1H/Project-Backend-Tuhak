@@ -14,7 +14,8 @@ import {
   adminAuthRegister,
   adminUserDetails,
   adminUserDetailsUpdate,
-  adminUserPasswordUpdate
+  adminUserPasswordUpdate,
+  adminAuthLogout
 } from './auth';
 import {
   adminQuizNameUpdate,
@@ -227,6 +228,17 @@ app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
   res.json(response);
 
 })
+
+app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
+  const { token } = req.body;
+  const response = adminAuthLogout(token);
+
+  if ('error' in response) {
+    return res.status(401).json(response);
+  }
+
+  res.json(response);
+});
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

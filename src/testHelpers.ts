@@ -118,6 +118,10 @@ const adminQuizQuestionCreate = (quizId: number, token: string, question: string
     }
   };
   return requestHelper('POST', `/v1/admin/quiz/${quizId}/question`, { token, questionBody });
+}
+
+const adminAuthLogout = (token: string) => {
+  return requestHelper('POST', '/v1/admin/auth/logout', { token } );
 };
 
 // ============================================================================================== //
@@ -137,4 +141,5 @@ export {
   adminQuizNameUpdate,
   adminQuizDescriptionUpdate,
   adminQuizQuestionCreate,
+  adminAuthLogout,
 };
