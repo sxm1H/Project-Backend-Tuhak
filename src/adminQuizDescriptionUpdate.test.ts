@@ -55,19 +55,19 @@ describe('Testing PUT v1/admin/quiz/:quizid/description', () => {
   });
 */
   test('Test Successful Quiz Description Update', () => {
-    const adminId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody;
-    const quizId = adminQuizCreate(adminId.authUserId, 'Australian Cities', 'lorem ipsum').jsonBody;
+    const token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody;
+    const quizId = adminQuizCreate(token.token, 'Australian Cities', 'lorem ipsum').jsonBody;
 
-    expect(adminQuizDescriptionUpdate(adminId.authUserId, quizId.quizId, 'lorem ipsum decorum')).toStrictEqual({
+    expect(adminQuizDescriptionUpdate(token.token, quizId.quizId, 'lorem ipsum decorum')).toStrictEqual({
       jsonBody: { },
       statusCode: 200,
     });
   });
 
   test('Test Unsuccessful: Auth User ID invalid', () => {
-    const adminId = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody;
-    const quizId = adminQuizCreate(adminId.authUserId, 'Australian Cities', 'lorem ipsum').jsonBody;
-    const valid = adminQuizDescriptionUpdate(-1, quizId.quizId, 'lorem ipsum decorum'); // Since authId are positive, -1 is an obvious invalid id.
+    const token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody;
+    const quizId = adminQuizCreate(token.token, 'Australian Cities', 'lorem ipsum').jsonBody;
+    const valid = adminQuizDescriptionUpdate('-1', quizId.quizId, 'lorem ipsum decorum'); // Since authId are positive, -1 is an obvious invalid id.
 
     expect(valid).toStrictEqual({
       jsonBody: {

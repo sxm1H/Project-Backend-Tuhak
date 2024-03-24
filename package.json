@@ -4,7 +4,9 @@
         "tsc": "tsc --project tsconfig.json",
         "lint": "eslint 'src/**/*.{ts,js}'",
         "lint-fix": "eslint --fix 'src/**/*.{ts,js}'",
-        "start": "ts-node -T src/server.ts",
+        "start": "ts-node-dev -T src/server.ts",
+        "ts-node": "ts-node",
+        "ts-node-dev": "ts-node-dev",
         "cleanup-sync-request": "pkill -f node_modules/sync-rpc/lib/worker.js > /dev/null 2>&1",
         "posttest": "npm run cleanup-sync-request || true"
     },
@@ -34,6 +36,7 @@
         "swagger-ui-express": "^4.6.2",
         "sync-request-curl": "^2.1.5",
         "ts-jest": "^28.0.2",
+        "ts-node-dev": "^2.0.0",
         "yaml": "^2.2.2"
     }
 }

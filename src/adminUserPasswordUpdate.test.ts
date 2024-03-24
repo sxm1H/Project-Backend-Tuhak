@@ -38,8 +38,8 @@ describe('Testing PUT /v1/admin/user/password', () => {
 */
   test('Test Successful Password Update', () => {
     const response = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
-    const authUserId = response.jsonBody;
-    const passwordChange = adminUserPasswordUpdate(authUserId.authUserId, 'abcd1234', 'efgh5678');
+    const token = response.jsonBody;
+    const passwordChange = adminUserPasswordUpdate(token.token, 'abcd1234', 'efgh5678');
 
     expect(passwordChange).toStrictEqual({
       jsonBody: {},
@@ -115,10 +115,8 @@ describe('Testing PUT /v1/admin/user/password', () => {
   */
 
   test('Test Unsuccessful: Auth User ID invalid', () => {
-    let response = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
-    const adminId = response.jsonBody;
-    adminId.authUserId++;
-    response = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'efgh5678');
+    const token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody;
+    let response = adminUserPasswordUpdate('5', 'abcd1234', 'efgh5678');
 
     expect(response).toStrictEqual({
       jsonBody: {
@@ -129,9 +127,8 @@ describe('Testing PUT /v1/admin/user/password', () => {
   });
 
   test('Test Unsuccessful: Old Password Incorrect', () => {
-    let response = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
-    const adminId = response.jsonBody;
-    response = adminUserPasswordUpdate(adminId.authUserId, 'aecd1234', 'efgh5678');
+    const token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody;
+    let response = adminUserPasswordUpdate(token.token, 'aecd1234', 'efgh5678');
 
     expect(response).toStrictEqual({
       jsonBody: {
@@ -142,9 +139,8 @@ describe('Testing PUT /v1/admin/user/password', () => {
   });
 
   test('Test Unsuccessful: Passwords are the Same', () => {
-    let response = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
-    const adminId = response.jsonBody;
-    response = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'abcd1234');
+    const token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody;
+    let response = adminUserPasswordUpdate(token.token, 'abcd1234', 'abcd1234');
 
     expect(response).toStrictEqual({
       jsonBody: {
@@ -155,10 +151,9 @@ describe('Testing PUT /v1/admin/user/password', () => {
   });
 
   test('Test Unsuccessful: New Password Matches Old Password', () => {
-    let response = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
-    const adminId = response.jsonBody;
-    adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'efgh5678');
-    response = adminUserPasswordUpdate(adminId.authUserId, 'efgh5678', 'abcd1234');
+    const token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody;
+    adminUserPasswordUpdate(token.token, 'abcd1234', 'efgh5678');
+    let response = adminUserPasswordUpdate(token.token, 'efgh5678', 'abcd1234');
 
     expect(response).toStrictEqual({
       jsonBody: {
@@ -169,9 +164,8 @@ describe('Testing PUT /v1/admin/user/password', () => {
   });
 
   test('Test Unsuccessful: Password less than 8 charachters', () => {
-    let response = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
-    const adminId = response.jsonBody;
-    response = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'efgh567');
+    const token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody;
+    let response = adminUserPasswordUpdate(token.token, 'abcd1234', 'efgh567');
 
     expect(response).toStrictEqual({
       jsonBody: {
@@ -182,9 +176,8 @@ describe('Testing PUT /v1/admin/user/password', () => {
   });
 
   test('Test Unsuccessful: Password does not contain at least one number and at least one letter', () => {
-    let response = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
-    const adminId = response.jsonBody;
-    response = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', '***********');
+    const token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody;
+    let response = adminUserPasswordUpdate(token.token, 'abcd1234', '***********');
 
     expect(response).toStrictEqual({
       jsonBody: {
