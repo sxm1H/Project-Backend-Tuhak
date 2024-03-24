@@ -107,6 +107,10 @@ const adminQuizDescriptionUpdate = (token: string, quizId: number, description: 
   return requestHelper('PUT', `/v1/admin/quiz/${quizId}/description`, { token, quizId, description });
 };
 
+const adminAuthLogout = (token: string) => {
+  return requestHelper('POST', '/v1/admin/auth/logout', { token } );
+};
+
 // ============================================================================================== //
 
 export {
