@@ -2,6 +2,7 @@ import {
     clear,
     adminAuthRegister,
     adminQuizCreate,
+    adminQuizList,
     adminQuizTransfer
 } from './testHelpers';
 
@@ -24,6 +25,17 @@ describe('Testing POST /v1/admin/quiz/:quizid/transfer', () => {
       {
         statusCode: 200,
         jsonBody: {}
+      }
+    );
+
+    expect(adminQuizList(token2).jsonBody).toStrictEqual(
+      {
+        quizzes: [
+          {
+            quizId: quizId,
+            name: 'Cool name'
+          }
+        ]
       }
     );
   });
