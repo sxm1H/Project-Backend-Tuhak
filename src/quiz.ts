@@ -5,6 +5,7 @@ import {
   QuizListInfo,
   QuizInfoReturn,
   QuizId,
+  QuestionId,
 } from './interfaces';
 import {
   getData,
@@ -418,7 +419,7 @@ function getRandomColour(): string {
   }
 }
 
-function adminQuizQuestionCreate(quizId: number, token: string, questionBody1: Question): QuizId | ErrorObject {
+function adminQuizQuestionCreate(quizId: number, token: string, questionBody: Question): ErrorObject | QuestionId {
   const data = getData();
   const date = Math.floor(Date.now() / 1000);
 
@@ -436,7 +437,6 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody1: Q
     return { error: 'User does not own this quiz.' };
   }
 
-  let questionBody = questionBody1.questionBody;
   //Error Checks for the Question.
   if (questionBody.question.length > 50 || questionBody.question.length < 5) {
     return { error: 'Question Length is not between 5 and 50.'};
@@ -539,6 +539,36 @@ function adminQuizQuestionMove(quizid: number, questionid: number, token: string
   findQuiz.timeLastEdited = date;
   return {};
 }
+
+function adminQuizQuestionDelete(token: string, quizId: number, questionId: number): ErrorObject | EmptyObject {
+  const data = getData();
+  const findToken = data.sessions.find(ids => ids.token === token);
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  const findQuizIndex = data.quizzes.findIndex(quiz => quiz.quizId === quizId);
+
+  //Error Checks for Token and QuizID
+  if (!findToken) {
+    return { error: 'Token invalid.'}
+  }
+  if (!findQuiz) {
+    return { error: 'Quiz Id is invalid.'}
+  }
+  if (findQuiz.authUserId !== findToken.userId) {
+    return { error: 'User does not own this quiz.' };
+  }
+
+  const findQuestionIndex = data.quizzes[findQuizIndex].questions.findIndex(question => question.questionId === questionId);
+
+  if (findQuestionIndex === -1) {
+    return { error: 'Question Invalid.' };
+  }
+
+  //Deleting the Question
+  data.quizzes[findQuizIndex].questions.splice(findQuestionIndex, 1);
+
+  return { };
+}
+
 export {
   adminQuizNameUpdate,
   adminQuizRemove,
@@ -546,6 +576,7 @@ export {
   adminQuizInfo,
   adminQuizCreate,
   adminQuizDescriptionUpdate,
+  adminQuizQuestionDelete,
   adminQuizTransfer,
   adminQuizQuestionCreate,
   adminQuizQuestionMove

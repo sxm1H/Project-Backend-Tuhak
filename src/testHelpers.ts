@@ -129,6 +129,10 @@ const adminAuthLogout = (token: string) => {
   return requestHelper('POST', '/v1/admin/auth/logout', { token } );
 };
 
+const adminQuizQuestionDelete = (token: string, quizId: number, questionId: number) => {
+  return requestHelper('DELETE', `/v1/admin/quiz/${quizId}/question/${questionId}`, { token });
+};
+
 const adminQuizTransfer = (token: string, userEmail: string, quizId: number) => {
   return requestHelper('POST', `/v1/admin/quiz/${quizId}/transfer`, { token, userEmail });
 };
@@ -152,5 +156,6 @@ export {
   adminQuizQuestionMove,
   adminQuizQuestionCreate,
   adminAuthLogout,
+  adminQuizQuestionDelete,
   adminQuizTransfer,
 };
