@@ -5,6 +5,7 @@ import {
   QuizListInfo,
   QuizInfoReturn,
   QuizId,
+  QuestionId,
 } from './interfaces';
 import {
   getData,
@@ -418,7 +419,7 @@ function getRandomColour(): string {
   }
 }
 
-function adminQuizQuestionCreate(quizId: number, token: string, questionBody1: Question): QuizId | ErrorObject {
+function adminQuizQuestionCreate(quizId: number, token: string, questionBody: Question): ErrorObject | QuestionId {
   const data = getData();
   const date = Math.floor(Date.now() / 1000);
 
@@ -436,7 +437,6 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody1: Q
     return { error: 'User does not own this quiz.' };
   }
 
-  let questionBody = questionBody1.questionBody;
   //Error Checks for the Question.
   if (questionBody.question.length > 50 || questionBody.question.length < 5) {
     return { error: 'Question Length is not between 5 and 50.'};
@@ -498,7 +498,7 @@ function adminQuizQuestionDelete(token: string, quizId: number, questionId: numb
   const findToken = data.sessions.find(ids => ids.token === token);
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
   const findQuizIndex = data.quizzes.findIndex(quiz => quiz.quizId === quizId);
-  
+
   //Error Checks for Token and QuizID
   if (!findToken) {
     return { error: 'Token invalid.'}

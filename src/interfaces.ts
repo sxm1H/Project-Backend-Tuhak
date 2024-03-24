@@ -14,6 +14,10 @@ interface TokenReturn {
   token: string;
 }
 
+interface QuestionId {
+  questionId: number;
+}
+
 interface UserDetails {
   userId: number;
   name: string;
@@ -76,5 +80,6 @@ export {
   QuizListInfo,
   QuizInfoReturn,
   QuizId,
-  RequestHelperReturnType
+  RequestHelperReturnType,
+  QuestionId,
 };

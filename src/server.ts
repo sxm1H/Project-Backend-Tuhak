@@ -212,7 +212,7 @@ app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
 app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const { token, questionBody } = req.body;
-  const response = adminQuizQuestionCreate(quizId, token, questionBody);
+  const response = adminQuizQuestionCreate(quizId, token, questionBody.questionBody);
 
   if ('error' in response) {
     if (response.error === 'Token invalid.') {
