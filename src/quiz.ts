@@ -439,6 +439,38 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody1: Q
   }
 }
 
+function adminQuizQuestionDelete(token: string, quizId: number, questionId: number): ErrorObject | EmptyObject {
+  const data = getData();
+  const findToken = data.sessions.find(ids => ids.token === token);
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  const findQuizIndex = data.quizzes.findIndex(quiz => quiz.quizId === quizId);
+
+  //Error Checks for Token and QuizID
+  if (!findToken) {
+    return { error: 'Token invalid.'}
+  }
+  if (!findQuiz) {
+    return { error: 'Quiz Id is invalid.'}
+  }
+  if (findQuiz.authUserId !== findToken.userId) {
+    return { error: 'User does not own this quiz.' };
+  }
+
+  const findQuestionIndex = data.quizzes[findQuizIndex].questions.findIndex(question => question.questionId === questionId);
+
+  if (findQuestionIndex === -1) {
+    return { error: 'Question Invalid.' };
+  }
+
+  //Deleting the Question
+  data.quizzes[findQuizIndex].questions.splice(findQuestionIndex, 1);
+
+  return { };
+
+
+
+}
+
 export {
   adminQuizNameUpdate,
   adminQuizRemove,
@@ -447,4 +479,5 @@ export {
   adminQuizCreate,
   adminQuizDescriptionUpdate,
   adminQuizQuestionCreate,
+  adminQuizQuestionDelete,
 };
