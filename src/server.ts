@@ -155,8 +155,8 @@ app.get('/v1/admin/user/details', (req: Request, res: Response) => {
 })
 
 app.put('/v1/admin/user/details', (req: Request, res: Response) => {
-  const  { authUserId, email, nameFirst, nameLast } = req.body;
-  const response = adminUserDetailsUpdate(parseInt(authUserId), email, nameFirst, nameLast);
+  const  { token, email, nameFirst, nameLast } = req.body;
+  const response = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
 
   if ('error' in response) {
     return res.status(400).json(response);

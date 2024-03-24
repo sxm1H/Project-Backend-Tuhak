@@ -192,7 +192,7 @@ function adminUserDetails(authUserId: number): ErrorObject | UserDetailsReturnOb
   * @returns  {string} if there is an error occurs error string returned
   * @returns  { } if function is succesful returns empty object
 */
-function adminUserDetailsUpdate(authUserId: number, email: string, nameFirst: string, nameLast: string): ErrorObject | EmptyObject {
+function adminUserDetailsUpdate(token: string, email: string, nameFirst: string, nameLast: string): ErrorObject | EmptyObject {
   const data = getData();
 
   for (let i = 0; i < data.user.length; i++) {
@@ -203,13 +203,14 @@ function adminUserDetailsUpdate(authUserId: number, email: string, nameFirst: st
     }
   }
 
-  const indexToUpdate = data.user.findIndex(user => user.userId === authUserId);
-
-  if (indexToUpdate < 0) {
+  const sessionDetails = data.session.find(sessionId => sessionId.token === token);
+  if (!(sessionDetails)) {
     return {
-      error: 'User not found.',
-    };
+      error: 'Token is invalid.'
+    }
   }
+  const userId = sessionDetails.userId;
+  const indexToUpdate = data.user.find(user => user.userId === userId);
 
   if (validator.isEmail(email) === false) {
     return {
