@@ -10,9 +10,7 @@ import {
   getData,
   Question,
   Answer,
-  questionIdCounter,
-  answerIdCounter,
-  quizIdCounter,
+  counters,
 } from './dataStore';
 
 /**
@@ -237,7 +235,6 @@ function adminQuizInfo(token: string, quizId: number): ErrorObject | QuizInfoRet
  * @return {object {quizId: number}} - returns a quiz Id object that contains the unique quiz Id relating
  * to the created quiz.
  */
-
 function adminQuizCreate(token: string, name: string, description: string): ErrorObject | QuizId {
   const newdata = getData();
   const activeTokens = newdata.sessions;
@@ -272,9 +269,9 @@ function adminQuizCreate(token: string, name: string, description: string): Erro
     return { error: 'Description is more than 100 characters' };
   }
 
-  quizIdCounter++;
+  counters.quizIdCounter++;
   newdata.quizzes.push({
-    quizId: quizIdCounter,
+    quizId: counters.quizIdCounter,
     name: name,
     description: description,
     authUserId: authUserId,
@@ -285,7 +282,7 @@ function adminQuizCreate(token: string, name: string, description: string): Erro
   });
 
   return {
-    quizId: quizIdCounter,
+    quizId: counters.quizIdCounter,
   };
 }
 
@@ -315,9 +312,7 @@ function adminQuizCreate(token: string, name: string, description: string): Erro
  *
  *   }
  * } Empty Object to indicidate that everything worked.
- *
 */
-
 function adminQuizDescriptionUpdate(token: string, quizId: number, description: string): ErrorObject | EmptyObject {
   const data = getData();
   const date = Math.floor(Date.now() / 1000);
@@ -342,6 +337,66 @@ function adminQuizDescriptionUpdate(token: string, quizId: number, description: 
     findQuiz.timeLastEdited = date;
     return {};
   }
+}
+
+/**
+  * adminQuizTransfer takes in the user's token, the quizId of the quiz they wish to transfer ownership of, and
+  * the email of the target user. If successful, the logged in user will no longer own the quiz, replaced by 
+  * the user linked to the email.
+  *
+  * This function does some preliminary error checking for
+  *   1. Is the token valid
+  *   2. Is the email valid
+  *   3. Does the email belong to the logged in user
+  *   4. Does the user actually own the quiz
+  *   5. Does the  target user own a quiz of the same name.
+  *
+  * @param {string} token - This is the user's token for their session.
+  * @param {string} userEmail - Email belonging to the target user.
+  * @param {number} quizId - ID belonging to the quiz the logged in user wishes to transfer ownership of.
+  *
+  * @returns {object {error: string}} Error Object with information regarding the error.
+  * @returns {object {}} Empty Object to indicidate that everything worked.
+*/
+function adminQuizTransfer(token: string, userEmail: string, quizId: number): ErrorObject | EmptyObject {
+  let data = getData();
+
+  // Returns session object corresponding the given token.
+  const findToken = data.sessions.find(session => session.token === token);
+  // Early error check as findToken is used later.
+  if (!findToken) {
+    return { error: 'Token invalid.' };
+  }
+  
+  // Returns quiz object corresponding with given quizId.
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  // Returns target user object corresponding to given userEmail.
+  const findTarget = data.user.find(user => user.email === userEmail);
+  // Returns user object corresponding with current logged in user.
+  const findUser = data.user.find(user => user.userId === findToken.userId);
+
+  // Error checks userEmail and permissions.
+  if (!findTarget) {
+    return { error: `${userEmail} does not belong to any users.` };
+  } else if (findUser.email === userEmail) {
+    return { error: `${userEmail} belongs to the current logged user.` };
+  } else if (findQuiz.authUserId !== findToken.userId) {
+    return { error: 'User does not own this quiz.' };
+  }
+  
+  // Check if the user with userEmail owns any quizzes with the same name as the quiz corresponding with quizId
+  for (const quiz of data.quizzes) {
+    if (quiz.name === findQuiz.name) {
+      if (quiz.authUserId === findTarget.userId) {
+        return { error: `${userEmail} already owns a quiz with the same name.`};
+      }
+    }
+  }
+
+  // Transfers ownership to user belonging to userEmail.
+  findQuiz.authUserId === findTarget.userId;
+
+  return {};
 }
 
 function getRandomColour(): string {
@@ -406,20 +461,19 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody1: Q
       }
     }
   }
-
   //Setting Up the Question and Answers to be Pushed Onto The Datastore
   let answerBody = [];
   for (let answer of questionBody.answers) {
     answerBody.push({
-      answerId: answerIdCounter,
+      answerId: counters.answerIdCounter,
       answer: answer.answer,
       colour: getRandomColour(),
       correct: answer.correct,
     })
   };
-  answerIdCounter++;
+  counters.answerIdCounter++;
 
-  let questionId = questionIdCounter;
+  let questionId = counters.questionIdCounter;
 
   findQuiz.questions.push({
     questionId: questionId,
@@ -429,7 +483,7 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody1: Q
     answers: answerBody,
   })
 
-  questionIdCounter++;
+  counters.questionIdCounter++;
 
   findQuiz.duration += questionBody.duration;
   findQuiz.timeLastEdited = date;
@@ -444,7 +498,7 @@ function adminQuizQuestionDelete(token: string, quizId: number, questionId: numb
   const findToken = data.sessions.find(ids => ids.token === token);
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
   const findQuizIndex = data.quizzes.findIndex(quiz => quiz.quizId === quizId);
-
+  
   //Error Checks for Token and QuizID
   if (!findToken) {
     return { error: 'Token invalid.'}
@@ -466,9 +520,6 @@ function adminQuizQuestionDelete(token: string, quizId: number, questionId: numb
   data.quizzes[findQuizIndex].questions.splice(findQuestionIndex, 1);
 
   return { };
-
-
-
 }
 
 export {
@@ -478,6 +529,7 @@ export {
   adminQuizInfo,
   adminQuizCreate,
   adminQuizDescriptionUpdate,
-  adminQuizQuestionCreate,
   adminQuizQuestionDelete,
+  adminQuizTransfer,
+  adminQuizQuestionCreate
 };

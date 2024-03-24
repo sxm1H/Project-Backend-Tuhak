@@ -24,8 +24,9 @@ import {
   adminQuizInfo,
   adminQuizCreate,
   adminQuizDescriptionUpdate,
-  adminQuizQuestionCreate,
   adminQuizQuestionDelete,
+  adminQuizTransfer,
+  adminQuizQuestionCreate
 } from './quiz';
 
 
@@ -209,12 +210,9 @@ app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
 });
 
 app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
-  console.log('In Server');
   const quizId = parseInt(req.params.quizid);
   const { token, questionBody } = req.body;
   const response = adminQuizQuestionCreate(quizId, token, questionBody);
-
-  console.log(response);
 
   if ('error' in response) {
     if (response.error === 'Token invalid.') {
@@ -259,7 +257,25 @@ app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Re
   }
 
   res.json(response);
-})
+});
+
+app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const { token, userEmail } = req.body
+  const response = adminQuizTransfer(token, userEmail, quizId);
+
+  if ('error' in response) {
+    if (response.error === 'Token invalid.') {
+      return res.status(401).json(response);
+    } else if (response.error === 'User does not own this quiz.') {
+      return res.status(403).json(response);
+    } else {
+      return res.status(400).json(response);
+    }
+  }
+  
+  res.json(response);
+});
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

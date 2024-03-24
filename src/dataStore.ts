@@ -1,7 +1,9 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW ONLY
-let answerIdCounter = 0;
-let questionIdCounter = 0;
-let quizIdCounter = 0;
+interface Counters {
+  answerIdCounter: number;
+  questionIdCounter: number;
+  quizIdCounter: number;
+}
 
 interface DataStore {
   user: User[];
@@ -59,6 +61,12 @@ let data: DataStore = {
   trash: [],
 };
 
+let counters: Counters = {
+  answerIdCounter: 0,
+  questionIdCounter: 0,
+  quizIdCounter: 0
+}
+
 // YOU SHOULD MODIFY THIS OBJECT ABOVE ONLY
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
@@ -90,7 +98,5 @@ function setData(newData: DataStore): void {
 export { 
   getData, 
   setData, 
-  answerIdCounter, 
-  questionIdCounter, 
-  quizIdCounter
+  counters
 };
