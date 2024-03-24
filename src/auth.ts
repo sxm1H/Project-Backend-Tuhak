@@ -402,6 +402,15 @@ function adminUserPasswordUpdate(token: string, oldPassword: string, newPassword
 }
 
 function adminAuthLogout(token: string) {
+  let data = getData();
+  const findTokenIndex = data.sessions.findIndex(session => session.token === token);
+
+  if (findTokenIndex === -1) {
+    return { error: 'Token invalid.' };
+  }
+  
+  data.sessions.splice(findTokenIndex, 1);
+  
   return {};
 }
 
