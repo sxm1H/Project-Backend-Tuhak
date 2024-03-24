@@ -107,6 +107,9 @@ const adminQuizDescriptionUpdate = (token: string, quizId: number, description: 
   return requestHelper('PUT', `/v1/admin/quiz/${quizId}/description`, { token, quizId, description });
 };
 
+const adminQuizQuestionMove = (quizid: number, questionid: number, token: string, newPosition: number) => {
+  return requestHelper('PUT', `/v1/admin/quiz/${quizid}/question/${questionid}/move`, {token, newPosition});
+};
 // ============================================================================================== //
 
 export {
@@ -122,5 +125,6 @@ export {
   adminQuizRemove,
   adminQuizInfo,
   adminQuizNameUpdate,
-  adminQuizDescriptionUpdate
+  adminQuizDescriptionUpdate,
+  adminQuizQuestionMove
 };
