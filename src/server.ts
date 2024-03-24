@@ -24,7 +24,8 @@ import {
   adminQuizInfo,
   adminQuizCreate,
   adminQuizDescriptionUpdate,
-  adminQuizTransfer
+  adminQuizTransfer,
+  adminQuizQuestionCreate
 } from './quiz';
 
 
@@ -206,6 +207,28 @@ app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   
   res.json(response);
 });
+
+app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
+  console.log('In Server');
+  const quizId = parseInt(req.params.quizid);
+  const { token, questionBody } = req.body;
+  const response = adminQuizQuestionCreate(quizId, token, questionBody);
+
+  console.log(response);
+
+  if ('error' in response) {
+    if (response.error === 'Token invalid.') {
+      return res.status(401).json(response);
+    } else if (response.error === 'User does not own this quiz.') {
+      return res.status(403).json(response);
+    } else {
+      return res.status(400).json(response);
+    }
+  }
+
+  res.json(response);
+
+})
 
 app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   const { token } = req.body;
