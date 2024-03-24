@@ -124,6 +124,10 @@ const adminAuthLogout = (token: string) => {
   return requestHelper('POST', '/v1/admin/auth/logout', { token } );
 };
 
+const adminQuizTransfer = (token: string, userEmail: string, quizId: number) => {
+  return requestHelper('POST', `/v1/admin/quiz/${quizId}/transfer`, { token, userEmail });
+};
+
 // ============================================================================================== //
 
 export {
@@ -140,6 +144,7 @@ export {
   adminQuizInfo,
   adminQuizNameUpdate,
   adminQuizDescriptionUpdate,
-  adminQuizQuestionCreate,
   adminAuthLogout,
+  adminQuizTransfer,
+  adminQuizQuestionCreate,
 };

@@ -384,11 +384,6 @@ function adminUserPasswordUpdate(token: string, oldPassword: string, newPassword
 }
 
 /**
-  * adminAuthLogout takes in the user's current token, current password and the
-  * password they want to change it to. If the current and new password passes
-  * a series of error checks, their password will be changed and updated
-  * and pushed onto the passwordHistory.
-  * 
   * adminAuthLogout takes in the user's current token, allowing them to logout of their current
   * session. This is done by deleting the session from the dataStore.
   *
@@ -400,7 +395,7 @@ function adminUserPasswordUpdate(token: string, oldPassword: string, newPassword
   * @returns {object {error: string}} Error Object with information regarding the error.
   * @returns {object {}} Empty Object to indicidate that everything worked.
 */
-function adminAuthLogout(token: string) {
+function adminAuthLogout(token: string): ErrorObject | EmptyObject {
   let data = getData();
   const findTokenIndex = data.sessions.findIndex(session => session.token === token);
 
