@@ -29,9 +29,9 @@ let sessionIdCounter = 10000;
   * } - Error object with information regarding error.
   * @returns {
   *   object {
-  *     authUserId: number
+  *     token: string
   *   }
-  * } - Generated authUserId to indicate the function worked.
+  * } - Generated token to indicate the function worked.
 */
 function adminAuthRegister(email: string, password: string, nameFirst: string, nameLast: string): ErrorObject | TokenReturn {
   const data = getData();
@@ -111,12 +111,12 @@ function adminAuthRegister(email: string, password: string, nameFirst: string, n
 }
 
 /**
-  * <Given a registered user's email and password returns their authUserId value>.
+  * <Given a registered user's email and password returns their token value>.
   *
   * @param {string} email - User email which may or not be registered
   * @param {string} password - Password that may or may not be correlated with specified email
   *
-  * @returns {object {token: number}} returned token if email and password correlates to registered user.
+  * @returns {object {token: string}} returned token if email and password correlates to registered user.
   * @returns {object {error: string}} returns specified error message
 */
 function adminAuthLogin(email: string, password: string): ErrorObject | TokenReturn {
@@ -158,7 +158,7 @@ function adminAuthLogin(email: string, password: string): ErrorObject | TokenRet
 }
 
 /**
-  * Gets the authUserId and if that matches a user updates their email or first name or last name
+  * Gets the token and if that matches a user updates their email or first name or last name
   * @param {string} token - The user's token for their session.
   * 
   * @returns {
@@ -190,32 +190,36 @@ function adminUserDetails(token: string): ErrorObject | UserDetailsReturnObject 
 }
 
 /**
-  * Gets the authUserId and if that matches a user updates their email or first name or last name
-  * parameter @ {int} authUserId - the id of the user we want to change
+  * Gets the token and if that matches a user updates their email or first name or last name
+  * parameter @ {int} token - the token of the user we want to change
   * parameter @ { string } email - the email we want to update or keep
   * parameter @ { string } nameFirst - the first name of the user we want to change or  keep the same
   * parameter @ { string } nameLast - the last name of the user we want to change or keep the same
   * @returns  {string} if there is an error occurs error string returned
   * @returns  { } if function is succesful returns empty object
 */
-function adminUserDetailsUpdate(authUserId: number, email: string, nameFirst: string, nameLast: string): ErrorObject | EmptyObject {
+function adminUserDetailsUpdate(token: string, email: string, nameFirst: string, nameLast: string): ErrorObject | EmptyObject {
   const data = getData();
 
-  for (let i = 0; i < data.user.length; i++) {
-    if (data.user[i].email === email) {
-      return {
-        error: 'Email is already in use.',
-      };
+  const sessionDetails = data.sessions.find(sessionId => sessionId.token === token);
+  if (!(sessionDetails)) {
+    return {
+      error: 'Token is invalid.'
     }
   }
 
-  const indexToUpdate = data.user.findIndex(user => user.userId === authUserId);
-
-  if (indexToUpdate < 0) {
-    return {
-      error: 'User not found.',
-    };
+  for (let i = 0; i < data.user.length; i++) {
+    if (data.user[i].email === email) {
+      if (sessionDetails.userId !== data.user[i].userId) {
+        return {
+          error: 'Email is already in use.',
+        };
+      }
+    }
   }
+
+  const userId = sessionDetails.userId;
+  const indexToUpdate = data.user.findIndex(user => user.userId === userId);
 
   if (validator.isEmail(email) === false) {
     return {
@@ -343,7 +347,7 @@ function passwordChecker(userDetails: UserData, oldPassword: string, newPassword
   * and pushed onto the passwordHistory.
   *
   * This function does some preliminary error checking for
-  *   1. Is the authId Valid
+  *   1. Is the token Valid
   *   2. Check if the inputted oldPassword is their correct current password
   * Afterwards, error checking for the new password is done in the helper function
   * passwordChecker.
