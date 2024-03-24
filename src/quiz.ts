@@ -120,12 +120,10 @@ function adminQuizRemove(token: string, quizId: number): ErrorObject | EmptyObje
     const data = newdata.quizzes[i];
     if (quizId === data.quizId) {
       if (data.authUserId === currentUserId) {
-        console.log(newdata);
         flag = true;
         data.timeLastEdited = Math.floor(Date.now() / 1000);
         newdata.trash.push(data);
         newdata.quizzes.splice(i, 1);
-        console.log(newdata);
         break;
       } else {
         return {
