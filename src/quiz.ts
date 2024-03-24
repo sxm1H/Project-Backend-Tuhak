@@ -339,6 +339,43 @@ function adminQuizDescriptionUpdate(token: string, quizId: number, description: 
 }
 
 function adminQuizTransfer(token: string, userEmail: string, quizId: number) {
+  let data = getData();
+
+  // Returns session object corresponding the given token.
+  const findToken = data.sessions.find(session => session.token === token);
+  // Early error check as findToken is used later.
+  if (!findToken) {
+    return { error: 'Token invalid.' };
+  }
+  
+  // Returns quiz object corresponding with given quizId.
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  // Returns target user object corresponding to given userEmail.
+  const findTarget = data.user.find(user => user.email === userEmail);
+  // Returns user object corresponding with current logged in user.
+  const findUser = data.user.find(user => user.userId === findToken.userId);
+
+  // Error checks userEmail and permissions.
+  if (!findTarget) {
+    return { error: `${userEmail} does not belong to any users.` };
+  } else if (findUser.email === userEmail) {
+    return { error: `${userEmail} belongs to the current logged user.` };
+  } else if (findQuiz.authUserId !== findToken.userId) {
+    return { error: 'User does not own this quiz.' };
+  }
+  
+  // Check if the user with userEmail owns any quizzes with the same name as the quiz corresponding with quizId
+  for (const quiz of data.quizzes) {
+    if (quiz.name === findQuiz.name) {
+      if (quiz.authUserId === findTarget.userId) {
+        return { error: `${userEmail} already owns a quiz with the same name.`};
+      }
+    }
+  }
+
+  // Transfers ownership to user belonging to userEmail.
+  findQuiz.authUserId === findTarget.userId;
+
   return {};
 }
 
