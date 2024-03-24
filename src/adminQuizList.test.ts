@@ -11,7 +11,7 @@ beforeEach(() => {
 
 describe('Test GET /v1/admin/quiz/list', () => {
   test('Non valid User Id', () => {
-    const {statusCode, jsonBody} = adminQuizList(999999999999999);
+    const {statusCode, jsonBody} = adminQuizList('999999999999999');
     expect(statusCode).toStrictEqual(401);
     expect(jsonBody).toStrictEqual({
       error: expect.any(String)
@@ -19,8 +19,8 @@ describe('Test GET /v1/admin/quiz/list', () => {
   });
 
   test('non valid user id with users', () => {
-    const {jsonBody: {authUserId} } = adminAuthRegister('pain@gmail.com', 'Wowowowow123', 'Alex', 'Hirsch');
-    const {statusCode, jsonBody} = adminQuizList(authUserId + 1);
+    const {jsonBody: {token} } = adminAuthRegister('pain@gmail.com', 'Wowowowow123', 'Alex', 'Hirsch');
+    const {statusCode, jsonBody} = adminQuizList(token.concat('Hello'));
     expect(statusCode).toStrictEqual(401);
     expect(jsonBody).toStrictEqual({
       error: expect.any(String)
@@ -29,15 +29,15 @@ describe('Test GET /v1/admin/quiz/list', () => {
 
   
   test('User Id Quiz List successfully accessed', () => {
-    const {jsonBody: {authUserId} } = adminAuthRegister('pogchamp@gmail.com', 'thisisvalidpassword1', 'Steve', 'Jobs');
-    const {statusCode, jsonBody} = adminQuizList(authUserId)
+    const {jsonBody: {token} } = adminAuthRegister('pogchamp@gmail.com', 'thisisvalidpassword1', 'Steve', 'Jobs');
+    const {statusCode, jsonBody} = adminQuizList(token);
     expect(statusCode).toStrictEqual(200);
     expect(jsonBody).toStrictEqual({
       quizzes: []
     });
 
-    const {jsonBody: {quizId} } = adminQuizCreate(authUserId, 'creative name', 'description');
-    const list2 = adminQuizList(authUserId);
+    const {jsonBody: {quizId} } = adminQuizCreate(token, 'creative name', 'description');
+    const list2 = adminQuizList(token);
 
     expect(list2.statusCode).toStrictEqual(200);
     expect(list2.jsonBody).toStrictEqual({

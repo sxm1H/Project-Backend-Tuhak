@@ -10,22 +10,26 @@ beforeEach(() => {
 });
 
 describe('Testing GET /v1/admin/quiz/:quizid', () => {
-  let authUserId: number;
+  let token: string;
   let quizId: number;
   let time: number;
   beforeEach(() => {
     const { jsonBody: reg} = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo');
-    const { jsonBody: create } = adminQuizCreate(reg.authUserId, 'quiz1', 'lorem ipsum');
-    authUserId = reg.authUserId;
+    const { jsonBody: create } = adminQuizCreate(reg.token, 'quiz1', 'lorem ipsum');
+    
+    token = reg.token;
     quizId = create.quizId;
     time = Math.floor(Date.now() / 1000);
   });
 
     test('Successfully retrieves info', () => {
-    const { statusCode, jsonBody } = adminQuizInfo(authUserId, quizId);
+    const { statusCode, jsonBody } = adminQuizInfo(token, quizId);
 
     expect(jsonBody.timeCreated).toBeGreaterThanOrEqual(time);
+    expect(jsonBody.timeCreated).toBeLessThan(time + 1);
     expect(jsonBody.timeLastEdited).toBeGreaterThanOrEqual(time);
+    expect(jsonBody.timeLastEdited).toBeLessThan(time + 1);
+    
     expect(statusCode).toStrictEqual(200);
     expect(jsonBody).toStrictEqual(
       {
@@ -38,8 +42,8 @@ describe('Testing GET /v1/admin/quiz/:quizid', () => {
     );
   });
 
-  test('Invalid AuthUserId', () => {
-    expect(adminQuizInfo(-2, quizId)).toStrictEqual(
+  test('Invalid token', () => {
+    expect(adminQuizInfo('hello', quizId)).toStrictEqual(
       {
         statusCode: 401,
         jsonBody: { error: expect.any(String) }
@@ -48,7 +52,7 @@ describe('Testing GET /v1/admin/quiz/:quizid', () => {
   });
 
   test('Invalid quizId)', () => {
-    expect(adminQuizInfo(authUserId, -2)).toStrictEqual(
+    expect(adminQuizInfo(token, -2)).toStrictEqual(
       {
         statusCode: 400,
         jsonBody: { error: expect.any(String) }
@@ -57,8 +61,8 @@ describe('Testing GET /v1/admin/quiz/:quizid', () => {
   });
 
   test('User does not own quiz', () => {
-    const { jsonBody: { authUserId: authUserId2 } } = adminAuthRegister('sami@unsw.edu.au', '1234abcd', 'Sami', 'Hossain');
-    expect(adminQuizInfo(authUserId2, quizId)).toStrictEqual(
+    const { jsonBody: { token: token2 } } = adminAuthRegister('sami@unsw.edu.au', '1234abcd', 'Sami', 'Hossain');
+    expect(adminQuizInfo(token2, quizId)).toStrictEqual(
       {
         statusCode: 403,
         jsonBody: { error: expect.any(String) }

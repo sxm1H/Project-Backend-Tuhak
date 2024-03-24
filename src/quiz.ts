@@ -1,14 +1,19 @@
-import { isAlpha } from 'validator';
-import { getData, setData } from './dataStore';
 import {
   ErrorObject,
   EmptyObject,
   QuizListReturnObject,
   QuizListInfo,
   QuizInfoReturn,
-  QuizId
+  QuizId,
 } from './interfaces';
-let quizIdcounter = 0;
+import {
+  getData,
+  Question,
+  Answer,
+  questionIdCounter,
+  answerIdCounter,
+  quizIdCounter,
+} from './dataStore';
 
 /**
   * <Given a registered user's id, a quizId that is valid, and a name that matches specified
@@ -21,15 +26,26 @@ let quizIdcounter = 0;
   * @returns {object { }} returns empty object if no error and parameters match specified criteria.
   * @returns {object {error: string}} returns specified error message
 */
-function adminQuizNameUpdate(authUserId: number, quizId: number, name: string): ErrorObject | EmptyObject {
+function adminQuizNameUpdate(token: string, quizId: number, name: string): ErrorObject | EmptyObject {
   const newdata = getData();
-  const userData = newdata.user;
-  const searchUserId = userData.findIndex(Ids => Ids.userId === authUserId);
+  let searchUserId;
   const isAlphanumeric = /^[a-zA-Z0-9 ]+$/.test(name);
-  const date = Date.now();
+  const date = Math.floor(Date.now() / 1000);
+  let flag = false;
 
-  if (searchUserId === -1) {
-    return { error: 'User Id is not valid' };
+
+  for (const data of newdata.sessions) {
+    if (token === data.token) {
+      searchUserId = data.userId;
+      flag = true;
+      break;
+    }
+  }
+
+  if (!flag) {
+    return {
+      error: 'does not refer to valid logged in user session',
+    };
   }
 
   if (!isAlphanumeric) {
@@ -43,19 +59,19 @@ function adminQuizNameUpdate(authUserId: number, quizId: number, name: string): 
   const courseData = newdata.quizzes;
 
   for (const i of courseData) {
-    if (i.authUserId === authUserId) {
+    if (i.authUserId === searchUserId) {
       if (i.name === name) {
         return { error: 'Quiz name already in use' };
       }
     }
   }
 
-  let flag = 0;
+  flag = false;
   for (let i = 0; i < newdata.quizzes.length; i++) {
     const data = newdata.quizzes[i];
     if (quizId === data.quizId) {
-      if (data.authUserId === authUserId) {
-        flag = 1;
+      if (data.authUserId === searchUserId) {
+        flag = true;
         data.name = name;
         data.timeLastEdited = date;
         break;
@@ -85,30 +101,34 @@ function adminQuizNameUpdate(authUserId: number, quizId: number, name: string): 
   * @returns {object { }} returns empty object if function went successful
   * @returns {object {error: string}} returns specified error message
 */
-function adminQuizRemove(authUserId: number, quizId: number): ErrorObject | EmptyObject {
+function adminQuizRemove(token: string, quizId: number): ErrorObject | EmptyObject {
   const newdata = getData();
-
-  let flag = 0;
-
-  for (const data of newdata.user) {
-    if (authUserId === data.userId) {
-      flag = 1;
+ 
+  let flag = false;
+  let currentUserId;
+ 
+  for (const data of newdata.sessions) {
+    if (token === data.token) {
+      currentUserId = data.userId;
+      flag = true;
       break;
     }
   }
-
+ 
   if (!flag) {
     return {
-      error: 'authUserId is not a valid user.',
+      error: 'does not refer to valid logged in user session',
     };
   }
-
-  flag = 0;
+ 
+  flag = false;
   for (let i = 0; i < newdata.quizzes.length; i++) {
     const data = newdata.quizzes[i];
     if (quizId === data.quizId) {
-      if (data.authUserId === authUserId) {
-        flag = 1;
+      if (data.authUserId === currentUserId) {
+        flag = true;
+        data.timeLastEdited = Math.floor(Date.now() / 1000);
+        newdata.trash.push(data);
         newdata.quizzes.splice(i, 1);
         break;
       } else {
@@ -118,13 +138,13 @@ function adminQuizRemove(authUserId: number, quizId: number): ErrorObject | Empt
       }
     }
   }
-
+ 
   if (!flag) {
     return {
       error: 'Quiz ID does not refer to a valid quiz',
     };
   }
-
+ 
   return { }; // Empty object
 }
 
@@ -136,11 +156,12 @@ function adminQuizRemove(authUserId: number, quizId: number): ErrorObject | Empt
  * @return {Object {error: string}} - If an error is occurs, it will return an error object with a string
  * @return {Object {quizzes: Array}} - an Array of quizzes ojects that have quizId and name
  */
-function adminQuizList(authUserId: number): ErrorObject | QuizListReturnObject {
+function adminQuizList(token: string): ErrorObject | QuizListReturnObject {
   const newdata = getData();
-  const serachUserId = newdata.user.findIndex(ids => ids.userId === authUserId);
+  const activeTokens = newdata.sessions
+  const searchToken = activeTokens.findIndex(session => session.token  === token);
 
-  if (serachUserId === -1) {
+  if (searchToken === -1) {
     return {
       error: 'invalid user Id'
     };
@@ -160,7 +181,7 @@ function adminQuizList(authUserId: number): ErrorObject | QuizListReturnObject {
   * Function allows user to view information about a specified quiz, unless the inputted ID's, user
   * and quiz respectively, are invalid, then returns an error message.
   *
-  * @param {number} authUserId - ID of user trying to access quiz information.
+  * @param {string} token - token belonging to session of user trying to access quiz information.
   * @param {number} quizId - ID of quiz user is trying to access.
   *
   * @returns {
@@ -178,27 +199,27 @@ function adminQuizList(authUserId: number): ErrorObject | QuizListReturnObject {
   *   }
   * } - Returns the quiz information user wants to access.
 */
-function adminQuizInfo(authUserId: number, quizId: number): ErrorObject | QuizInfoReturn {
+function adminQuizInfo(token: string, quizId: number): ErrorObject | QuizInfoReturn {
   const data = getData();
-  const searchUserId = data.user.find(ids => ids.userId === authUserId);
-  const searchquizId = data.quizzes.find(ids => ids.quizId === quizId);
+  const findToken = data.sessions.find(session => session.token === token);
+  const findQuiz = data.quizzes.find(session => session.quizId === quizId);
 
-  if (!searchUserId) {
-    return { error: 'User Id is not valid.' };
-  } else if (!searchquizId) {
-    return { error: 'Quiz Id is not valid.' };
+  if (!findToken) {
+    return { error: 'Token invalid.' };
+  } else if (!findQuiz) {
+    return { error: 'Quiz Id invalid.' };
   }
 
-  if (authUserId !== searchquizId.authUserId) {
+  if (findToken.userId !== findQuiz.authUserId) {
     return { error: 'User does not own this quiz.' };
   }
 
   return {
-    quizId: searchquizId.quizId,
-    name: searchquizId.name,
-    timeCreated: searchquizId.timeCreated,
-    timeLastEdited: searchquizId.timeLastEdited,
-    description: searchquizId.description,
+    quizId: findQuiz.quizId,
+    name: findQuiz.name,
+    timeCreated: findQuiz.timeCreated,
+    timeLastEdited: findQuiz.timeLastEdited,
+    description: findQuiz.description,
   };
 }
 
@@ -217,15 +238,15 @@ function adminQuizInfo(authUserId: number, quizId: number): ErrorObject | QuizIn
  * to the created quiz.
  */
 
-function adminQuizCreate(authUserId: number, name: string, description: string): ErrorObject | QuizId {
+function adminQuizCreate(token: string, name: string, description: string): ErrorObject | QuizId {
   const newdata = getData();
-  const userData = newdata.user;
-  const searchUserId = userData.findIndex(Ids => Ids.userId === authUserId);
+  const activeTokens = newdata.sessions;
+  const searchToken = activeTokens.findIndex(session => session.token  === token);
   const isAlphanumeric = /^[a-zA-Z0-9 ]+$/.test(name);
-  const date = Date.now();
+  const date = Math.floor(Date.now() / 1000);
 
-  if (searchUserId === -1) {
-    return { error: 'User Id is not valid' };
+  if (searchToken === -1) {
+    return { error: 'Token is not valid' };
   }
 
   if (!isAlphanumeric) {
@@ -237,7 +258,8 @@ function adminQuizCreate(authUserId: number, name: string, description: string):
   }
 
   const courseData = newdata.quizzes;
-
+  let authUserId = activeTokens[searchToken].userId;
+  
   for (const i of courseData) {
     if (i.authUserId === authUserId) {
       if (i.name === name) {
@@ -250,34 +272,36 @@ function adminQuizCreate(authUserId: number, name: string, description: string):
     return { error: 'Description is more than 100 characters' };
   }
 
-  quizIdcounter++;
+  quizIdCounter++;
   newdata.quizzes.push({
-    quizId: quizIdcounter,
+    quizId: quizIdCounter,
     name: name,
     description: description,
     authUserId: authUserId,
     timeCreated: date,
     timeLastEdited: date,
+    questions: [],
+    duration: 0,
   });
 
   return {
-    quizId: quizIdcounter,
+    quizId: quizIdCounter,
   };
 }
 
 /**
- * Function takes in UserId, QuizId and New Description and returns
+ * Function takes in token, QuizId and New Description and returns
  * an empty object if it passes all the error checks.
  * Otherwise, an error object will be returned containing the specific
  * error.
  *
  * Before changing the Quiz Description, the function checks for whether:
- * 	 1. Is Auth Id Valid
+ * 	 1. Is Token Valid
  *   2. Is Quiz Id Valid
  *   3. Does the Quiz Belong to the user
  *   4. Is the Desc Under 100 words
  *
- * @param {integer} authUserId - This is the user's id.
+ * @param {integer} tokens - This is the user's current token for this session.
  * @param {string} quizId - This is the quiz id.
  * @param {string} description - This is the new description for the quiz.
  *
@@ -294,39 +318,124 @@ function adminQuizCreate(authUserId: number, name: string, description: string):
  *
 */
 
-function adminQuizDescriptionUpdate(authUserId: number, quizId: number, description: string): ErrorObject | EmptyObject {
+function adminQuizDescriptionUpdate(token: string, quizId: number, description: string): ErrorObject | EmptyObject {
   const data = getData();
-  const date = Date.now();
+  const date = Math.floor(Date.now() / 1000);
 
-  if (data.user.findIndex(Ids => Ids.userId === authUserId) === -1) {
-    return {
-      error: 'Auth User ID invalid'
-    };
+  const findToken = data.sessions.find(ids => ids.token === token);
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+
+  if (!findToken) {
+    return { error: 'Token is Not Valid.'}
   }
-
-  let quizInfo;
-  let flag = false;
-
-  for (let i = 0; i < data.quizzes.length; i++) {
-    if (data.quizzes[i].quizId === quizId) {
-      quizInfo = data.quizzes[i];
-      flag = true;
-      if (quizInfo.authUserId !== authUserId) {
-        return { error: 'Quiz Does Not Belong to User' };
-      }
-    }
+  if (!findQuiz) {
+    return { error: 'Quiz Id is invalid.'}
   }
-
-  if (flag === false) {
-    return { error: 'Quiz ID Invalid' };
+  if (findQuiz.authUserId !== findToken.userId) {
+    return { error: 'Quiz Does Not Belong to User' };
   }
 
   if (description.length > 100) {
     return { error: 'Description Too Long' };
   } else {
-    quizInfo.description = description;
-    quizInfo.timeLastEdited = date;
+    findQuiz.description = description;
+    findQuiz.timeLastEdited = date;
     return {};
+  }
+}
+
+function getRandomColour(): string {
+  let random = Math.floor((Math.random() + 1) * 7);
+  if (random === 1) {
+    return 'red';
+  } else if (random === 2) {
+    return 'blue';
+  } else if (random === 3) {
+    return 'green';
+  } else if (random === 4) {
+    return 'yellow';
+  } else if (random === 5) {
+    return 'purple';
+  } else if (random === 6) {
+    return 'brown';
+  } else if (random === 7) {
+    return 'orange';
+  }
+}
+
+function adminQuizQuestionCreate(quizId: number, token: string, questionBody1: Question): QuizId | ErrorObject {
+  const data = getData();
+  const date = Math.floor(Date.now() / 1000);
+
+  const findToken = data.sessions.find(ids => ids.token === token);
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+
+  //Error Checks for Token and QuizID
+  if (!findToken) {
+    return { error: 'Token invalid.'}
+  }
+  if (!findQuiz) {
+    return { error: 'Quiz Id is invalid.'}
+  }
+  if (findQuiz.authUserId !== findToken.userId) {
+    return { error: 'User does not own this quiz.' };
+  }
+
+  let questionBody = questionBody1.questionBody;
+  //Error Checks for the Question.
+  if (questionBody.question.length > 50 || questionBody.question.length < 5) {
+    return { error: 'Question Length is not between 5 and 50.'};
+  } else if (questionBody.answers.length > 6 || questionBody.answers.length < 2) {
+    return { error: 'Number of Question Answers is not between 2 and 6.'};
+  } else if (questionBody.duration < 0) {
+    return { error: 'Question Duration is Not Positive.'};
+  } else if (questionBody.duration + findQuiz.duration > 180) {
+    return { error: 'Quiz Duration is Longer than 3 minutes.'};
+  } else if (questionBody.points > 10 || questionBody.points < 1) {
+    return { error: 'Quiz Points is Not Between 1 and 10.'};
+  }
+  for (let answer of questionBody.answers) {
+    if (answer.answer.length > 30 || answer.answer.length < 1) {
+      return { error: 'Question Answer Length is not Between 1 and 30.'};
+    }
+  }
+  for (let i = 0; i < questionBody.answers.length; i++) {
+    for (let j = i + 1; j < questionBody.answers.length; j++) {
+      if (questionBody.answers[i].answer === questionBody.answers[j].answer) {
+        return {error: 'There Are Duplicate '}
+      }
+    }
+  }
+
+  //Setting Up the Question and Answers to be Pushed Onto The Datastore
+  let answerBody = [];
+  for (let answer of questionBody.answers) {
+    answerBody.push({
+      answerId: answerIdCounter,
+      answer: answer.answer,
+      colour: getRandomColour(),
+      correct: answer.correct,
+    })
+  };
+  answerIdCounter++;
+
+  let questionId = questionIdCounter;
+
+  findQuiz.questions.push({
+    questionId: questionId,
+    question: questionBody.question,
+    duration: questionBody.duration,
+    points: questionBody.points,
+    answers: answerBody,
+  })
+
+  questionIdCounter++;
+
+  findQuiz.duration += questionBody.duration;
+  findQuiz.timeLastEdited = date;
+
+  return {
+    questionId: questionId,
   }
 }
 
@@ -337,4 +446,5 @@ export {
   adminQuizInfo,
   adminQuizCreate,
   adminQuizDescriptionUpdate,
+  adminQuizQuestionCreate,
 };

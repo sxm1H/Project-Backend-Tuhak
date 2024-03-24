@@ -1,8 +1,12 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW ONLY
+let answerIdCounter = 0;
+let questionIdCounter = 0;
+let quizIdCounter = 0;
+
 interface DataStore {
   user: User[];
   quizzes: Quiz[];
-  tokens: Token[];
+  sessions: Sessions[];
   trash: Quiz[];
 }
 
@@ -24,17 +28,34 @@ interface Quiz {
   authUserId: number;
   timeCreated: number;
   timeLastEdited: number;
+  questions: Question[];
+  duration: number;
 }
 
-interface Token {
+export interface Question {
+  questionId?: number;
+  question: string;
+  duration: number;
+  points: number;
+  answers: Answer[];
+}
+
+export interface Answer {
+  answerId?: number;
+  answer: string;
+  colour?: string;
+  correct: boolean;
+}
+
+interface Sessions {
   userId: number;
-  sessionId: number;
+  token: string;
 }
 
 let data: DataStore = {
   user: [],
   quizzes: [],
-  tokens: [],
+  sessions: [],
   trash: [],
 };
 
@@ -66,4 +87,10 @@ function setData(newData: DataStore): void {
   data = newData;
 }
 
-export { getData, setData };
+export { 
+  getData, 
+  setData, 
+  answerIdCounter, 
+  questionIdCounter, 
+  quizIdCounter
+};

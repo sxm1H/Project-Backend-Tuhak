@@ -1,48 +1,14 @@
-import { getData, setData } from './dataStore';
+import { getData } from './dataStore';
 import validator from 'validator';
 import {
   ErrorObject,
   EmptyObject,
-  AdminId,
-  UserDetails,
+  TokenReturn,
   UserDetailsReturnObject,
   UserData
 } from './interfaces';
 
-/**
-  * <Given a registered user's email and password returns their authUserId value>.
-  *
-  * @param {string} email - User email which may or not be registered
-  * @param {string} password - Password that may or may not be correlated with specified email
-  *
-  * @returns {object {authUserId: number}} returned ID if email and password correlates to registered user.
-  * @returns {object {error: string}} returns specified error message
-*/
-
-function adminAuthLogin(email: string, password: string): ErrorObject | AdminId {
-  const newData = getData();
-
-  for (const data of newData.user) {
-    if (data.email === email) {
-      if (data.password === password) {
-        data.numFailedPasswordsSinceLastLogin = 0;
-        data.numSuccessfulLogins++;
-        return {
-          authUserId: data.userId,
-        };
-      } else {
-        data.numFailedPasswordsSinceLastLogin++;
-        return {
-          error: 'Password is not correct for the given email.'
-        };
-      }
-    }
-  }
-
-  return {
-    error: 'Email address does not exist.',
-  };
-}
+let sessionIdCounter = 10000;
 
 /**
   * Registers a user with a given email, password, first name and last name. The function pushes
@@ -55,25 +21,15 @@ function adminAuthLogin(email: string, password: string): ErrorObject | AdminId 
   * @param {string} nameFirst - First name of user registering.
   * @param {string} nameLast - Last name of user registering.
   *
-  * @returns {
-  *   object {
-  *     error: string
-  *   }
-  * } - Error object with information regarding error.
-  * @returns {
-  *   object {
-  *     authUserId: number
-  *   }
-  * } - Generated authUserId to indicate the function worked.
+  * @returns {object {error: string}} - Error object with information regarding error.
+  * @returns {object {token: string}} - Generated token to indicate the function worked.
 */
-function adminAuthRegister(email: string, password: string, nameFirst: string, nameLast: string): ErrorObject | AdminId {
-  const newdata = getData();
+function adminAuthRegister(email: string, password: string, nameFirst: string, nameLast: string): ErrorObject | TokenReturn {
+  const data = getData();
 
-  for (let i = 0; i < newdata.user.length; i++) {
-    if (newdata.user[i].email === email) {
-      return {
-        error: 'Email is already in use.',
-      };
+  for (let i = 0; i < data.user.length; i++) {
+    if (data.user[i].email === email) {
+      return { error: 'Email is already in use.' };
     }
   }
 
@@ -120,9 +76,16 @@ function adminAuthRegister(email: string, password: string, nameFirst: string, n
     };
   }
 
-  const id = newdata.user.length + 1;
+  const id = data.user.length + 1;
+  sessionIdCounter++;
+  let token = sessionIdCounter.toString();
+  
+  data.sessions.push({
+    userId: id,
+    token: token,
+  });
 
-  newdata.user.push({
+  data.user.push({
     email: email,
     password: password,
     nameFirst: nameFirst,
@@ -134,61 +97,125 @@ function adminAuthRegister(email: string, password: string, nameFirst: string, n
   });
 
   return {
-    authUserId: id,
-  };
+    token: token,
+  }
 }
-/**
-  * Gets the authUserId and if that matches a user updates their email or first name or last name
-  * parameter @ {int} authUserId - the id of the user we want to change
-  * @returns  {string} if there is an error occurs error string returned
-  * @returns  {user:} returns the user: object with the necessary values of the details returned.
-*/
-function adminUserDetails(authUserId: number): ErrorObject | UserDetailsReturnObject {
-  const data = getData();
 
-  for (const j of data.user) {
-    if (j.userId === authUserId) {
-      return {
-        user: {
-          userId: j.userId,
-          name: j.nameFirst + ' ' + j.nameLast,
-          email: j.email,
-          numSuccessfulLogins: j.numSuccessfulLogins,
-          numFailedPasswordsSinceLastLogin: j.numFailedPasswordsSinceLastLogin,
+/**
+  * <Given a registered user's email and password returns their token value>.
+  *
+  * @param {string} email - User email which may or not be registered
+  * @param {string} password - Password that may or may not be correlated with specified email
+  *
+  * @returns {object {token: string}} returned token if email and password correlates to registered user.
+  * @returns {object {error: string}} returns specified error message
+*/
+function adminAuthLogin(email: string, password: string): ErrorObject | TokenReturn {
+  const newData = getData();
+
+  for (const data of newData.user) {
+    if (data.email === email) {
+      if (data.password === password) {
+        data.numFailedPasswordsSinceLastLogin = 0;
+        data.numSuccessfulLogins++;
+        for (const tokens of newData.sessions) {
+          if (tokens.userId === data.userId) {
+            sessionIdCounter++;
+            let token = sessionIdCounter.toString();
+
+            newData.sessions.push({
+              userId: tokens.userId,
+              token: token
+            });
+
+            return {
+              token: token
+            };
+          }
         }
-      };
+
+      } else {
+        data.numFailedPasswordsSinceLastLogin++;
+        return {
+          error: 'Password is not correct for the given email.'
+        };
+      }
     }
   }
- 
-  return { error: 'authUserId not a valid Id' };
+
+  return {
+    error: 'Email address does not exist.',
+  };
 }
+
 /**
-  * Gets the authUserId and if that matches a user updates their email or first name or last name
-  * parameter @ {int} authUserId - the id of the user we want to change
-  * parameter @ { string } email - the email we want to update or keep
-  * parameter @ { string } nameFirst - the first name of the user we want to change or  keep the same
-  * parameter @ { string } nameLast - the last name of the user we want to change or keep the same
-  * @returns  {string} if there is an error occurs error string returned
-  * @returns  { } if function is succesful returns empty object
+  * Gets the token and if that matches a user updates their email or first name or last name
+  * @param {string} token - The user's token for their session.
+  * 
+  * @returns {object {error: string}} Error Object with information regarding the error.
+  * @returns {
+  *   user: {
+  *     userId: number,
+  *     name: string,
+  *     email: string,
+  *     numSuccessfulLogins: string,
+  *     numFailedPasswordsSinceLastLogin: string  
+  *   }
+  * } returns the user: object with the necessary values of the details returned.
 */
-function adminUserDetailsUpdate(authUserId: number, email: string, nameFirst: string, nameLast: string): ErrorObject | EmptyObject {
+function adminUserDetails(token: string): ErrorObject | UserDetailsReturnObject {
   const data = getData();
+  const findToken = data.sessions.find(sessions => sessions.token === token);
+
+  if (!findToken) {
+    return { error: 'Token invalid' };
+  }
+
+  const findUser = data.user.find(user => user.userId === findToken.userId);
+
+  return {
+    user: {
+      userId: findUser.userId,
+      name: findUser.nameFirst + ' ' + findUser.nameLast,
+      email: findUser.email,
+      numSuccessfulLogins: findUser.numSuccessfulLogins,
+      numFailedPasswordsSinceLastLogin: findUser.numFailedPasswordsSinceLastLogin,
+    }
+  };
+}
+
+/**
+  * Gets the token and if that matches a user updates their email or first name or last name
+  * @param {string} token - the token of the user we want to change
+  * @param {string} email - the email we want to update or keep
+  * @param {string} nameFirst - the first name of the user we want to change or  keep the same
+  * @param {string} nameLast - the last name of the user we want to change or keep the same
+  * 
+  * @returns  {string} if there is an error occurs error string returned
+  * @returns  {} if function is succesful returns empty object
+*/
+function adminUserDetailsUpdate(token: string, email: string, nameFirst: string, nameLast: string): ErrorObject | EmptyObject {
+  const data = getData();
+
+  const sessionDetails = data.sessions.find(sessionId => sessionId.token === token);
+  if (!(sessionDetails)) {
+    return {
+      error: 'Token is invalid.'
+    }
+  }
 
   for (let i = 0; i < data.user.length; i++) {
     if (data.user[i].email === email) {
-      return {
-        error: 'Email is already in use.',
-      };
+      if (sessionDetails.userId !== data.user[i].userId) {
+        return {
+          error: 'Email is already in use.',
+        };
+      }
     }
   }
 
-  const indexToUpdate = data.user.findIndex(user => user.userId === authUserId);
-
-  if (indexToUpdate < 0) {
-    return {
-      error: 'User not found.',
-    };
-  }
+  const userId = sessionDetails.userId;
+  const indexToUpdate = data.user.findIndex(user => user.userId === userId);
 
   if (validator.isEmail(email) === false) {
     return {
@@ -258,13 +285,8 @@ function adminUserDetailsUpdate(authUserId: number, email: string, nameFirst: st
   * @param {string} oldPassword - User's current password.
   * @param {string} newPassword - User's new password.
   *
-  * @returns {
-  *   object {
-  *      error: string
-  *   }
-  * } Error Object with information regarding the error.
+  * @returns {object {error: string}} Error Object with information regarding the error.
 */
-
 function passwordChecker(userDetails: UserData, oldPassword: string, newPassword: string): ErrorObject {
   if (oldPassword === newPassword) {
     return {
@@ -310,50 +332,48 @@ function passwordChecker(userDetails: UserData, oldPassword: string, newPassword
 }
 
 /**
-  * adminUserPasswordUpdate takes in the user's Id, current password and the
+  * adminUserPasswordUpdate takes in the user's current token, current password and the
   * password they want to change it to. If the current and new password passes
   * a series of error checks, their password will be changed and updated
   * and pushed onto the passwordHistory.
   *
   * This function does some preliminary error checking for
-  *   1. Is the authId Valid
+  *   1. Is the token Valid
   *   2. Check if the inputted oldPassword is their correct current password
   * Afterwards, error checking for the new password is done in the helper function
   * passwordChecker.
   *
-  * @param {integer} authUserId - This is the user's id.
+  * @param {string} token - This is the user's token for their session.
   * @param {string} oldPassword - User's current password.
   * @param {string} newPassword - User's new password.
   *
-  * @returns {
-  *   object {
-  *      error: string
-  *   }
-  * } Error Object with information regarding the error.
-  * @returns {
-  *   object {
-  *
-  *   }
-  * } Empty Object to indicidate that everything worked.
-  *
+  * @returns {object {error: string}} Error Object with information regarding the error.
+  * @returns {} Empty Object to indicidate that everything worked.
 */
-function adminUserPasswordUpdate(authUserId: number, oldPassword: string, newPassword: string): ErrorObject | EmptyObject {
+function adminUserPasswordUpdate(token: string, oldPassword: string, newPassword: string): ErrorObject | EmptyObject {
   const data = getData();
-  if (data.user.findIndex(Ids => Ids.userId === authUserId) === -1) {
+  //Finding the token.
+  const findToken = data.sessions.find(sessionId => sessionId.token === token);
+  if (!(findToken)) {
     return {
-      error: 'Auth User ID invalid'
+      error: 'Token invalid'
     };
   }
 
-  const userInfo = data.user[authUserId - 1];
+  //Getting the userInfo
+  const userInfo = data.user.find(id => id.userId === findToken.userId);
+
+  //Checking if the current pass was entered correctly.
   if (oldPassword !== userInfo.password) {
     return {
       error: 'Password Entered Is Incorrect.'
     };
   }
 
+  //Passing into Helper To Do The Rest of the Error Checks.  
   const newPassIsOk = passwordChecker(userInfo, oldPassword, newPassword);
 
+  //Now checking the contents of the return.
   if (newPassIsOk.error !== 'No Error') {
     return newPassIsOk;
   } else {
@@ -363,10 +383,43 @@ function adminUserPasswordUpdate(authUserId: number, oldPassword: string, newPas
   }
 }
 
+/**
+  * adminAuthLogout takes in the user's current token, current password and the
+  * password they want to change it to. If the current and new password passes
+  * a series of error checks, their password will be changed and updated
+  * and pushed onto the passwordHistory.
+  * 
+  * adminAuthLogout takes in the user's current token, allowing them to logout of their current
+  * session. This is done by deleting the session from the dataStore.
+  *
+  * This function does some preliminary error checking for
+  *   1. Is the token valid
+  *
+  * @param {string} token - This is the user's token for their session.
+  *
+  * @returns {object {error: string}} Error Object with information regarding the error.
+  * @returns {object {}} Empty Object to indicidate that everything worked.
+*/
+function adminAuthLogout(token: string) {
+  let data = getData();
+  const findTokenIndex = data.sessions.findIndex(session => session.token === token);
+
+  // Error checking: token invalid
+  if (findTokenIndex === -1) {
+    return { error: 'Token invalid.' };
+  }
+  
+  // Deletes the session object and shuffles the array accordingly.
+  data.sessions.splice(findTokenIndex, 1);
+  
+  return {};
+}
+
 export {
   adminAuthLogin,
   adminAuthRegister,
   adminUserDetails,
   adminUserDetailsUpdate,
   adminUserPasswordUpdate,
+  adminAuthLogout
 };

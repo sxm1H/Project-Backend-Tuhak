@@ -11,14 +11,13 @@ beforeEach(() => {
 
 describe('adminUserDetailsUpdate', () => {
   test('Admin updates user details successfully', () => {
-    const {jsonBody: {authUserId} } = adminAuthRegister('dilhanmr@gmail.com', 'abCdddD123', 'Dilhan', 'Mert');
-    console.log(authUserId);
-    adminUserDetailsUpdate(authUserId, 'dilhanmert@gmail.com', 'Dun Yao', 'Foo');
-    const {statusCode, jsonBody} = adminUserDetails(authUserId);
+    const {jsonBody: {token} } = adminAuthRegister('dilhanmert@gmail.com', 'abCdddD123', 'Dilhan', 'Mert');
+    adminUserDetailsUpdate(token, 'dilhanmert@gmail.com', 'Dun Yao', 'Foo')
+    const {statusCode, jsonBody} = adminUserDetails(token);
     expect(statusCode).toStrictEqual(200);
     expect(jsonBody).toStrictEqual({
       user: {
-        userId: authUserId,
+        userId: expect.any(Number),
         name: 'Dun Yao Foo',
         email: 'dilhanmert@gmail.com',
         numSuccessfulLogins: 1,
@@ -28,70 +27,57 @@ describe('adminUserDetailsUpdate', () => {
   });
 
   test('Admin updates user details successfully with multiple users', () => {
-    {
-      const {jsonBody: {authUserId} } = adminAuthRegister('dilhanmr@gmail.com', 'abCdddD123', 'Dilhan', 'Mert');
-      adminUserDetailsUpdate(authUserId, 'dilhanmert@gmail.com', 'Dun Yao', 'Foo');
-      const {statusCode, jsonBody} = adminUserDetails(authUserId);
-      expect(statusCode).toStrictEqual(200);
-      expect(jsonBody).toStrictEqual({
-        user: {
-          userId: authUserId,
-          name: 'Dun Yao Foo',
-          email: 'dilhanmert@gmail.com',
-          numSuccessfulLogins: 1,
-          numFailedPasswordsSinceLastLogin: 0,
-        }
-      });
-    }
+    const {jsonBody: {token} } = adminAuthRegister('dilhanmr@gmail.com', 'abCdddD123', 'Dilhan', 'Mert');
+    adminUserDetailsUpdate(token, 'dilhanmert@gmail.com', 'Dun Yao', 'Foo');
+    let response = adminUserDetails(token);
+    expect(response.statusCode).toStrictEqual(200);
+    expect(response.jsonBody).toStrictEqual({
+      user: {
+        userId: expect.any(Number),
+        name: 'Dun Yao Foo',
+        email: 'dilhanmert@gmail.com',
+        numSuccessfulLogins: 1,
+        numFailedPasswordsSinceLastLogin: 0,
+      }
+    });
 
-    {
-      const { jsonBody } = adminAuthRegister('DunYao@hotmail.com', 'abCdddD123', 'DunYao', 'Foo');
-      const authUserId2 = jsonBody && jsonBody.authUserId2;
-      if (authUserId2) {
+    const token2 = adminAuthRegister('DunYao@hotmail.com', 'abCdddD123', 'DunYao', 'Foo').jsonBody;
 
-        adminUserDetailsUpdate(authUserId2, 'samueljeong@gmail.com', 'Samuel', 'Jeong');
-        
-        const { statusCode, jsonBody: userDetailsJson } = adminUserDetails(authUserId2);
-        expect(statusCode).toStrictEqual(200);
-        expect(userDetailsJson).toStrictEqual({
-          user: {
-            userId: authUserId2,
-            name: 'Samuel Jeong',
-            email: 'samueljeong@gmail.com',
-            numSuccessfulLogins: 1,
-            numFailedPasswordsSinceLastLogin: 0,
-          }
-        });
-      } 
-    }
+    adminUserDetailsUpdate(token2.token, 'samueljeong@gmail.com', 'Samuel', 'Jeong');
+    
+    response = adminUserDetails(token2.token);
+    expect(response.statusCode).toStrictEqual(200);
+    expect(response.jsonBody).toStrictEqual({
+      user: {
+        userId: expect.any(Number),
+        name: 'Samuel Jeong',
+        email: 'samueljeong@gmail.com',
+        numSuccessfulLogins: 1,
+        numFailedPasswordsSinceLastLogin: 0,
+      }
+    });
 
-    {
-      const { jsonBody } = adminAuthRegister('SamiHossaini@hotmail.com', 'abCdddD123', 'Sami', 'Hossaini');
-      const authUserId3 = jsonBody && jsonBody.authUserId3;
-      if (authUserId3) {
-        adminUserDetailsUpdate(authUserId3, 'dunyao@gmail.com', 'Dun Yao', 'Foo');
-        const { statusCode, jsonBody: userDetailsJson } = adminUserDetails(authUserId3);
-        expect(statusCode).toStrictEqual(200);
-        expect(userDetailsJson).toStrictEqual({
-          user: {
-            userId: authUserId3,
-            name: 'Dun Yao Foo',
-            email: 'dunyao@gmail.com',
-            numSuccessfulLogins: 1,
-            numFailedPasswordsSinceLastLogin: 0,
-          }
-        });
-      } 
-    }
+    const token3 = adminAuthRegister('SamiHossaini@hotmail.com', 'abCdddD123', 'Sami', 'Hossain').jsonBody;
+    adminUserDetailsUpdate(token3.token, 'dunyao@gmail.com', 'Dun Yao', 'Foo');
+    response = adminUserDetails(token3.token);
+    expect(response.statusCode).toStrictEqual(200);
+    expect(response.jsonBody).toStrictEqual({
+      user: {
+        userId: expect.any(Number),
+        name: 'Dun Yao Foo',
+        email: 'dunyao@gmail.com',
+        numSuccessfulLogins: 1,
+        numFailedPasswordsSinceLastLogin: 0,
+      }
+    });
     
   });
 
   test('Invalid email: Used by another user', () => {
-    const {jsonBody: {authUserId: authUserId1}} = adminAuthRegister('dunyao@unsw.edu.au', 'abCdddD123', 'DunYao', 'Foo');
-    
-    const {jsonBody: {authUserId: authUserId2}} = adminAuthRegister('nicksebastian@unsw.edu.au', 'abCdddD1232', 'Nick', 'Sebastian');
-    const {statusCode, jsonBody} = adminUserDetailsUpdate(authUserId2, 'dunyao@unsw.edu.au', 'Nick', 'Sebastian');
+    const {jsonBody: {token: token1}} = adminAuthRegister('dunyao@unsw.edu.au', 'abCdddD123', 'DunYao', 'Foo');
+    const {jsonBody: {token: token2}} = adminAuthRegister('nicksebastian@unsw.edu.au', 'abCdddD1232', 'Nick', 'Sebastian');
 
+    const {statusCode, jsonBody} = adminUserDetailsUpdate(token2, 'dunyao@unsw.edu.au', 'Nick', 'Sebastian');
     expect(statusCode).toStrictEqual(400);
     expect(jsonBody.error).toStrictEqual(expect.any(String));
   });
@@ -102,9 +88,8 @@ describe('adminUserDetailsUpdate', () => {
     ['dunyao@', 'abcd1234', 'DunYao', 'Foo'],
   ])('Invalid email: Incorrect input', (email, password, nameFirst, nameLast) => {
     test(`Attempt to update with invalid email ${email}`, () => {
-      const {jsonBody: {authUserId}} = adminAuthRegister('validemail@unsw.edu.au', 'abCdddD123', 'ValidName', 'ValidLast');     
-      const {statusCode, jsonBody} = adminUserDetailsUpdate(authUserId, email, nameFirst, nameLast);
-
+      const {jsonBody: {token}} = adminAuthRegister('validemail@unsw.edu.au', 'abCdddD123', 'ValidName', 'ValidLast');     
+      const {statusCode, jsonBody} = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
       expect(statusCode).toStrictEqual(400); 
       expect(jsonBody.error).toStrictEqual(expect.any(String));
     });
@@ -116,9 +101,8 @@ describe('adminUserDetailsUpdate', () => {
     ['dunyao@unsw.edu.au', 'abcd1234', 'Dun Yao123', 'Foo'],
   ])('Invalid first name: Characters', (email, password, nameFirst, nameLast) => {
     test(`Attempt to update with invalid first name "${nameFirst}"`, () => {
-      const {jsonBody: {authUserId}} = adminAuthRegister(email, 'securePassword123!', 'ValidName', 'ValidLast');
-      const {statusCode, jsonBody} = adminUserDetailsUpdate(authUserId, email, nameFirst, nameLast);
-
+      const {jsonBody: {token}} = adminAuthRegister(email, 'securePassword123!', 'ValidName', 'ValidLast');
+      const {statusCode, jsonBody} = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
       expect(statusCode).toStrictEqual(400); 
       expect(jsonBody.error).toStrictEqual(expect.any(String));
     });
@@ -130,8 +114,8 @@ describe('adminUserDetailsUpdate', () => {
     ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Dun Yao123'],
   ])('Invalid last name: Characters', (email, password, nameFirst, nameLast) => {
     test(`Attempt to update with invalid last name "${nameLast}"`, () => {
-      const {jsonBody: {authUserId}} = adminAuthRegister(email, password, nameFirst, 'ValidLast');
-      const {statusCode, jsonBody} = adminUserDetailsUpdate(authUserId, email, nameFirst, nameLast);
+      const {jsonBody: {token}} = adminAuthRegister(email, password, nameFirst, 'ValidLast');
+      const {statusCode, jsonBody} = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
 
       expect(statusCode).toStrictEqual(400);
       expect(jsonBody.error).toStrictEqual(expect.any(String));
@@ -140,8 +124,8 @@ describe('adminUserDetailsUpdate', () => {
 
   describe('Blank last name', () => {
     test('Attempt to update with a blank last name', () => {
-      const {jsonBody: {authUserId}} = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo');
-      const {statusCode, jsonBody} = adminUserDetailsUpdate(authUserId, 'dunyao@unsw.edu.au', 'DunYao', '');
+      const {jsonBody: {token}} = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo');
+      const {statusCode, jsonBody} = adminUserDetailsUpdate(token, 'dunyao@unsw.edu.au', 'DunYao', '');
 
       expect(statusCode).toStrictEqual(400); 
       expect(jsonBody.error).toStrictEqual(expect.any(String));
@@ -154,8 +138,8 @@ describe('adminUserDetailsUpdate', () => {
     ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Dun Yao123'],
   ])('Blank first name', (email, password, nameFirst, nameLast) => {
     test(`Attempt to update with a blank first name, given last name "${nameLast}"`, () => {
-      const {jsonBody: {authUserId}} = adminAuthRegister(email, password, nameFirst, nameLast);
-      const {statusCode, jsonBody} = adminUserDetailsUpdate(authUserId, email, ' ', nameLast);
+      const {jsonBody: {token}} = adminAuthRegister(email, password, nameFirst, nameLast);
+      const {statusCode, jsonBody} = adminUserDetailsUpdate(token, email, ' ', nameLast);
 
       expect(statusCode).toStrictEqual(400);
       expect(jsonBody.error).toStrictEqual(expect.any(String));
@@ -169,8 +153,8 @@ describe('adminUserDetailsUpdate', () => {
     ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Dun Yao123'],
   ])('Blank email', (email, password, nameFirst, nameLast) => {
     test(`Attempt to update with a blank email, given names "${nameFirst} ${nameLast}"`, () => {
-      const {jsonBody: {authUserId}} = adminAuthRegister(email, password, nameFirst, nameLast);
-      const {statusCode, jsonBody} = adminUserDetailsUpdate(authUserId, '', nameFirst, nameLast);
+      const {jsonBody: {token}} = adminAuthRegister(email, password, nameFirst, nameLast);
+      const {statusCode, jsonBody} = adminUserDetailsUpdate(token, '', nameFirst, nameLast);
 
       expect(statusCode).toStrictEqual(400); 
       expect(jsonBody.error).toStrictEqual(expect.any(String));
@@ -183,8 +167,8 @@ describe('adminUserDetailsUpdate', () => {
     ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'abcdefghijklmnopqfafsaasfrstuv'], 
   ])('Invalid last name: Length', (email, password, nameFirst, nameLast) => {
     test(`Attempt to update with invalid last name length "${nameLast}"`, () => {
-      const {jsonBody: {authUserId}} = adminAuthRegister(email, password, nameFirst, 'ValidLast');
-      const {statusCode, jsonBody} = adminUserDetailsUpdate(authUserId, email, nameFirst, nameLast);
+      const {jsonBody: {token}} = adminAuthRegister(email, password, nameFirst, 'ValidLast');
+      const {statusCode, jsonBody} = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
 
       expect(statusCode).toStrictEqual(400); 
       expect(jsonBody.error).toStrictEqual(expect.any(String));
