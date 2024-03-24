@@ -106,13 +106,13 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
 })
 
 app.delete('/v1/admin/quiz/:quizId', (req: Request, res: Response) => {
-  const authUserId = parseInt(req.query.authUserId as string);
+  const token = req.query.token as string;
   const quizId = parseInt(req.params.quizId);
 
-  const result = adminQuizRemove(authUserId, quizId);
+  const result = adminQuizRemove(token, quizId);
 
   if ('error' in result) {
-    if (result.error === 'authUserId is not a valid user.') {
+    if (result.error === 'does not refer to valid logged in user session') {
       return res.status(401).json(result);
     } else {
       return res.status(403).json(result);
@@ -124,16 +124,16 @@ app.delete('/v1/admin/quiz/:quizId', (req: Request, res: Response) => {
 
 
 app.put('/v1/admin/quiz/:quizId/name', (req: Request, res: Response) => {
-  const {authUserId, name} = req.body;
+  const {token, name} = req.body;
   const quizId = parseInt(req.params.quizId)
 
-  const result = adminQuizNameUpdate(authUserId, quizId, name);
+  const result = adminQuizNameUpdate(token, quizId, name);
 
   if ('error' in result) {
     if (result.error === 'Quiz ID does not refer to a quiz that this user owns.' ||
         result.error === 'Quiz ID does not refer to a valid quiz') {
      return res.status(403).json(result);
-    } else if (result.error === 'User Id is not valid') {
+    } else if (result.error === 'does not refer to valid logged in user session') {
       return res.status(401).json(result);
     } else {
       return res.status(400).json(result);
@@ -144,11 +144,11 @@ app.put('/v1/admin/quiz/:quizId/name', (req: Request, res: Response) => {
 })
 
 app.get('/v1/admin/user/details', (req: Request, res: Response) => {
-  const authUserId  = req.query.authUserId as string
-  const response = adminUserDetails(parseInt(authUserId));
+  const token = req.query.token as string
+  const response = adminUserDetails(token);
   
   if ('error' in response) {
-    return res.status(400).json(response);
+    return res.status(401).json(response);
   }
 
   res.json(response);
@@ -177,8 +177,8 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
 });
 
 app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
-  const userId = parseInt(req.query.authUserId as string);
-  const response = adminQuizList(userId);
+  const sessionId = req.query.token as string;
+  const response = adminQuizList(sessionId);
 
   if ('error' in response) {
     return res.status(401).json(response);
