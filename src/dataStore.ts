@@ -24,6 +24,23 @@ interface Quiz {
   authUserId: number;
   timeCreated: number;
   timeLastEdited: number;
+  questions: Question[];
+  duration: number;
+}
+
+interface Question {
+  questionId: number;
+  question: string;
+  duration: number;
+  points: number;
+  answers: Answer[];
+}
+
+interface Answer {
+  answerId: number;
+  answer: string;
+  colour: string;
+  correct: boolean;
 }
 
 interface Sessions {
