@@ -272,6 +272,8 @@ function adminQuizCreate(token: string, name: string, description: string): Erro
     authUserId: authUserId,
     timeCreated: date,
     timeLastEdited: date,
+    questions: [],
+    duration: 0,
   });
 
   return {
