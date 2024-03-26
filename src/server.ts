@@ -27,6 +27,7 @@ import {
   adminQuizQuestionDelete,
   adminQuizTransfer,
   adminQuizQuestionCreate,
+  adminQuizQuestionMove,
   adminQuizQuestionDuplicate,
   adminQuizTrash,
   adminQuizQuestionUpdate,
@@ -171,10 +172,6 @@ app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
   res.json(response);
 })
 
-app.put('/v1/admin/quiz/:quizId/question/:questionid', (req: Request, res: Response) => {
-  const {quizId, questionid } = req.body;
-  const response = adminQuizQuestionUpdate(quizId,questionid);
-})
 app.put('/v1/admin/user/details', (req: Request, res: Response) => {
   const  { token, email, nameFirst, nameLast } = req.body;
   const response = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
@@ -293,6 +290,27 @@ app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
   
   res.json(response);
 });
+
+app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response)=> {
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const {token, newPosition} = req.body;
+
+  const response = adminQuizQuestionMove(quizId, questionId, token, newPosition);
+  
+  if ('error' in response) {
+    if (response.error === 'Token invalid.') {
+      return res.status(401).json(response);
+    } else if (response.error === 'User does not own this quiz') {
+      return res.status(403).json(response);
+    } else if (response.error === 'Quiz Id is invalid') {
+      return res.status(403).json(response);
+    } else {
+      return res.status(400).json(response);
+    }
+  }
+  res.json(response);
+})
 
 app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
