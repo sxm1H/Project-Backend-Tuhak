@@ -136,9 +136,13 @@ const adminQuizTransfer = (token: string, userEmail: string, quizId: number) => 
   return requestHelper('POST', `/v1/admin/quiz/${quizId}/transfer`, { token, userEmail });
 };
 
+const adminQuizQuestionDuplicate = (token: string, quizId: number, questionId: number) => {
+  return requestHelper('POST', `/v1/admin/quiz/${quizId}/question/${questionId}/duplicate`, {token})
+};
+
 const adminQuizQuestionUpdate = (quizId: number, questionId: number) => {
   return requestHelper('POST', `/v1/admin/quiz/${quizId}/question/${questionId}`, {quizId, questionId})
-}
+};
 
 // ============================================================================================== //
 
@@ -160,6 +164,7 @@ export {
   adminQuizQuestionDelete,
   adminQuizTransfer,
   adminQuizQuestionCreate,
+  adminQuizQuestionDuplicate,
   adminQuizTrash,
   adminQuizQuestionUpdate,
 };

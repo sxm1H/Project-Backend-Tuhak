@@ -27,6 +27,7 @@ import {
   adminQuizQuestionDelete,
   adminQuizTransfer,
   adminQuizQuestionCreate,
+  adminQuizQuestionDuplicate,
   adminQuizTrash,
   adminQuizQuestionUpdate,
 } from './quiz';
@@ -293,6 +294,25 @@ app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
   res.json(response);
 });
 
+app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const {token} = req.body;
+
+  const response = adminQuizQuestionDuplicate(token, quizId, questionId);
+
+  if ('error' in response) {
+    if (response.error === 'Token invalid') {
+      return res.status(401).json(response);
+    } else if (response.error === 'User does not own this Quiz') {
+      return res.status(403).json(response);
+    } else if (response.error === 'Question id is invalid') {
+      return res.status(400).json(response);
+    }
+  }
+
+  res.json(response);
+})
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

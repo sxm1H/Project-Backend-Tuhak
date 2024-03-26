@@ -72,6 +72,10 @@ interface RequestHelperReturnType {
   error?: string;
 }
 
+interface DuplicateQuestionReturn {
+  newQuestionId: number;
+}
+
 export {
   ErrorObject,
   EmptyObject,
@@ -87,4 +91,5 @@ export {
   RequestHelperReturnType,
   QuizTrashReturnObject,
   QuestionId,
+  DuplicateQuestionReturn,
 };
