@@ -119,12 +119,10 @@ const adminQuizQuestionMove = (quizid: number, questionid: number, token: string
 
 const adminQuizQuestionCreate = (quizId: number, token: string, question: string, duration: number, points: number, answers: Answer[]) => {
   let questionBody = {
-    questionBody: {
-      question: question,
-      duration: duration,
-      points: points,
-      answers: answers,
-    }
+    question: question,
+    duration: duration,
+    points: points,
+    answers: answers,
   };
   return requestHelper('POST', `/v1/admin/quiz/${quizId}/question`, { token, questionBody });
 }

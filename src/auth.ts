@@ -93,7 +93,7 @@ function adminAuthLogin(email: string, password: string): ErrorObject | TokenRet
     findUser.numFailedPasswordsSinceLastLogin++;
     return { error: 'Password is not correct for the given email.' };
   }
-  
+
   findUser.numFailedPasswordsSinceLastLogin = 0;
   findUser.numSuccessfulLogins++;
 
