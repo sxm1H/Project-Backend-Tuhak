@@ -1,0 +1,119 @@
+import {
+    clear,
+    adminQuizTrashEmpty,
+    adminQuizRemove,
+    adminAuthRegister,
+    adminQuizCreate,
+    adminQuizList,
+} from './testHelpers';
+  
+beforeEach(() => {
+    clear();
+});
+
+
+describe('Testing DELETE /v1/admin/quiz/trash/empty', () => {
+    let token: string;
+    let quizId: number;
+    beforeEach(() => {
+      const { jsonBody: reg} = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo');
+      const { jsonBody: create } = adminQuizCreate(reg.token, 'quiz1', 'lorem ipsum');
+      
+      token = reg.token;
+      quizId = create.quizId;
+    });
+  
+      test('Successfully emptys trash', () => {
+      
+      expect(adminQuizList(token)).toStrictEqual({
+        statusCode: 200,
+        jsonBody: {
+          quizzes: [
+            {
+              quizId: quizId,
+              name: 'quiz1'
+            }
+          ]
+        }
+      });
+      const { statusCode, jsonBody } = adminQuizRemove(token, quizId);
+      expect(adminQuizList(token)).toStrictEqual({
+        statusCode: 200,
+        jsonBody: {
+          quizzes: []
+        }
+      });
+
+      const stringArray = [quizId];
+      
+      expect(adminQuizTrashEmpty(token, stringArray)).toStrictEqual({
+        statusCode: 200,
+        jsonBody: {},
+      })
+    });
+  
+    test('Invalid token', () => {
+      expect(adminQuizList(token)).toStrictEqual({
+        statusCode: 200,
+        jsonBody: {
+          quizzes: [
+            {
+              quizId: quizId,
+              name: 'quiz1'
+            }
+          ]
+        }
+      });
+      const { statusCode, jsonBody } = adminQuizRemove(token, quizId);
+      expect(adminQuizList(token)).toStrictEqual({
+        statusCode: 200,
+        jsonBody: {
+          quizzes: []
+        }
+      });
+
+      const stringArray = [quizId];
+      
+      expect(adminQuizTrashEmpty(token + 'hello', stringArray)).toStrictEqual({
+        statusCode: 401,
+        jsonBody: {
+          string: expect.any(String)
+        }
+      })
+    });
+    
+    test('Quiz not in trash', () => {
+      expect(adminQuizList(token)).toStrictEqual({
+        statusCode: 200,
+        jsonBody: {
+          quizzes: [
+            {
+              quizId: quizId,
+              name: 'quiz1'
+            }
+          ]
+        }
+      });
+      const { statusCode, jsonBody } = adminQuizRemove(token, quizId);
+      expect(adminQuizList(token)).toStrictEqual({
+        statusCode: 200,
+        jsonBody: {
+          quizzes: []
+        }
+      });
+
+      const { jsonBody: create } = adminQuizCreate(token, 'quiz2', 'lorem ipsum');
+      
+      const stringArray = [quizId, create.quizId];
+      
+      expect(adminQuizTrashEmpty(token, stringArray)).toStrictEqual({
+        statusCode: 400,
+        jsonBody: {
+          error: expect.any(String)
+        },
+      })
+    })
+    
+  });
+
+  
