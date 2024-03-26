@@ -196,9 +196,19 @@ function adminQuizTrash(token: string): ErrorObject | QuizTrashReturnObject {
     trash: trashlist
   };
 }
-function adminQuizQuestionUpdate(quizId: number, questionId: number): ErrorObject | EmptyObject {
+function adminQuizQuestionUpdate(token: string, quizId: number, questionId: number): ErrorObject | EmptyObject {
   const data = getData();
-  const findQuiz = data.quizzes.find(session => sessionStorage.quizId === quizId);
+  const findToken = data.sessions.find(session => session.token === token);
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  //const findQuestion = data.q
+  if (!findToken) {
+    return { error: 'Token invalid.' };
+  } else if (!findQuiz) {
+    return { error: 'Quiz Id invalid.' };
+  }
+  if (findToken.userId !== findQuiz.authUserId) {
+    return { error: 'User does not own this quiz.' };
+  }
   return {};
 
 }
@@ -227,7 +237,7 @@ function adminQuizQuestionUpdate(quizId: number, questionId: number): ErrorObjec
 function adminQuizInfo(token: string, quizId: number): ErrorObject | QuizInfoReturn {
   const data = getData();
   const findToken = data.sessions.find(session => session.token === token);
-  const findQuiz = data.quizzes.find(session => session.quizId === quizId);
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
 
   if (!findToken) {
     return { error: 'Token invalid.' };
@@ -245,6 +255,10 @@ function adminQuizInfo(token: string, quizId: number): ErrorObject | QuizInfoRet
     timeCreated: findQuiz.timeCreated,
     timeLastEdited: findQuiz.timeLastEdited,
     description: findQuiz.description,
+    numQuestions: findQuiz.numQuestions,
+    duration: findQuiz.duration,
+    questions: findQuiz.questions
+
   };
 }
 
@@ -304,6 +318,7 @@ function adminQuizCreate(token: string, name: string, description: string): Erro
     authUserId: authUserId,
     timeCreated: date,
     timeLastEdited: date,
+    numQuestions: 0,
     questions: [],
     duration: 0,
   });
