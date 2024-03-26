@@ -32,7 +32,9 @@ import {
   adminQuizQuestionDuplicate,
   adminQuizTrash,
   adminQuizQuestionUpdate,
+  adminQuizRestore
 } from './quiz';
+
 
 
 // Set up web app
@@ -346,6 +348,26 @@ app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
     } else if (response.error === 'User does not own this Quiz') {
       return res.status(403).json(response);
     } else if (response.error === 'Question id is invalid') {
+      return res.status(400).json(response);
+    }
+  }
+
+  res.json(response);
+});
+
+app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const {token} = req.body;
+
+  const response = adminQuizRestore(token, quizId);
+
+  if ('error' in response) {
+    if (response.error === 'Token invalid.') {
+      return res.status(401).json(response);
+    } else if (response.error === 'Valid token, but user is not the owner of the quiz') {
+      return res.status(403).json(response);
+    } else if (response.error === 'Quiz Id not currently in trash' 
+            || response.error === 'Quiz name of restored quiz already in use from active quiz') {
       return res.status(400).json(response);
     }
   }
