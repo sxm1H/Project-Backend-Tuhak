@@ -1,4 +1,4 @@
-import { getData } from './dataStore';
+import { getData, counters } from './dataStore';
 import validator from 'validator';
 import {
   ErrorObject,
@@ -7,8 +7,6 @@ import {
   UserDetailsReturnObject,
   UserData
 } from './interfaces';
-
-let sessionIdCounter = 10000;
 
 /**
   * Registers a user with a given email, password, first name and last name. The function pushes
@@ -50,8 +48,8 @@ function adminAuthRegister(email: string, password: string, nameFirst: string, n
 
   // Generation of authUserId and token
   const id = data.user.length + 1;
-  sessionIdCounter++;
-  let token = sessionIdCounter.toString();
+  counters.sessionIdCounter++;
+  let token = counters.sessionIdCounter.toString();
   
   // Adds token to dataStore
   data.sessions.push({
@@ -87,40 +85,27 @@ function adminAuthRegister(email: string, password: string, nameFirst: string, n
 */
 function adminAuthLogin(email: string, password: string): ErrorObject | TokenReturn {
   const newData = getData();
+  const findUser = newData.user.find(user => user.email === email);
 
-  for (const data of newData.user) {
-    if (data.email === email) {
-      if (data.password === password) {
-        data.numFailedPasswordsSinceLastLogin = 0;
-        data.numSuccessfulLogins++;
-        for (const tokens of newData.sessions) {
-          if (tokens.userId === data.userId) {
-            sessionIdCounter++;
-            let token = sessionIdCounter.toString();
-
-            newData.sessions.push({
-              userId: tokens.userId,
-              token: token
-            });
-
-            return {
-              token: token
-            };
-          }
-        }
-
-      } else {
-        data.numFailedPasswordsSinceLastLogin++;
-        return {
-          error: 'Password is not correct for the given email.'
-        };
-      }
-    }
+  if (!findUser) {
+    return { error: 'Email address does not exist.' };
+  } else if (findUser.password !== password) {
+    findUser.numFailedPasswordsSinceLastLogin++;
+    return { error: 'Password is not correct for the given email.' };
   }
 
-  return {
-    error: 'Email address does not exist.',
-  };
+  findUser.numFailedPasswordsSinceLastLogin = 0;
+  findUser.numSuccessfulLogins++;
+
+  counters.sessionIdCounter++;
+  let token = counters.sessionIdCounter.toString();
+
+  newData.sessions.push({
+    userId: findUser.userId,
+    token: token
+  })
+
+  return { token: token };
 }
 
 /**

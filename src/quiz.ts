@@ -160,18 +160,17 @@ function adminQuizRemove(token: string, quizId: number): ErrorObject | EmptyObje
 function adminQuizList(token: string): ErrorObject | QuizListReturnObject {
   const newdata = getData();
   const activeTokens = newdata.sessions
-  const searchToken = activeTokens.findIndex(session => session.token  === token);
+  const searchToken = activeTokens.find(session => session.token  === token);
 
-  if (searchToken === -1) {
-    return {
-      error: 'invalid user Id'
-    };
+  if (!searchToken) {
+    return { error: 'invalid user Id' };
   }
 
-  const quizList = newdata.quizzes.map(quizes => ({
-    quizId: quizes.quizId,
-    name: quizes.name,
-  }));
+  const filteredQuizzes = newdata.quizzes.filter(quiz => quiz.authUserId === searchToken.userId);
+  const quizList = filteredQuizzes.map(quizzes => ({
+    quizId: quizzes.quizId,
+    name: quizzes.name
+  }))
 
   return {
     quizzes: quizList
@@ -181,21 +180,31 @@ function adminQuizList(token: string): ErrorObject | QuizListReturnObject {
 function adminQuizTrash(token: string): ErrorObject | QuizTrashReturnObject {
   const newdata = getData();
   const activeTokens = newdata.sessions
-  const searchToken = activeTokens.findIndex(session => session.token  === token);
+  const searchToken = activeTokens.find(session => session.token  === token);
 
-  if (searchToken === -1) {
-    return {
-      error: 'invalid user Id'
-    };
+  if (!searchToken) {
+    return { error: 'invalid user Id' };
   }
-  const trashlist = newdata.trash.map(trash => ({
+
+  // const trashlist = newdata.trash.map(trash => ({
+  //   quizId: trash.quizId,
+  //   name: trash.name,
+  // }));
+  // return {
+  //   trash: trashlist
+  // };
+
+  const filteredQuizzes = newdata.trash.filter(quiz => quiz.authUserId === searchToken.userId);
+  const trashList = filteredQuizzes.map(trash => ({
     quizId: trash.quizId,
-    name: trash.name,
-  }));
+    name: trash.name
+  }))
+
   return {
-    trash: trashlist
+    quizzes: trashList
   };
 }
+
 function adminQuizQuestionUpdate(token: string, quizId: number, questionId: number): ErrorObject | EmptyObject {
   const data = getData();
   const findToken = data.sessions.find(session => session.token === token);
@@ -436,7 +445,7 @@ function adminQuizTransfer(token: string, userEmail: string, quizId: number): Er
   }
 
   // Transfers ownership to user belonging to userEmail.
-  findQuiz.authUserId === findTarget.userId;
+  findQuiz.authUserId = findTarget.userId;
 
   return {};
 }
@@ -490,6 +499,7 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody: Qu
   } else if (questionBody.points > 10 || questionBody.points < 1) {
     return { error: 'Quiz Points is Not Between 1 and 10.'};
   }
+
   for (let answer of questionBody.answers) {
     if (answer.answer.length > 30 || answer.answer.length < 1) {
       return { error: 'Question Answer Length is not Between 1 and 30.'};
@@ -575,7 +585,7 @@ function adminQuizQuestionMove(quizid: number, questionid: number, token: string
   const data = getData();
   const findToken = data.sessions.find(ids => ids.token === token);
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizid);
-
+  console.log(questionid);
   if (!findToken) {
     return {error: 'Token invalid.'}
   };

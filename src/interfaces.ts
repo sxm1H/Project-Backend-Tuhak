@@ -46,7 +46,7 @@ interface QuizListReturnObject {
 }
 
 interface QuizTrashReturnObject {
-  trash: QuizListInfo[];
+  quizzes: QuizListInfo[];
 }
 
 interface QuizListInfo {
