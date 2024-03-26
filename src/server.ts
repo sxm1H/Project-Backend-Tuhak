@@ -259,6 +259,14 @@ app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
   res.json(response);
 });
 
+app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
+  const quizIds = Array.isArray(req.query.quizIds) ? req.query.quizIds.map(Number) : [req.query.quizIds].map(Number);
+  const token = req.query.token as string
+  const response = adminQuizTrashEmpty(token, quizIds);
+  
+  res.json(response);
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

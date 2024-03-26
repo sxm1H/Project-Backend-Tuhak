@@ -128,6 +128,10 @@ const adminQuizTransfer = (token: string, userEmail: string, quizId: number) => 
   return requestHelper('POST', `/v1/admin/quiz/${quizId}/transfer`, { token, userEmail });
 };
 
+const adminQuizTrashEmpty = (token: string, quizIds: number[]) => {
+  return requestHelper('DELETE', '/v1/admin/quiz/trash/empty', {token, quizIds});
+};
+
 // ============================================================================================== //
 
 export {

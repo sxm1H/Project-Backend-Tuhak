@@ -493,6 +493,10 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody1: Q
   }
 }
 
+function adminQuizTrashEmpty(token: string, quizIds: number[]): EmptyObject | ErrorObject {
+  
+}
+
 export {
   adminQuizNameUpdate,
   adminQuizRemove,
