@@ -26,7 +26,8 @@ import {
   adminQuizDescriptionUpdate,
   adminQuizQuestionDelete,
   adminQuizTransfer,
-  adminQuizQuestionCreate
+  adminQuizQuestionCreate,
+  adminQuizTrashEmpty
 } from './quiz';
 
 
@@ -278,10 +279,20 @@ app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
 });
 
 app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
-  const quizIds = Array.isArray(req.query.quizIds) ? req.query.quizIds.map(Number) : [req.query.quizIds].map(Number);
-  const token = req.query.token as string
-  const response = adminQuizTrashEmpty(token, quizIds);
+  const stringQuizIds = req.query.quizIds as string;
+  const token = req.query.token as string;
+  const response = adminQuizTrashEmpty(token, stringQuizIds);
   
+  if ('error' in response) {
+    if (response.error === 'Token invalid') {
+      return res.status(401).json(response);
+    } else if (response.error === 'a QuizId refers to a quiz that this current user does not own') {
+      return res.status(403).json(response);
+    } else if (response.error === 'One or more of the Quiz IDs is not currently in the trash') {
+      return res.status(400).json(response);
+    }
+  }
+
   res.json(response);
 });
 

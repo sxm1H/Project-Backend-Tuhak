@@ -494,11 +494,14 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody: Qu
 }
 
 
-function adminQuizTrashEmpty(token: string, quizIds: number[]): EmptyObject | ErrorObject {
+function adminQuizTrashEmpty(token: string, quizIds: string): EmptyObject | ErrorObject {
   const data = getData();
 
-  for (const trashQuizzes of data.trash) {
-    const findIdInTrash = quizIds.find(paramQuizIds => paramQuizIds === trashQuizzes.quizId);
+  const arrayQuizIds = JSON.parse(quizIds) as number[]
+  console.log(arrayQuizIds);
+
+  for (const userQuizIds of arrayQuizIds) {
+    const findIdInTrash = data.trash.find(ids => ids.quizId === userQuizIds);
     if (!findIdInTrash) {
       return { error: 'One or more of the Quiz IDs is not currently in the trash' };
     }
@@ -509,21 +512,22 @@ function adminQuizTrashEmpty(token: string, quizIds: number[]): EmptyObject | Er
     return { error: 'Token invalid' };
   }
 
-  for (const userQuizIds of quizIds) {
-    for (const trashQuizzes of data.trash) {
-      if (userQuizIds === trashQuizzes.quizId) {
-        if (findToken.userId !== trashQuizzes.authUserId) {
+  for (const userQuizIds of arrayQuizIds) {
+    for (const trashQuizzes2 of data.trash) {
+      if (userQuizIds === trashQuizzes2.quizId) {
+        if (findToken.userId !== trashQuizzes2.authUserId) {
           return { error: 'a QuizId refers to a quiz that this current user does not own'}
         }
       }
     }
   }
 
-  for (const userQuizIds of quizIds) {
-    const findQuizIndex = data.trash.findIndex(trash => trash.quizId === userQuizIds);
+  for (const userQuizIds1 of arrayQuizIds) {
+    const findQuizIndex = data.trash.findIndex(trash => trash.quizId === userQuizIds1);
     data.trash.splice(findQuizIndex, 1);
   }
 
+  return {};
 }
 
 function adminQuizQuestionDelete(token: string, quizId: number, questionId: number): ErrorObject | EmptyObject {

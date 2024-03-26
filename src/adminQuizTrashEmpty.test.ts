@@ -44,7 +44,7 @@ describe('Testing DELETE /v1/admin/quiz/trash/empty', () => {
         }
       });
 
-      const stringArray = [quizId];
+      const stringArray = `[${quizId}]`;
       
       expect(adminQuizTrashEmpty(token, stringArray)).toStrictEqual({
         statusCode: 200,
@@ -72,12 +72,12 @@ describe('Testing DELETE /v1/admin/quiz/trash/empty', () => {
         }
       });
 
-      const stringArray = [quizId];
+      const stringArray = `[${quizId}]`;
       
       expect(adminQuizTrashEmpty(token + 'hello', stringArray)).toStrictEqual({
         statusCode: 401,
         jsonBody: {
-          string: expect.any(String)
+          error: expect.any(String)
         }
       })
     });
@@ -104,10 +104,45 @@ describe('Testing DELETE /v1/admin/quiz/trash/empty', () => {
 
       const { jsonBody: create } = adminQuizCreate(token, 'quiz2', 'lorem ipsum');
       
-      const stringArray = [quizId, create.quizId];
+      const stringArray = `[${quizId}, ${create.quizId}]`;
       
       expect(adminQuizTrashEmpty(token, stringArray)).toStrictEqual({
         statusCode: 400,
+        jsonBody: {
+          error: expect.any(String)
+        },
+      })
+    })
+
+    test('Quiz does not belong to user, but is in trash', () => {
+      expect(adminQuizList(token)).toStrictEqual({
+        statusCode: 200,
+        jsonBody: {
+          quizzes: [
+            {
+              quizId: quizId,
+              name: 'quiz1'
+            }
+          ]
+        }
+      });
+      const { statusCode, jsonBody } = adminQuizRemove(token, quizId);
+      expect(adminQuizList(token)).toStrictEqual({
+        statusCode: 200,
+        jsonBody: {
+          quizzes: []
+        }
+      });
+
+      const { jsonBody: newUser } = adminAuthRegister('nick@unsw.edu.au', 'nick1234', 'nicholas', 'sebastian');
+      const { jsonBody: create } = adminQuizCreate(newUser.token, 'quiz2', 'lorem ipsum');
+      adminQuizRemove(newUser.token, create.quizId);
+      
+      const stringArray = `[${quizId}, ${create.quizId}]`;
+
+      
+      expect(adminQuizTrashEmpty(token, stringArray)).toStrictEqual({
+        statusCode: 403,
         jsonBody: {
           error: expect.any(String)
         },
