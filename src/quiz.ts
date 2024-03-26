@@ -539,7 +539,6 @@ function adminQuizTrashEmpty(token: string, quizIds: string): EmptyObject | Erro
   const data = getData();
 
   const arrayQuizIds = JSON.parse(quizIds) as number[]
-  console.log(arrayQuizIds);
 
   for (const userQuizIds of arrayQuizIds) {
     const findIdInTrash = data.trash.find(ids => ids.quizId === userQuizIds);
@@ -696,6 +695,40 @@ function adminQuizQuestionDuplicate(token: string, quizId: number, questionId: n
   }
 }
 
+function adminQuizRestore(token: string, quizId: number): ErrorObject | EmptyObject {
+
+  const data = getData();
+  const findToken = data.sessions.find(ids => ids.token === token);
+  const time = Math.floor(Date.now() / 1000);
+
+  if (!findToken) {
+    return { error: 'Token invalid.'};
+  }
+
+  const findQuizInTrash = data.trash.find(ids => ids.quizId === quizId) 
+  if (!findQuizInTrash) {
+      return { error: 'Quiz Id not currently in trash' };
+  }
+
+  for (const activeQuizzes of data.quizzes) {
+    if (findQuizInTrash.name === activeQuizzes.name) {
+      return { error: 'Quiz name of restored quiz already in use from active quiz'};
+    }
+  }
+
+  if (findQuizInTrash.authUserId !== findToken.userId) {
+    return { error: 'Valid token, but user is not the owner of the quiz'}
+  }
+
+  findQuizInTrash.timeLastEdited = time;
+  data.quizzes.push(findQuizInTrash);
+  
+  const findQuizIndex = data.trash.findIndex(trash => trash.quizId === quizId);
+  data.trash.splice(findQuizIndex, 1);
+
+  return {}
+}
+
 export {
   adminQuizNameUpdate,
   adminQuizRemove,
@@ -711,4 +744,5 @@ export {
   adminQuizQuestionDuplicate,
   adminQuizTrash,
   adminQuizQuestionUpdate,
+  adminQuizRestore
 };
