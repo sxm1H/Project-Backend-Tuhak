@@ -36,7 +36,7 @@ beforeEach(() => {
         })
     })
 
-    test.only('Test Unsuccessful: User is not an owner of the quiz', () => {
+    test('Test Unsuccessful: User is not an owner of the quiz', () => {
         const session2 = adminAuthRegister('glhfh@gmail.com', 'glhf123111', 'abcd', 'efgh').jsonBody;
         expect(adminQuizQuestionDelete(session2.token, quizId, questionId)).toStrictEqual({
             jsonBody: {

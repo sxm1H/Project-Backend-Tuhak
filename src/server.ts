@@ -26,7 +26,9 @@ import {
   adminQuizDescriptionUpdate,
   adminQuizQuestionDelete,
   adminQuizTransfer,
-  adminQuizQuestionCreate
+  adminQuizQuestionCreate,
+  adminQuizTrash,
+  adminQuizQuestionUpdate,
 } from './quiz';
 
 
@@ -158,6 +160,20 @@ app.get('/v1/admin/user/details', (req: Request, res: Response) => {
   res.json(response);
 })
 
+app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
+  const token = req.query.token as string
+  const response = adminQuizTrash(token);
+  if('error' in response) {
+    return res.status(401).json(response);
+  }
+
+  res.json(response);
+})
+
+app.put('/v1/admin/quiz/:quizId/question/:questionid', (req: Request, res: Response) => {
+  const {quizId, questionid } = req.body;
+  const response = adminQuizQuestionUpdate(quizId,questionid);
+})
 app.put('/v1/admin/user/details', (req: Request, res: Response) => {
   const  { token, email, nameFirst, nameLast } = req.body;
   const response = adminUserDetailsUpdate(token, email, nameFirst, nameLast);

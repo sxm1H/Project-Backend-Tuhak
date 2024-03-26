@@ -5,6 +5,7 @@ import {
   QuizListInfo,
   QuizInfoReturn,
   QuizId,
+  QuizTrashReturnObject,
   QuestionId,
 } from './interfaces';
 import {
@@ -176,6 +177,30 @@ function adminQuizList(token: string): ErrorObject | QuizListReturnObject {
   };
 }
 
+function adminQuizTrash(token: string): ErrorObject | QuizTrashReturnObject {
+  const newdata = getData();
+  const activeTokens = newdata.sessions
+  const searchToken = activeTokens.findIndex(session => session.token  === token);
+
+  if (searchToken === -1) {
+    return {
+      error: 'invalid user Id'
+    };
+  }
+  const trashlist = newdata.trash.map(trash => ({
+    quizId: trash.quizId,
+    name: trash.name,
+  }));
+  return {
+    trash: trashlist
+  };
+}
+function adminQuizQuestionUpdate(quizId: number, questionId: number): ErrorObject | EmptyObject {
+  const data = getData();
+  const findQuiz = data.quizzes.find(session => sessionStorage.quizId === quizId);
+  return {};
+
+}
 /**
   * Function allows user to view information about a specified quiz, unless the inputted ID's, user
   * and quiz respectively, are invalid, then returns an error message.
@@ -531,5 +556,7 @@ export {
   adminQuizDescriptionUpdate,
   adminQuizQuestionDelete,
   adminQuizTransfer,
-  adminQuizQuestionCreate
+  adminQuizQuestionCreate,
+  adminQuizTrash,
+  adminQuizQuestionUpdate,
 };
