@@ -575,29 +575,23 @@ function adminQuizQuestionDuplicate(token: string, quizId: number, questionId: n
 
   //inserts the duplicate question into the index next tothe orignal question
   questions.splice(findQuestion + 1, 0, duplicateQuestion);
-  // console.log(findQuiz);
-  // console.log('----------------------------------------')
+ 
   let date = Math.floor(Date.now()/1000);
   findQuiz.timeLastEdited = date;
   let newQuestionId = counters.questionIdCounter++;
   questions[findQuestion + 1].questionId = newQuestionId;
-  // console.log(questions[findQuestion + 1]);
-  // console.log('----------------------------------------')
-  // console.log(findQuiz);
-  // console.log('----------------------------------------')
+  
+  //copies the Answers array for the specific question
   let duplicateAnswers = JSON.parse(JSON.stringify(questions[findQuestion].answers))
-
+  
+  //Updates answerId for new answers in new duplicated question
   questions[findQuestion + 1].answers = duplicateAnswers;
   for (let answer of questions[findQuestion + 1].answers) {
     answer.answerId = counters.answerIdCounter++;
   }
-  // console.log(counters);
 
-  // console.log(questions[findQuestion]);
-  // console.log(questions[findQuestion + 1]);
   findQuiz.duration += questions[findQuestion].duration;
-  // console.log(findQuiz);
-  // console.log(newQuestionId);
+
   return {
     newQuestionId : newQuestionId
   }
