@@ -38,6 +38,10 @@ describe('Testing GET /v1/admin/quiz/:quizid', () => {
         timeCreated: expect.any(Number),
         timeLastEdited: expect.any(Number),
         description: expect.any(String),
+        duration: expect.any(Number),
+        questions: [],
+        numQuestions: 0,
+
       }
     );
   });
