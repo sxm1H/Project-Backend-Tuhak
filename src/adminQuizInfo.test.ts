@@ -40,8 +40,7 @@ describe('Testing GET /v1/admin/quiz/:quizid', () => {
         description: expect.any(String),
         duration: expect.any(Number),
         questions: [],
-        numQuestions: 0,
-
+        numQuestions: 0
       }
     );
   });

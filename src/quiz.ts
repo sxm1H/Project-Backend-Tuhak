@@ -199,7 +199,7 @@ function adminQuizTrash(token: string): ErrorObject | QuizTrashReturnObject {
 function adminQuizQuestionUpdate(token: string, quizId: number, questionId: number): ErrorObject | EmptyObject {
   const data = getData();
   const findToken = data.sessions.find(session => session.token === token);
-  const findQuiz = data.quizzes.find(session => session.quizId === quizId);
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
   //const findQuestion = data.q
   if (!findToken) {
     return { error: 'Token invalid.' };
@@ -237,7 +237,7 @@ function adminQuizQuestionUpdate(token: string, quizId: number, questionId: numb
 function adminQuizInfo(token: string, quizId: number): ErrorObject | QuizInfoReturn {
   const data = getData();
   const findToken = data.sessions.find(session => session.token === token);
-  const findQuiz = data.quizzes.find(session => session.quizId === quizId);
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
 
   if (!findToken) {
     return { error: 'Token invalid.' };
@@ -257,7 +257,7 @@ function adminQuizInfo(token: string, quizId: number): ErrorObject | QuizInfoRet
     description: findQuiz.description,
     numQuestions: findQuiz.numQuestions,
     duration: findQuiz.duration,
-    questions: findQuiz.questions,
+    questions: findQuiz.questions
 
   };
 }
