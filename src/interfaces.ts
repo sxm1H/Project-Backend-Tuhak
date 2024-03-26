@@ -45,6 +45,10 @@ interface QuizListReturnObject {
   quizzes: QuizListInfo[];
 }
 
+interface QuizTrashReturnObject {
+  trash: QuizListInfo[];
+}
+
 interface QuizListInfo {
   quizId: number;
   name: string;
@@ -85,6 +89,7 @@ export {
   QuizInfoReturn,
   QuizId,
   RequestHelperReturnType,
+  QuizTrashReturnObject,
   QuestionId,
   DuplicateQuestionReturn,
 };
