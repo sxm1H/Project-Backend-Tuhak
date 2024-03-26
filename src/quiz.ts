@@ -726,7 +726,9 @@ function adminQuizRestore(token: string, quizId: number): ErrorObject | EmptyObj
   const findQuizIndex = data.trash.findIndex(trash => trash.quizId === quizId);
   data.trash.splice(findQuizIndex, 1);
 
-  return {}
+  return {
+    
+  }
 }
 
 export {
