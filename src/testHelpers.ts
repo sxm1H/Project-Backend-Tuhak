@@ -95,12 +95,23 @@ const adminQuizCreate = (token: string, name: string, description: string) => {
 const adminQuizRemove = (token: string, quizId: number) => {
   return requestHelper('DELETE', `/v1/admin/quiz/${quizId}`, { token, quizId });
 };
-
+const adminQuizQuestionUpdate = (question: string, duration: number, points: number, answers: Answer[], token: string, quizId: number,questionId: number) => {
+  let questionBody = {
+      questionBody: {
+        questionId: questionId,
+        question: question,
+        duration: duration,
+        points: points,
+        answers: answers,
+      }
+  }
+  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/question/${questionId}`, {questionBody,token, quizId})
+}
 const adminQuizInfo = (token: string, quizId: number) => {
   return requestHelper('GET', `/v1/admin/quiz/${quizId}`, { token, quizId });
 };
 
-const adminQuizTrash = (token: string) => {
+const adminQuizTrashView = (token: string) => {
   return requestHelper('GET','/v1/admin/quiz/trash',{ token })
 }
 
@@ -111,7 +122,6 @@ const adminQuizNameUpdate = (token: string, quizId: number, name: string) => {
 const adminQuizDescriptionUpdate = (token: string, quizId: number, description: string) => {
   return requestHelper('PUT', `/v1/admin/quiz/${quizId}/description`, { token, quizId, description });
 };
-
 
 const adminQuizQuestionMove = (quizid: number, questionid: number, token: string, newPosition: number) => {
   return requestHelper('PUT', `/v1/admin/quiz/${quizid}/question/${questionid}/move`, {token, newPosition});
@@ -142,17 +152,15 @@ const adminQuizTransfer = (token: string, userEmail: string, quizId: number) => 
 const adminQuizTrashEmpty = (token: string, quizIds: string) => {
   return requestHelper('DELETE', '/v1/admin/quiz/trash/empty', {token, quizIds});
 }
+
 const adminQuizQuestionDuplicate = (token: string, quizId: number, questionId: number) => {
   return requestHelper('POST', `/v1/admin/quiz/${quizId}/question/${questionId}/duplicate`, {token})
-};
-
-const adminQuizQuestionUpdate = (quizId: number, questionId: number) => {
-  return requestHelper('POST', `/v1/admin/quiz/${quizId}/question/${questionId}`, {quizId, questionId})
 };
 
 const adminQuizRestore = (token: string, quizId: number) => {
   return requestHelper('POST', `/v1/admin/quiz/${quizId}/restore`, {token, quizId});
 };
+
 
 // ============================================================================================== //
 
@@ -171,13 +179,13 @@ export {
   adminQuizNameUpdate,
   adminQuizDescriptionUpdate,
   adminQuizQuestionMove,
-  adminQuizQuestionCreate,
   adminAuthLogout,
   adminQuizQuestionDelete,
   adminQuizTransfer,
-  adminQuizTrashEmpty,
+  adminQuizQuestionCreate,
   adminQuizQuestionDuplicate,
-  adminQuizTrash,
+  adminQuizTrashView,
+  adminQuizTrashEmpty,
   adminQuizQuestionUpdate,
   adminQuizRestore
 };

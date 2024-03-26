@@ -30,7 +30,7 @@ import {
   adminQuizTrashEmpty,
   adminQuizQuestionMove,
   adminQuizQuestionDuplicate,
-  adminQuizTrash,
+  adminQuizTrashView,
   adminQuizQuestionUpdate,
   adminQuizRestore
 } from './quiz';
@@ -191,7 +191,7 @@ app.get('/v1/admin/user/details', (req: Request, res: Response) => {
 
 app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
   const token = req.query.token as string
-  const response = adminQuizTrash(token);
+  const response = adminQuizTrashView(token);
   if('error' in response) {
     return res.status(401).json(response);
   }
@@ -200,6 +200,22 @@ app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
   res.json(response);
 })
 
+app.put('/v1/admin/quiz/:quizId/question/:questionid', (req: Request, res: Response) => {
+  const {token, quizId, questionid,questionBody } = req.body;
+  const response = adminQuizQuestionUpdate(questionBody.questionBody,token, quizId);
+  if ('error' in response) {
+    if (response.error === 'Token invalid.') {
+      return res.status(401).json(response);
+    } else if (response.error === 'User does not own this quiz.') {
+      return res.status(403).json(response);
+    } else {
+      return res.status(400).json(response);
+    }
+   
+  }
+
+  res.json(response);
+});
 app.put('/v1/admin/user/details', (req: Request, res: Response) => {
   const  { token, email, nameFirst, nameLast } = req.body;
   const response = adminUserDetailsUpdate(token, email, nameFirst, nameLast);

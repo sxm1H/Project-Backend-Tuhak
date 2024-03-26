@@ -3,7 +3,7 @@ import {
     adminAuthRegister,
     adminQuizList,
     adminQuizCreate,
-    adminQuizTrash,
+    adminQuizTrashView,
     adminQuizRemove,
   } from './testHelpers';
   
@@ -24,7 +24,7 @@ test.each([
 const {jsonBody: {token}} = adminAuthRegister('fakerT1@gmail.com', 'pass123word', 'Smith', 'John');
 const {jsonBody: {quizId}} = adminQuizCreate(token, name, description);
 adminQuizRemove(token, quizId )
-const {statusCode, jsonBody} = adminQuizTrash(token);
+const {statusCode, jsonBody} = adminQuizTrashView(token);
 expect(statusCode).toStrictEqual(200);
 expect(jsonBody).toStrictEqual({
   quizzes: [
@@ -48,7 +48,7 @@ test.each([
   const {jsonBody: {token}} = adminAuthRegister('fakerT1@gmail.com', 'pass123word', 'Smith', 'John');
   const {jsonBody: {quizId}} = adminQuizCreate(token, name, description);
   adminQuizRemove(token, quizId )
-  const {statusCode, jsonBody} = adminQuizTrash('');
+  const {statusCode, jsonBody} = adminQuizTrashView('');
   expect(statusCode).toStrictEqual(401);
   expect(jsonBody).toStrictEqual({
     error:  expect.any(String)
@@ -67,7 +67,7 @@ test.each([
     const {jsonBody: {token}} = adminAuthRegister('fakerT1@gmail.com', 'pass123word', 'Smith', 'John');
     const {jsonBody: {quizId}} = adminQuizCreate(token, name, description);
     adminQuizRemove(token, quizId )
-    const {statusCode, jsonBody} = adminQuizTrash(token + 1);
+    const {statusCode, jsonBody} = adminQuizTrashView(token + 1);
     expect(statusCode).toStrictEqual(401);
     expect(jsonBody).toStrictEqual({
       error:  expect.any(String)
