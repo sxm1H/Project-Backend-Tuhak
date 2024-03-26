@@ -535,6 +535,42 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody: Qu
   }
 }
 
+function adminQuizTrashEmpty(token: string, quizIds: string): EmptyObject | ErrorObject {
+  const data = getData();
+
+  const arrayQuizIds = JSON.parse(quizIds) as number[]
+  console.log(arrayQuizIds);
+
+  for (const userQuizIds of arrayQuizIds) {
+    const findIdInTrash = data.trash.find(ids => ids.quizId === userQuizIds);
+    if (!findIdInTrash) {
+      return { error: 'One or more of the Quiz IDs is not currently in the trash' };
+    }
+  }
+
+  const findToken = data.sessions.find(ids => ids.token === token);
+  if (!findToken) {
+    return { error: 'Token invalid' };
+  }
+
+  for (const userQuizIds of arrayQuizIds) {
+    for (const trashQuizzes2 of data.trash) {
+      if (userQuizIds === trashQuizzes2.quizId) {
+        if (findToken.userId !== trashQuizzes2.authUserId) {
+          return { error: 'a QuizId refers to a quiz that this current user does not own'}
+        }
+      }
+    }
+  }
+
+  for (const userQuizIds1 of arrayQuizIds) {
+    const findQuizIndex = data.trash.findIndex(trash => trash.quizId === userQuizIds1);
+    data.trash.splice(findQuizIndex, 1);
+  }
+
+  return {};
+}
+
 function adminQuizQuestionMove(quizid: number, questionid: number, token: string, newPosition: number): EmptyObject | ErrorObject {
   const data = getData();
   const findToken = data.sessions.find(ids => ids.token === token);
@@ -611,6 +647,7 @@ function adminQuizQuestionDelete(token: string, quizId: number, questionId: numb
   return { };
 }
 
+
 function adminQuizQuestionDuplicate(token: string, quizId: number, questionId: number): ErrorObject | DuplicateQuestionReturn {
   const data = getData();
   const findToken = data.sessions.find(ids => ids.token === token);
@@ -658,6 +695,7 @@ function adminQuizQuestionDuplicate(token: string, quizId: number, questionId: n
     newQuestionId : newQuestionId
   }
 }
+
 export {
   adminQuizNameUpdate,
   adminQuizRemove,
@@ -668,6 +706,7 @@ export {
   adminQuizQuestionDelete,
   adminQuizTransfer,
   adminQuizQuestionCreate,
+  adminQuizTrashEmpty,
   adminQuizQuestionMove,
   adminQuizQuestionDuplicate,
   adminQuizTrash,

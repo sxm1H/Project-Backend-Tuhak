@@ -141,6 +141,10 @@ const adminQuizTransfer = (token: string, userEmail: string, quizId: number) => 
   return requestHelper('POST', `/v1/admin/quiz/${quizId}/transfer`, { token, userEmail });
 };
 
+
+const adminQuizTrashEmpty = (token: string, quizIds: string) => {
+  return requestHelper('DELETE', '/v1/admin/quiz/trash/empty', {token, quizIds});
+}
 const adminQuizQuestionDuplicate = (token: string, quizId: number, questionId: number) => {
   return requestHelper('POST', `/v1/admin/quiz/${quizId}/question/${questionId}/duplicate`, {token})
 };
@@ -170,6 +174,7 @@ export {
   adminAuthLogout,
   adminQuizQuestionDelete,
   adminQuizTransfer,
+  adminQuizTrashEmpty,
   adminQuizQuestionDuplicate,
   adminQuizTrash,
   adminQuizQuestionUpdate,
