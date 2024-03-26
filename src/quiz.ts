@@ -566,11 +566,13 @@ function adminQuizQuestionDuplicate(token: string, quizId: number, questionId: n
   for (let answer of questions[findQuestion + 1].answers) {
     answer.answerId = counters.answerIdCounter++;
   }
+  // console.log(counters);
 
   // console.log(questions[findQuestion]);
   // console.log(questions[findQuestion + 1]);
   findQuiz.duration += questions[findQuestion].duration;
   // console.log(findQuiz);
+  // console.log(newQuestionId);
   return {
     newQuestionId : newQuestionId
   }
