@@ -529,6 +529,7 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody: Qu
 
   findQuiz.duration += questionBody.duration;
   findQuiz.timeLastEdited = date;
+  findQuiz.numQuestions++;
 
   return {
     questionId: questionId,
