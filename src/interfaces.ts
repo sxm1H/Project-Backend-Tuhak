@@ -60,6 +60,9 @@ interface QuizInfoReturn {
   timeCreated: number;
   timeLastEdited: number;
   description: string;
+  numQuestions: number;
+  questions: Question[],
+  duration: number;
 }
 
 interface QuizId {
@@ -93,3 +96,6 @@ export {
   QuestionId,
   DuplicateQuestionReturn,
 };
+import {
+  Question,
+} from "./dataStore"
