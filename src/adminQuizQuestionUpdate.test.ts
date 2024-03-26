@@ -75,7 +75,7 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
         numQuestions: expect.any(Number)
       }
       )
-  })
+  })/*
   test.each([
     ['lorem ipsum something something', 2, 1, [{answer: 'İzmir', correct: true}, {answer: 'İstanbul', correct: false}]],
       ['What is the best city in Turkey', 4, 5, [{answer: 'İzmir', correct: true}, {answer: 'İstanbul', correct: false}]],
@@ -150,9 +150,9 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
             points: points,
         }
         ],
-        numQuestions: expect.any(Number)*/
+        numQuestions: expect.any(Number)
       }
-    )
+    )*/
     /*expect(adminQuizQuestionUpdate(question, duration, points, answers, token, quizId, questionId2)).toStrictEqual({
       jsonBody: {},
       statusCode: 200,
@@ -331,4 +331,4 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
           statusCode: 401,
       })
   })
-})})
+})

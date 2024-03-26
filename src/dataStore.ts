@@ -1,5 +1,6 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW ONLY
 interface Counters {
+  sessionIdCounter: number;
   answerIdCounter: number;
   questionIdCounter: number;
   quizIdCounter: number;
@@ -63,6 +64,7 @@ let data: DataStore = {
 };
 
 let counters: Counters = {
+  sessionIdCounter: 10000,
   answerIdCounter: 0,
   questionIdCounter: 0,
   quizIdCounter: 0
@@ -91,13 +93,22 @@ function getData(): DataStore {
   return data;
 }
 
+function getCounters(): Counters {
+  return counters;
+}
+
 // Use set(newData) to pass in the entire data object, with modifications made
 function setData(newData: DataStore): void {
   data = newData;
 }
 
+function setCounters(newCounters: Counters): void {
+  counters = newCounters;
+}
 export { 
   getData, 
   setData, 
-  counters
+  counters,
+  getCounters,
+  setCounters
 };

@@ -34,6 +34,7 @@ import {
   adminQuizQuestionUpdate,
   adminQuizRestore
 } from './quiz';
+import { getData, setData, counters, setCounters, getCounters } from './dataStore';
 
 
 
@@ -57,6 +58,21 @@ const HOST: string = process.env.IP || '127.0.0.1';
 //  ================= WORK IS DONE BELOW THIS LINE ===================
 // ====================================================================
 
+const load = () => {
+  if (fs.existsSync('./database.json')) {
+    const file = fs.readFileSync('./database.json', { encoding: 'utf8' });
+    const count = fs.readFileSync('./counters.json', { encoding: 'utf8' });
+    setData(JSON.parse(file));
+    setCounters(JSON.parse(count));
+  }
+};
+load();
+
+const save = () => {
+  fs.writeFileSync('./database.json', JSON.stringify(getData()));
+  fs.writeFileSync('./counters.json', JSON.stringify(getCounters()));
+};
+
 // Example get request
 app.get('/echo', (req: Request, res: Response) => {
   const data = req.query.echo as string;
@@ -73,6 +89,8 @@ app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   if ('error' in response) {
     return res.status(400).json(response);
   }
+
+  save();
   res.json(response);
 });
 
@@ -88,6 +106,7 @@ app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
     return res.status(400).json(result);
   }
 
+  save();
   res.json(result);
 });
 
@@ -99,6 +118,7 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
     return res.status(400).json(result);
   }
 
+  save();
   res.json(result);
 });
 
@@ -113,6 +133,7 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
     return res.status(400).json(result);
   }
 
+  save();
   res.json(result);
 })
 
@@ -130,6 +151,7 @@ app.delete('/v1/admin/quiz/:quizId', (req: Request, res: Response) => {
     }
   }
 
+  save();
   res.json(result);
 })
 
@@ -151,6 +173,7 @@ app.put('/v1/admin/quiz/:quizId/name', (req: Request, res: Response) => {
     }
   }
 
+  save();
   res.json(result);
 })
 
@@ -162,6 +185,7 @@ app.get('/v1/admin/user/details', (req: Request, res: Response) => {
     return res.status(401).json(response);
   }
 
+  save();
   res.json(response);
 })
 
@@ -172,6 +196,7 @@ app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
     return res.status(401).json(response);
   }
 
+  save();
   res.json(response);
 })
 
@@ -199,6 +224,7 @@ app.put('/v1/admin/user/details', (req: Request, res: Response) => {
     return res.status(400).json(response);
   }
 
+  save();
   res.json(response);
 })
 
@@ -210,6 +236,7 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
     return res.status(400).json(response);
   }
 
+  save();
   res.json(response);
 });
 
@@ -221,6 +248,7 @@ app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
     return res.status(401).json(response);
   };
 
+  save();
   res.json(response);
 });
 
@@ -239,13 +267,14 @@ app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
     }
   }
   
+  save();
   res.json(response);
 });
 
 app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const { token, questionBody } = req.body;
-  const response = adminQuizQuestionCreate(quizId, token, questionBody.questionBody);
+  const response = adminQuizQuestionCreate(quizId, token, questionBody);
 
   if ('error' in response) {
     if (response.error === 'Token invalid.') {
@@ -257,8 +286,9 @@ app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
     }
   }
 
-  res.json(response);
 
+  save();
+  res.json(response);
 })
 
 app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
@@ -269,6 +299,7 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
     return res.status(401).json(response);
   }
 
+  save();
   res.json(response);
 });
 
@@ -289,6 +320,7 @@ app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Re
     }
   }
 
+  save();
   res.json(response);
 });
 
@@ -307,6 +339,7 @@ app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
     }
   }
   
+  save();
   res.json(response);
 });
 
@@ -326,6 +359,7 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
     }
   }
 
+  save();
   res.json(response);
 });
 
@@ -347,6 +381,8 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: 
       return res.status(400).json(response);
     }
   }
+
+  save();
   res.json(response);
 })
 
@@ -368,6 +404,7 @@ app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
     }
   }
 
+  save();
   res.json(response);
 });
 
@@ -388,6 +425,7 @@ app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
     }
   }
 
+  save();
   res.json(response);
 });
 

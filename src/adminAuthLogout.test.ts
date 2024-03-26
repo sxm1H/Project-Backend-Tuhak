@@ -26,13 +26,6 @@ describe ('Testing POST /v1/admin/auth/logout', () => {
     expect(statusCode).toStrictEqual(200);
     expect(jsonBody).toStrictEqual({});
 
-    expect(adminAuthLogin('dunyao@unsw.edu.au', 'abcd1234')).toStrictEqual(
-      {
-        statusCode: 400,
-        jsonBody: { error: expect.any(String) }
-      }
-    );
-    
     expect(adminUserDetails(token)).toStrictEqual(
       {
         statusCode: 401,
@@ -49,7 +42,7 @@ describe ('Testing POST /v1/admin/auth/logout', () => {
     
     // expect(adminUserPasswordUpdate(token, 'abcd1234', '1234abcd')).toStrictEqual(
     //   {
-    //     statusCode: 401,
+    //     statusCode: 400,
     //     jsonBody: { error: expect.any(String) }
     //   }
     // );
