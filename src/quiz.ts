@@ -5,7 +5,9 @@ import {
   QuizListInfo,
   QuizInfoReturn,
   QuizId,
+  QuizTrashReturnObject,
   QuestionId,
+  DuplicateQuestionReturn,
 } from './interfaces';
 import {
   getData,
@@ -176,6 +178,40 @@ function adminQuizList(token: string): ErrorObject | QuizListReturnObject {
   };
 }
 
+function adminQuizTrash(token: string): ErrorObject | QuizTrashReturnObject {
+  const newdata = getData();
+  const activeTokens = newdata.sessions
+  const searchToken = activeTokens.findIndex(session => session.token  === token);
+
+  if (searchToken === -1) {
+    return {
+      error: 'invalid user Id'
+    };
+  }
+  const trashlist = newdata.trash.map(trash => ({
+    quizId: trash.quizId,
+    name: trash.name,
+  }));
+  return {
+    trash: trashlist
+  };
+}
+function adminQuizQuestionUpdate(token: string, quizId: number, questionId: number): ErrorObject | EmptyObject {
+  const data = getData();
+  const findToken = data.sessions.find(session => session.token === token);
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  //const findQuestion = data.q
+  if (!findToken) {
+    return { error: 'Token invalid.' };
+  } else if (!findQuiz) {
+    return { error: 'Quiz Id invalid.' };
+  }
+  if (findToken.userId !== findQuiz.authUserId) {
+    return { error: 'User does not own this quiz.' };
+  }
+  return {};
+
+}
 /**
   * Function allows user to view information about a specified quiz, unless the inputted ID's, user
   * and quiz respectively, are invalid, then returns an error message.
@@ -201,7 +237,7 @@ function adminQuizList(token: string): ErrorObject | QuizListReturnObject {
 function adminQuizInfo(token: string, quizId: number): ErrorObject | QuizInfoReturn {
   const data = getData();
   const findToken = data.sessions.find(session => session.token === token);
-  const findQuiz = data.quizzes.find(session => session.quizId === quizId);
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
 
   if (!findToken) {
     return { error: 'Token invalid.' };
@@ -219,6 +255,10 @@ function adminQuizInfo(token: string, quizId: number): ErrorObject | QuizInfoRet
     timeCreated: findQuiz.timeCreated,
     timeLastEdited: findQuiz.timeLastEdited,
     description: findQuiz.description,
+    numQuestions: findQuiz.numQuestions,
+    duration: findQuiz.duration,
+    questions: findQuiz.questions
+
   };
 }
 
@@ -278,6 +318,7 @@ function adminQuizCreate(token: string, name: string, description: string): Erro
     authUserId: authUserId,
     timeCreated: date,
     timeLastEdited: date,
+    numQuestions: 0,
     questions: [],
     duration: 0,
   });
@@ -401,7 +442,7 @@ function adminQuizTransfer(token: string, userEmail: string, quizId: number): Er
 }
 
 function getRandomColour(): string {
-  let random = Math.floor((Math.random() + 1) * 7);
+  let random = Math.floor((Math.random() * (7 - 1) + 1));
   if (random === 1) {
     return 'red';
   } else if (random === 2) {
@@ -470,8 +511,9 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody: Qu
       colour: getRandomColour(),
       correct: answer.correct,
     })
+    counters.answerIdCounter++;
   };
-  counters.answerIdCounter++;
+  
 
   let questionId = counters.questionIdCounter;
 
@@ -569,6 +611,53 @@ function adminQuizQuestionDelete(token: string, quizId: number, questionId: numb
   return { };
 }
 
+function adminQuizQuestionDuplicate(token: string, quizId: number, questionId: number): ErrorObject | DuplicateQuestionReturn {
+  const data = getData();
+  const findToken = data.sessions.find(ids => ids.token === token);
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  
+  if (!findToken) {
+    return {error: 'Token invalid'}
+  };
+
+  if (findToken.userId !== findQuiz.authUserId) {
+    return {error: 'User does not own this Quiz'}
+  };
+
+  const questions = findQuiz.questions;
+  const findQuestion = questions.findIndex(ids => ids.questionId === questionId);
+
+  if (findQuestion === -1) {
+    return {error: 'Question id is invalid'}
+  };
+
+  //Get the question and create a duplicate object
+  let question = questions[findQuestion];
+  let duplicateQuestion = {...question}; 
+
+  //inserts the duplicate question into the index next tothe orignal question
+  questions.splice(findQuestion + 1, 0, duplicateQuestion);
+ 
+  let date = Math.floor(Date.now()/1000);
+  findQuiz.timeLastEdited = date;
+  let newQuestionId = counters.questionIdCounter++;
+  questions[findQuestion + 1].questionId = newQuestionId;
+  
+  //copies the Answers array for the specific question
+  let duplicateAnswers = JSON.parse(JSON.stringify(questions[findQuestion].answers))
+  
+  //Updates answerId for new answers in new duplicated question
+  questions[findQuestion + 1].answers = duplicateAnswers;
+  for (let answer of questions[findQuestion + 1].answers) {
+    answer.answerId = counters.answerIdCounter++;
+  }
+
+  findQuiz.duration += questions[findQuestion].duration;
+
+  return {
+    newQuestionId : newQuestionId
+  }
+}
 export {
   adminQuizNameUpdate,
   adminQuizRemove,
@@ -579,5 +668,8 @@ export {
   adminQuizQuestionDelete,
   adminQuizTransfer,
   adminQuizQuestionCreate,
-  adminQuizQuestionMove
+  adminQuizQuestionMove,
+  adminQuizQuestionDuplicate,
+  adminQuizTrash,
+  adminQuizQuestionUpdate,
 };

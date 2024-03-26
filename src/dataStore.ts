@@ -30,6 +30,7 @@ interface Quiz {
   authUserId: number;
   timeCreated: number;
   timeLastEdited: number;
+  numQuestions: number;
   questions: Question[];
   duration: number;
 }

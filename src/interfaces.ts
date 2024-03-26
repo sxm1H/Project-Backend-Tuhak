@@ -45,6 +45,10 @@ interface QuizListReturnObject {
   quizzes: QuizListInfo[];
 }
 
+interface QuizTrashReturnObject {
+  trash: QuizListInfo[];
+}
+
 interface QuizListInfo {
   quizId: number;
   name: string;
@@ -56,6 +60,9 @@ interface QuizInfoReturn {
   timeCreated: number;
   timeLastEdited: number;
   description: string;
+  numQuestions: number;
+  questions: Question[],
+  duration: number;
 }
 
 interface QuizId {
@@ -66,6 +73,10 @@ interface RequestHelperReturnType {
   statusCode: number;
   jsonBody?: Record<string, any>;
   error?: string;
+}
+
+interface DuplicateQuestionReturn {
+  newQuestionId: number;
 }
 
 export {
@@ -81,5 +92,10 @@ export {
   QuizInfoReturn,
   QuizId,
   RequestHelperReturnType,
+  QuizTrashReturnObject,
   QuestionId,
+  DuplicateQuestionReturn,
 };
+import {
+  Question,
+} from "./dataStore"
