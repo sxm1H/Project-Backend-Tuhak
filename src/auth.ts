@@ -26,65 +26,40 @@ let sessionIdCounter = 10000;
 */
 function adminAuthRegister(email: string, password: string, nameFirst: string, nameLast: string): ErrorObject | TokenReturn {
   const data = getData();
+  // Returns user object if the email exists already
+  const findEmail = data.user.find(user => user.email === email);
 
-  for (let i = 0; i < data.user.length; i++) {
-    if (data.user[i].email === email) {
-      return { error: 'Email is already in use.' };
-    }
+  // Error checking for all inputs
+  if (findEmail) {
+    return { error: 'Email is already in use.' };
+  } else if (validator.isEmail(email) === false) {
+    return { error: 'Invalid email.' };
+  } else if (!Boolean(nameFirst.match(/^[A-Za-z'" -]+$/))) {
+    return { error: 'Invalid characters in first name.' };
+  } else if (nameFirst.length < 2 || nameFirst.length > 20) {
+    return { error: 'Invalid first name length.' };
+  } else if (!Boolean(nameLast.match(/^[A-Za-z'" -]+$/))) {
+    return { error: 'Invalid characters in last name.' };
+  } else if (nameLast.length < 2 || nameLast.length > 20) {
+    return { error: 'Invalid last name length.' };
+  } else if (password.length < 8) {
+    return { error: 'Password must be at least 8 characters long.' };
+  } else if (!Boolean(password.match(/[A-Za-z]/)) || !Boolean(password.match(/[0-9]/))) {
+    return { error: 'Password must have at least one number and one letter.' };
   }
 
-  if (validator.isEmail(email) === false) {
-    return {
-      error: 'Invalid email.',
-    };
-  }
-
-  if (Boolean(nameFirst.match(/^[A-Za-z'" -]+$/)) === false) {
-    return {
-      error: 'Invalid characters in first name.',
-    };
-  }
-
-  if (nameFirst.length < 2 || nameFirst.length > 20) {
-    return {
-      error: 'Invalid first name length.',
-    };
-  }
-
-  if (Boolean(nameLast.match(/^[A-Za-z'" -]+$/)) === false) {
-    return {
-      error: 'Invalid characters in last name.',
-    };
-  }
-
-  if (nameLast.length < 2 || nameLast.length > 20) {
-    return {
-      error: 'Invalid last name length.',
-    };
-  }
-
-  if (password.length < 8) {
-    return {
-      error: 'Password must be at least 8 characters long.',
-    };
-  }
-
-  if (Boolean(password.match(/[A-Za-z]/)) === false ||
-      Boolean(password.match(/[0-9]/)) === false) {
-    return {
-      error: 'Password must have at least one number and one letter.',
-    };
-  }
-
+  // Generation of authUserId and token
   const id = data.user.length + 1;
   sessionIdCounter++;
   let token = sessionIdCounter.toString();
   
+  // Adds token to dataStore
   data.sessions.push({
     userId: id,
     token: token,
   });
 
+  // Adds new user to dataStore
   data.user.push({
     email: email,
     password: password,
