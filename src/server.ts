@@ -242,7 +242,11 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
   const response = adminUserPasswordUpdate(token, oldPassword, newPassword);
 
   if ('error' in response) {
-    return res.status(400).json(response);
+    if (response.error === 'Token invalid') {
+      return res.status(401).json(response);
+    } else {
+      return res.status(400).json(response);
+    }
   }
 
   save();

@@ -19,23 +19,25 @@ beforeEach(() => {
 });
 
 describe('Testing PUT /v1/admin/user/password', () => {
-/*
+
   test('Comprehensive Test Successful: Logging on after changing the password', () => {
     let response = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
-    let adminId = response.jsonBody;
+    let token = response.jsonBody.token;
 
-    response = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'efgh5678');
+    response = adminUserPasswordUpdate(token, 'abcd1234', 'efgh5678');
     expect(response).toStrictEqual({
       jsonBody: {},
       statusCode: 200,
     });
 
     expect(adminAuthLogin('abcd.efgh@gmail.com', 'efgh5678')).toStrictEqual({
-      jsonBody: {},
+      jsonBody: {
+        token: expect.any(String),
+      },
       statusCode: 200,
     });
   });
-*/
+
   test('Test Successful Password Update', () => {
     const response = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
     const token = response.jsonBody;
@@ -47,37 +49,35 @@ describe('Testing PUT /v1/admin/user/password', () => {
     });
   });
 
-  /*
-
   test('Comprehensive Test Successful: Changing Passwords a bunch of times and checking if it works by logging in', () => {
     let response = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
-    let adminId = response.jsonBody;
+    let token = response.jsonBody.token;
 
-    response = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'efgh5678');
+    response = adminUserPasswordUpdate(token, 'abcd1234', 'efgh5678');
     expect(response).toStrictEqual({
       jsonBody: {},
       statusCode: 200,
     });
 
-    response = adminUserPasswordUpdate(adminId.authUserId, 'efgh5678', 'password1234');
+    response = adminUserPasswordUpdate(token, 'efgh5678', 'password1234');
     expect(response).toStrictEqual({
       jsonBody: {},
       statusCode: 200,
     });
 
-    response = adminUserPasswordUpdate(adminId.authUserId, 'password1234', 'fortress9871');
+    response = adminUserPasswordUpdate(token, 'password1234', 'fortress9871');
     expect(response).toStrictEqual({
       jsonBody: {},
       statusCode: 200,
     });
 
-    response = adminUserPasswordUpdate(adminId.authUserId, 'fortress9871', 'columbus1071');
+    response = adminUserPasswordUpdate(token, 'fortress9871', 'columbus1071');
     expect(response).toStrictEqual({
       jsonBody: {},
       statusCode: 200,
     });
 
-    response = adminUserPasswordUpdate(adminId.authUserId, 'columbus1071', 'pirate981');
+    response = adminUserPasswordUpdate(token, 'columbus1071', 'pirate981');
     expect(response).toStrictEqual({
       jsonBody: {},
       statusCode: 200,
@@ -85,7 +85,7 @@ describe('Testing PUT /v1/admin/user/password', () => {
 
     expect(adminAuthLogin('abcd.efgh@gmail.com', 'pirate981')).toStrictEqual({
       jsonBody: {
-        authUserId: expect.any(number)
+        token: expect.any(String)
       },
       statusCode: 200,
     });
@@ -94,35 +94,34 @@ describe('Testing PUT /v1/admin/user/password', () => {
   test('Comprehensive Test Unsuccessful: Trying to log in after trying to change to an invalid pass', () => {
     let response = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
     let adminId = response.jsonBody;
-    response = adminUserPasswordUpdate(adminId.authUserId, 'abcd1234', 'abcd1234');
-
-    expect(response).toStrictEqual({
-      jsonBody: {
-        error: expect.any(string)
-      },
-      statusCode: 400,
-    });
-
-    reponse = adminAuthLogin('abcd.efgh@gmail.com', 'abcd1234');
-
-    expect(response).toStrictEqual({
-      jsonBody: {
-        authUserId: expect.any(number)
-      },
-      statusCode: 200,
-    });;
-  });
-  */
-
-  test('Test Unsuccessful: Auth User ID invalid', () => {
-    const token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody;
-    let response = adminUserPasswordUpdate('5', 'abcd1234', 'efgh5678');
+    response = adminUserPasswordUpdate(response.jsonBody.token, 'abcd1234', 'abcd1234');
 
     expect(response).toStrictEqual({
       jsonBody: {
         error: expect.any(String)
       },
       statusCode: 400,
+    });
+
+    response = adminAuthLogin('abcd.efgh@gmail.com', 'abcd1234');
+
+    expect(response).toStrictEqual({
+      jsonBody: {
+        token: expect.any(String)
+      },
+      statusCode: 200,
+    });;
+  });
+
+  test('Test Unsuccessful: Token invalid', () => {
+    const token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody;
+    let response = adminUserPasswordUpdate('', 'abcd1234', 'efgh5678');
+
+    expect(response).toStrictEqual({
+      jsonBody: {
+        error: expect.any(String)
+      },
+      statusCode: 401,
     });
   });
 
