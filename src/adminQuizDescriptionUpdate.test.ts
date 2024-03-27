@@ -1,17 +1,9 @@
 import {
-  requestHelper,
   clear,
   adminAuthRegister,
-  adminAuthLogin,
-  adminUserDetails,
-  adminUserDetailsUpdate,
-  adminUserPasswordUpdate,
-  adminQuizList,
   adminQuizCreate,
-  adminQuizRemove,
+  adminQuizDescriptionUpdate,
   adminQuizInfo,
-  adminQuizNameUpdate,
-  adminQuizDescriptionUpdate
 } from './testHelpers';
 
 beforeEach(() => {
@@ -32,11 +24,10 @@ describe('Testing PUT v1/admin/quiz/:quizid/description', () => {
       statusCode: 200,
     });
 
-    let response = adminQuizInfo(token, quizId);
+    const response = adminQuizInfo(token, quizId);
     expect(response.jsonBody.description).toStrictEqual('lorem ipsum decorum');
     expect(response.statusCode).toStrictEqual(200);
   });
-
 
   test('Comprehensive Test Successful: Using Quiz Info to check updated desc when the user has multiple quizzes.', () => {
     const token1 = adminAuthRegister('abcd@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody.token;

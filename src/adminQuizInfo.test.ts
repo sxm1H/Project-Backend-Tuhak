@@ -14,22 +14,22 @@ describe('Testing GET /v1/admin/quiz/:quizid', () => {
   let quizId: number;
   let time: number;
   beforeEach(() => {
-    const { jsonBody: reg} = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo');
+    const { jsonBody: reg } = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo');
     const { jsonBody: create } = adminQuizCreate(reg.token, 'quiz1', 'lorem ipsum');
-    
+
     token = reg.token;
     quizId = create.quizId;
     time = Math.floor(Date.now() / 1000);
   });
 
-    test('Successfully retrieves info', () => {
+  test('Successfully retrieves info', () => {
     const { statusCode, jsonBody } = adminQuizInfo(token, quizId);
 
     expect(jsonBody.timeCreated).toBeGreaterThanOrEqual(time);
     expect(jsonBody.timeCreated).toBeLessThan(time + 1);
     expect(jsonBody.timeLastEdited).toBeGreaterThanOrEqual(time);
     expect(jsonBody.timeLastEdited).toBeLessThan(time + 1);
-    
+
     expect(statusCode).toStrictEqual(200);
     expect(jsonBody).toStrictEqual(
       {

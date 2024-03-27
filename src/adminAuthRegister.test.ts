@@ -43,7 +43,7 @@ describe('Testing POST /v1/admin/auth/register', () => {
 
   test.each([
     ['dunyao@unsw.edu.au', 'abcd1234', '1984', 'Foo'],
-    ['dunyao@unsw.edu.au', 'abcd1234', '?+-/*)(*&^%$#@!~`:><,.={}\|', 'Foo'],
+    ['dunyao@unsw.edu.au', 'abcd1234', '?+-/*)(*&^%$#@!~`:><,.={}', 'Foo'],
     ['dunyao@unsw.edu.au', 'abcd1234', 'Dun Yao123', 'Foo'],
   ])('Invalid first name: Characters', (email, password, nameFirst, nameLast) => {
     expect(adminAuthRegister(email, password, nameFirst, nameLast)).toStrictEqual(
@@ -69,7 +69,7 @@ describe('Testing POST /v1/admin/auth/register', () => {
 
   test.each([
     ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', '1984'],
-    ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', '?+-/*)(*&^%$#@!~`:><,.={}\|'],
+    ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', '?+-/*)(*&^%$#@!~`:><,.={}'],
     ['dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Dun Yao123'],
   ])('Invalid last name: Characters', (email, password, nameFirst, nameLast) => {
     expect(adminAuthRegister(email, password, nameFirst, nameLast)).toStrictEqual(

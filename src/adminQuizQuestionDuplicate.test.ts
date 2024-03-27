@@ -1,4 +1,3 @@
-import { time } from 'console';
 import {
   clear,
   adminAuthRegister,
@@ -9,10 +8,10 @@ import {
 } from './testHelpers';
 
 beforeEach(() => {
-    clear();
+  clear();
 });
 
-describe ('Testing POST /v1/admin/quiz/:quizid/question/:questionid/duplicate', () => {
+describe('Testing POST /v1/admin/quiz/:quizid/question/:questionid/duplicate', () => {
   let token: string;
   let quizId: number;
 
@@ -21,17 +20,17 @@ describe ('Testing POST /v1/admin/quiz/:quizid/question/:questionid/duplicate', 
     quizId = adminQuizCreate(token, 'cool quiz', 'cool desc').jsonBody.quizId;
   });
 
-  test('Question Id does not refer to valid question', () =>{
-    const {statusCode, jsonBody} = adminQuizQuestionDuplicate(token, quizId, 1);
+  test('Question Id does not refer to valid question', () => {
+    const { statusCode, jsonBody } = adminQuizQuestionDuplicate(token, quizId, 1);
     expect(statusCode).toStrictEqual(400);
     expect(jsonBody).toStrictEqual({
       error: expect.any(String)
     });
-  })
- 
+  });
+
   test('Token is invalid', () => {
-    const {jsonBody: {questionId}} = adminQuizQuestionCreate(quizId, token, 'cool question', 4, 5, [{answer: 'Sydney', correct: true}, {answer: 'Melbourne', correct: false}]);
-    const {statusCode, jsonBody} = adminQuizQuestionDuplicate(token.concat('POG'), quizId, questionId);
+    const { jsonBody: { questionId } } = adminQuizQuestionCreate(quizId, token, 'cool question', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]);
+    const { statusCode, jsonBody } = adminQuizQuestionDuplicate(token.concat('POG'), quizId, questionId);
     expect(statusCode).toStrictEqual(401);
     expect(jsonBody).toStrictEqual({
       error: expect.any(String)
@@ -39,9 +38,9 @@ describe ('Testing POST /v1/admin/quiz/:quizid/question/:questionid/duplicate', 
   });
 
   test('User is not owner of the quiz', () => {
-    let token2 = adminAuthRegister('abcd@gmail.com', 'abcd1234', 'ahhhhh', 'hello').jsonBody.token;
-    const {jsonBody: {questionId}} = adminQuizQuestionCreate(quizId, token, 'cool question', 4, 5, [{answer: 'Sydney', correct: true}, {answer: 'Melbourne', correct: false}]);
-    const {statusCode, jsonBody} = adminQuizQuestionDuplicate(token2, quizId, questionId);
+    const token2 = adminAuthRegister('abcd@gmail.com', 'abcd1234', 'ahhhhh', 'hello').jsonBody.token;
+    const { jsonBody: { questionId } } = adminQuizQuestionCreate(quizId, token, 'cool question', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]);
+    const { statusCode, jsonBody } = adminQuizQuestionDuplicate(token2, quizId, questionId);
     expect(statusCode).toStrictEqual(403);
     expect(jsonBody).toStrictEqual({
       error: expect.any(String)
@@ -49,15 +48,15 @@ describe ('Testing POST /v1/admin/quiz/:quizid/question/:questionid/duplicate', 
   });
 
   test('Question successfully duplicated', () => {
-    const {jsonBody: {questionId}} = adminQuizQuestionCreate(quizId, token, 'cool question', 4, 5, [{answer: 'Sydney', correct: true}, {answer: 'Melbourne', correct: false}]);
-    const {statusCode, jsonBody} = adminQuizQuestionDuplicate(token, quizId, questionId);
+    const { jsonBody: { questionId } } = adminQuizQuestionCreate(quizId, token, 'cool question', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]);
+    const { statusCode, jsonBody } = adminQuizQuestionDuplicate(token, quizId, questionId);
     expect(statusCode).toStrictEqual(200);
     expect(jsonBody).toStrictEqual({
       newQuestionId: expect.any(Number)
     });
-    let updatedDate = Math.floor(Date.now() / 1000)
-    let timeLastEdited = adminQuizInfo(token, quizId).jsonBody.timeLastEdited;
+    const updatedDate = Math.floor(Date.now() / 1000);
+    const timeLastEdited = adminQuizInfo(token, quizId).jsonBody.timeLastEdited;
     expect(updatedDate).toBeGreaterThanOrEqual(timeLastEdited);
     expect(updatedDate).toBeLessThanOrEqual(timeLastEdited + 2);
   });
-})
+});
