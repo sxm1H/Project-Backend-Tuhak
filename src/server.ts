@@ -203,12 +203,6 @@ app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
 app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
   const {token, questionBody } = req.body;
   const quizId = parseInt(req.params.quizid);
-  console.log('In server');
-  console.log(questionBody);
-  console.log(questionBody.question);
-  console.log(questionBody.duration);
-  console.log(questionBody.points);
-  console.log(questionBody.answers);
   const questionId = parseInt(req.params.questionid);
   const response = adminQuizQuestionUpdate(questionBody, token, quizId, questionId);
   if ('error' in response) {

@@ -211,8 +211,6 @@ function adminQuizQuestionUpdate(questionBody: Question, token: string, quizId: 
 
   const findToken = data.sessions.find(session => session.token === token);
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
-  console.log(quizId);
-  console.log(data.quizzes);
   const findQuestion = findQuiz.questions.find(question => question.questionId === questionId);
  
   if (!findToken) {
@@ -228,14 +226,7 @@ function adminQuizQuestionUpdate(questionBody: Question, token: string, quizId: 
     return { error: 'Questions not found.' };
   }
 
-  console.log("========================");
-  console.log(questionBody);
-  console.log(questionBody.question);
-  console.log(questionBody.duration);
-  console.log(questionBody.points);
-  console.log(questionBody.answers);
-  
-  console.log(questionBody.question.length);
+
 
   //Error Checks for the Question.
   if (questionBody.question.length > 50 || questionBody.question.length < 5) {
@@ -269,8 +260,6 @@ function adminQuizQuestionUpdate(questionBody: Question, token: string, quizId: 
     colour: answer.colour, 
     correct: answer.correct,
   }));
-  //console.log(findQuestion);
-  
  
    // Updating the question properties
    findQuestion.duration = questionBody.duration;
@@ -653,7 +642,6 @@ function adminQuizQuestionMove(quizid: number, questionid: number, token: string
   const data = getData();
   const findToken = data.sessions.find(ids => ids.token === token);
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizid);
-  console.log(questionid);
   if (!findToken) {
     return {error: 'Token invalid.'}
   };
