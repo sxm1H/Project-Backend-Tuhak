@@ -87,7 +87,13 @@ app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   const response = adminQuizDescriptionUpdate(token, quizId, description);
 
   if ('error' in response) {
-    return res.status(400).json(response);
+    if (response.error === 'Token invalid.') {
+      return res.status(401).json(response);
+    } else if (response.error === 'User does not own this quiz.') {
+      return res.status(403).json(response);
+    } else {
+      return res.status(400).json(response);
+    }
   }
 
   save();
@@ -236,7 +242,11 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
   const response = adminUserPasswordUpdate(token, oldPassword, newPassword);
 
   if ('error' in response) {
-    return res.status(400).json(response);
+    if (response.error === 'Token invalid') {
+      return res.status(401).json(response);
+    } else {
+      return res.status(400).json(response);
+    }
   }
 
   save();
