@@ -430,13 +430,13 @@ function adminQuizDescriptionUpdate(token: string, quizId: number, description: 
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
 
   if (!findToken) {
-    return { error: 'Token is Not Valid.'}
+    return { error: 'Token invalid.'}
   }
   if (!findQuiz) {
     return { error: 'Quiz Id is invalid.'}
   }
   if (findQuiz.authUserId !== findToken.userId) {
-    return { error: 'Quiz Does Not Belong to User' };
+    return { error: 'User does not own this quiz.'};
   }
 
   if (description.length > 100) {
