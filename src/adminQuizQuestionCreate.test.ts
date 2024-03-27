@@ -3,6 +3,7 @@ import {
   adminAuthRegister,
   adminQuizCreate,
   adminQuizQuestionCreate,
+  adminQuizInfo,
 } from './testHelpers';
 
 beforeEach(() => {
@@ -16,6 +17,41 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
     token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody.token;
     quizId = adminQuizCreate(token, 'Australian Cities', 'lorem ipsum').jsonBody.quizId;
   });
+
+  test('Comprehensive Test Successful: Creating a Question and Checking adminQuizInfo', () => {
+    const response = adminQuizQuestionCreate(quizId, token, 'question1', 5, 4, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }])
+    expect(response).toStrictEqual({
+      jsonBody: {
+        questionId: expect.any(Number),
+      },
+      statusCode: 200,
+    });
+    const response2 = adminQuizInfo(token, quizId);
+    expect(response2.jsonBody.questions).toStrictEqual([
+      {
+        questionId: response.jsonBody.questionId,
+        question: 'question1',
+        duration: 5,
+        points: 4,
+        answers: [
+          {
+            answerId: expect.any(Number),
+            answer: 'Sydney',
+            colour: expect.any(String),
+            correct: true,
+          },
+          {
+            answerId: expect.any(Number),
+            answer: 'Melbourne',
+            colour: expect.any(String),
+            correct: false,
+          }
+        ]
+      }
+    ])
+    expect(response2.jsonBody.duration).toStrictEqual(5);
+    expect(response2.jsonBody.numQuestions).toStrictEqual(1);
+  })
 
   test.each([
     ['What is the best city in Australia', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]],
