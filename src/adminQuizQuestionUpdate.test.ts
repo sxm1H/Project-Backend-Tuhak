@@ -31,154 +31,181 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
       questionId = adminQuizQuestionCreate(quizId, token,'What is the best city in Australia',4,5 ,[{answer: 'Sydney', correct: true}, {answer: 'Melbourne', correct: false}]).jsonBody.questionId;
   })
 
-  test.each([
-      ['lorem ipsum something something', 2, 1, [{answer: 'İzmir', correct: true}, {answer: 'İstanbul', correct: false}]],
-      ['What is the best city in Turkey', 4, 5, [{answer: 'İzmir', correct: true}, {answer: 'İstanbul', correct: false}]],
-  ])('Test Successful: Updating a Question with One or More Answers', (question, duration, points, answers) => {
-    
-      expect(adminQuizQuestionUpdate(question, duration, points, answers, token, quizId, questionId)).toStrictEqual({
-        jsonBody: {},
+  test('Test Successful: Successfully Updating One Question', () => {
+    const question = 'What is the best things to do in your spare time';
+    const duration = 4;
+    const points = 10;
+    const answers = [{
+        answer: 'Valorant',
+        correct: true,
+    },
+    {
+        answer: 'Video Games',
+        correct: false,
+    }]
+    expect(adminQuizQuestionUpdate(question, duration, points, answers, token, quizId, questionId)).toStrictEqual({
+        jsonBody: { },
         statusCode: 200,
-      })
-      const { statusCode, jsonBody } = adminQuizInfo(token, quizId);
-      expect(statusCode).toStrictEqual(200);
-      expect(jsonBody).toStrictEqual({
-        quizId: quizId,
-        name: expect.any(String),
-        timeCreated: expect.any(Number),
-        timeLastEdited: expect.any(Number),
-        description: expect.any(String),
-        duration: duration,
-        questions: [
-            {
-          questionId: questionId,
-          question: question,
-          duration: duration,
-          points: points,
-          answers: [
-            {
-                answer: 'İzmir',
-                answerId: expect.any(Number),
-                correct: true,
-                //colour: expect.any(String)
-            },
-            {
-                answer: 'İstanbul',
-                answerId: expect.any(Number),
-                correct: false,
-                //colour: expect.any(String)
-            },
-          ],
-
-          }
-        ],
-        numQuestions: expect.any(Number)
-      }
-      )
-  })/*
-  test.each([
-    ['lorem ipsum something something', 2, 1, [{answer: 'İzmir', correct: true}, {answer: 'İstanbul', correct: false}]],
-      ['What is the best city in Turkey', 4, 5, [{answer: 'İzmir', correct: true}, {answer: 'İstanbul', correct: false}]],
-  ])('Test Succesful: Updating multiple questions with one or more answers', (question, duration, points, answers) => {
-  
-  let  questionId2 = adminQuizQuestionCreate(quizId, token,'What is the best city in Australia',4,5 ,[{answer: 'Sydney', correct: true}, {answer: 'Melbourne', correct: false}]).jsonBody.questionId;
-  expect(adminQuizQuestionUpdate(question, duration, points, answers, token, quizId, questionId)).toStrictEqual({
-    jsonBody: {},
-    statusCode: 200,
-  })
-  const { statusCode, jsonBody } = adminQuizInfo(token, quizId);
-      expect(statusCode).toStrictEqual(200);
-      expect(jsonBody).toStrictEqual({
-        quizId: quizId,
-        name: expect.any(String),
-        timeCreated: expect.any(Number),
-        timeLastEdited: expect.any(Number),
-        description: expect.any(String),
-        duration: duration + 4,//added 4 because the function adds the duration of the question created in the before each function aswell and the duration there is 4
-        questions: [
-            {
-          questionId: questionId,
-          question: question,
-          duration: duration,
-          points: points,
-          answers: [
-            {
-                answer: 'İzmir',
-                answerId: expect.any(Number), // here for some reason expect.any doesnt work and it returns an error for in the test for some reason ???
-                correct: true,
-                colour: expect.any(String)
-            },
-            {
-                answer: 'İstanbul',
-                answerId: expect.any(Number),
-                correct: false,
-                colour: expect.any(String)
-            },
-          ],
-
-          },
-          {
-            questionId: questionId2,
-            question: 'What is the best city in Australia',
-            duration: 4,
-            points: 5,
-            answers: [{answer: 'Sydney', correct: true,answerId: expect.any(Number), colour: expect.any(String)}, {answer: 'Melbourne', correct: false}, ],
-  
-            }
-        ],
-        numQuestions: expect.any(Number)
-       /* quizId: quizId,
-        name: expect.any(String),
-        timeCreated: expect.any(Number),
-        timeLastEdited: expect.any(Number),
-        description: expect.any(String),
-        duration: duration,
-        questions: [
-            {
-             
-              answers: answers,
-              questionId: questionId,
-              question: question,
-              duration: duration,
-              points: points,
-          },
-          {
-            answers: answers,
-            questionId: questionId,
-            question: question,
-            duration: duration,
-            points: points,
-        }
-        ],
-        numQuestions: expect.any(Number)
-      }
-    )*/
-    /*expect(adminQuizQuestionUpdate(question, duration, points, answers, token, quizId, questionId2)).toStrictEqual({
-      jsonBody: {},
-      statusCode: 200,
     })
-    const quizinfo2 = adminQuizInfo(token, quizId);
-        expect(quizinfo2.statusCode).toStrictEqual(200);
-        expect(quizinfo2.jsonBody).toStrictEqual({
-          quizId: quizId,
-          name: expect.any(String),
-          timeCreated: expect.any(Number),
-          timeLastEdited: expect.any(Number),
-          description: expect.any(String),
-          duration: duration,
-          questions: [
-              {
-            questionId: questionId,
-            question: question,
+  })
+
+  test('Comprehensive Test Successful: Successfully Updating One Question and Checking QuizInfo', () => {
+    const question = 'What is the best things to do in your spare time';
+    const duration = 4;
+    const points = 10;
+    const answers = [{
+        answer: 'Valorant',
+        correct: true,
+    },
+    {
+        answer: 'Video Games',
+        correct: false,
+    }]
+    
+    expect(adminQuizQuestionUpdate(question, duration, points, answers, token, quizId, questionId)).toStrictEqual({
+        jsonBody: { },
+        statusCode: 200,
+    })
+
+    expect(adminQuizInfo(token, quizId)).toStrictEqual({
+        jsonBody: {
+            quizId: quizId,
+            name: 'Australian Cities',
+            timeCreated: expect.any(Number),
+            timeLastEdited: expect.any(Number),
+            description: 'lorem ipsum',
             duration: duration,
-            points: points,
-            answers: answers,
-  
-            }
-          ],
-          numQuestions: expect.any(Number)
-        }
-      )*/
+            numQuestions: 1,
+            questions: [
+                {
+                    questionId: questionId,
+                    question: question,
+                    duration: duration,
+                    points: points,
+                    answers: [
+                        {
+                            answerId: expect.any(Number),
+                            answer: 'Valorant',
+                            correct: true,
+                        },
+                        {
+                            answerId: expect.any(Number),
+                            answer: 'Video Games',
+                            correct: false,
+                        }
+                    ],
+                }
+            ]
+        },
+        statusCode: 200,
+    })
+  })
+
+  test('Comprehensive Test Successful: Creating Multiple Questions, Updating them Simultaneously, then checking QuizInfo', () => {
+    const questionId2 = adminQuizQuestionCreate(quizId, token,'Question2',4,5 ,[{answer: 'Hello', correct: true}, {answer: 'Bye', correct: false}]).jsonBody.questionId;
+    const questionId3 = adminQuizQuestionCreate(quizId, token,'Question3',4,5 ,[{answer: 'lorem', correct: true}, {answer: 'ispum', correct: false}]).jsonBody.questionId;
+    const questionId4 = adminQuizQuestionCreate(quizId, token,'Question3',4,5 ,[{answer: 'answer1', correct: true}, {answer: 'answer2', correct: false}]).jsonBody.questionId;
+
+    const duration = 4;
+    const points = 5;
+
+    adminQuizQuestionUpdate('question1update', duration, points, [{answer: 'a1update', correct: true}, {answer: 'a2update', correct: false}, {answer: 'a3update', correct: false}], token, quizId, questionId);
+    adminQuizQuestionUpdate('question2update', duration, points, [{answer: 'a1update', correct: true}, {answer: 'a2update', correct: false}], token, quizId, questionId2);
+    adminQuizQuestionUpdate('question3update', duration, points, [{answer: 'a1update', correct: true}, {answer: 'a2update', correct: false}], token, quizId, questionId3);
+    adminQuizQuestionUpdate('question4update', duration, points, [{answer: 'a1update', correct: true}, {answer: 'a2update', correct: false}], token, quizId, questionId4);
+
+    expect(adminQuizInfo(token, quizId)).toStrictEqual({
+        jsonBody: {
+            quizId: quizId,
+            name: 'Australian Cities',
+            timeCreated: expect.any(Number),
+            timeLastEdited: expect.any(Number),
+            description: 'lorem ipsum',
+            duration: duration * 4,
+            numQuestions: 4,
+            questions: [
+                {
+                    questionId: questionId,
+                    question: 'question1update',
+                    duration: duration,
+                    points: points,
+                    answers: [
+                        {
+                            answerId: expect.any(Number),
+                            answer: 'a1update',
+                            correct: true,
+                        },
+                        {
+                            answerId: expect.any(Number),
+                            answer: 'a2update',
+                            correct: false,
+                        },
+                        {
+                            answerId: expect.any(Number),
+                            answer: 'a3update',
+                            correct: false,
+                        }
+                    ],
+                },
+                {
+                    questionId: questionId2,
+                    question: 'question2update',
+                    duration: duration,
+                    points: points,
+                    answers: [
+                        {
+                            answerId: expect.any(Number),
+                            answer: 'a1update',
+                            correct: true,
+                        },
+                        {
+                            answerId: expect.any(Number),
+                            answer: 'a2update',
+                            correct: false,
+                        }
+                    ],
+                },
+                {
+                    questionId: questionId3,
+                    question: 'question3update',
+                    duration: duration,
+                    points: points,
+                    answers: [
+                        {
+                            answerId: expect.any(Number),
+                            answer: 'a1update',
+                            correct: true,
+                        },
+                        {
+                            answerId: expect.any(Number),
+                            answer: 'a2update',
+                            correct: false,
+                        }
+                    ],
+                },
+                {
+                    questionId: questionId4,
+                    question: 'question4update',
+                    duration: duration,
+                    points: points,
+                    answers: [
+                        {
+                            answerId: expect.any(Number),
+                            answer: 'a1update',
+                            correct: true,
+                        },
+                        {
+                            answerId: expect.any(Number),
+                            answer: 'a2update',
+                            correct: false,
+                        }
+                    ],
+                },
+            ]
+        },
+        statusCode: 200,
+    })  
+  })
     
 
   test.each([
