@@ -401,20 +401,12 @@ function adminQuizCreate(token: string, name: string, description: string): Erro
  *   3. Does the Quiz Belong to the user
  *   4. Is the Desc Under 100 words
  *
- * @param {integer} tokens - This is the user's current token for this session.
+ * @param {number} tokens - This is the user's current token for this session.
  * @param {string} quizId - This is the quiz id.
  * @param {string} description - This is the new description for the quiz.
  *
- * @returns {
- *   object {
- *     error: string
- *   }
- * } Error Object with information regarding the error.
- * @returns {
- *   object {
- *
- *   }
- * } Empty Object to indicidate that everything worked.
+ * @returns { Error Object } -  Object containing the key 'error' and the value being the relevant error message
+ * @returns { Empty Object } - Empty Object to indicate succesful addition of the question.
 */
 function adminQuizDescriptionUpdate(token: string, quizId: number, description: string): ErrorObject | EmptyObject {
   const data = getData();

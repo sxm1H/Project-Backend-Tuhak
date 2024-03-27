@@ -245,7 +245,7 @@ function adminUserDetailsUpdate(token: string, email: string, nameFirst: string,
   * @param {string} oldPassword - User's current password.
   * @param {string} newPassword - User's new password.
   *
-  * @returns {object {error: string}} Error Object with information regarding the error.
+  * @returns { Error Object } Error Object with information regarding the error.
 */
 function passwordChecker(userDetails: UserData, oldPassword: string, newPassword: string): ErrorObject {
   if (oldPassword === newPassword) {
