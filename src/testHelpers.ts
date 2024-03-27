@@ -95,17 +95,14 @@ const adminQuizCreate = (token: string, name: string, description: string) => {
 const adminQuizRemove = (token: string, quizId: number) => {
   return requestHelper('DELETE', `/v1/admin/quiz/${quizId}`, { token, quizId });
 };
-const adminQuizQuestionUpdate = (question: string, duration: number, points: number, answers: Answer[], token: string, quizId: number,questionId: number) => {
+const adminQuizQuestionUpdate = (question: string, duration: number, points: number, answers: Answer[], token: string, quizId: number, questionId: number) => {
   let questionBody = {
-      questionBody: {
-        questionId: questionId,
         question: question,
         duration: duration,
         points: points,
         answers: answers,
-      }
   }
-  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/question/${questionId}`, {questionBody,token, quizId})
+  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/question/${questionId}`, {questionBody, token})
 }
 const adminQuizInfo = (token: string, quizId: number) => {
   return requestHelper('GET', `/v1/admin/quiz/${quizId}`, { token, quizId });
@@ -134,6 +131,7 @@ const adminQuizQuestionCreate = (quizId: number, token: string, question: string
     points: points,
     answers: answers,
   };
+
   return requestHelper('POST', `/v1/admin/quiz/${quizId}/question`, { token, questionBody });
 }
 
