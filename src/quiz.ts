@@ -270,8 +270,6 @@ function adminQuizQuestionUpdate(questionBody: Question, token: string, quizId: 
 
   findQuiz.timeLastEdited = date;
 
-  console.log(findQuestion.answers);
-
   return {};
 }
 
