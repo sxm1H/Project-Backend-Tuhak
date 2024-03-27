@@ -103,8 +103,8 @@ describe('Testing PUT /v1/admin/user/password', () => {
   });
 
   test('Test Unsuccessful: Token invalid', () => {
-    adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody;
-    const response = adminUserPasswordUpdate('', 'abcd1234', 'efgh5678');
+    let response = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody;
+    response = adminUserPasswordUpdate('', 'abcd1234', 'efgh5678');
 
     expect(response).toStrictEqual({
       jsonBody: {

@@ -24,7 +24,7 @@ describe('Testing PUT v1/admin/quiz/:quizid/description', () => {
       statusCode: 200,
     });
 
-    let response = adminQuizInfo(token, quizId);
+    const response = adminQuizInfo(token, quizId);
     expect(response.jsonBody.description).toStrictEqual('lorem ipsum decorum');
     expect(response.statusCode).toStrictEqual(200);
   });

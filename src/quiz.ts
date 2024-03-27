@@ -16,11 +16,11 @@ import {
 
 /**
   * <Given a registered user's id, a quizId that is valid, and a name that matches specified
-	* criteria, the quizId specified will have their name changed to the name parameter>
+  * criteria, the quizId specified will have their name changed to the name parameter>
   *
   * @param {number} authUserId - UserId which may or not be registered in the data
   * @param {number} quizId - quizId that may or may not correlate with a quiz in the data.
-	* @param {string} name - string that User wants the specified quizId to change the name to
+  * @param {string} name - string that User wants the specified quizId to change the name to
   *
   * @returns {object { }} returns empty object if no error and parameters match specified criteria.
   * @returns {object {error: string}} returns specified error message
@@ -396,7 +396,7 @@ function adminQuizCreate(token: string, name: string, description: string): Erro
  * error.
  *
  * Before changing the Quiz Description, the function checks for whether:
- * 	 1. Is Token Valid
+ *   1. Is Token Valid
  *   2. Is Quiz Id Valid
  *   3. Does the Quiz Belong to the user
  *   4. Is the Desc Under 100 words
@@ -424,13 +424,13 @@ function adminQuizDescriptionUpdate(token: string, quizId: number, description: 
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
 
   if (!findToken) {
-    return { error: 'Token invalid.'}
+    return { error: 'Token invalid.' };
   }
   if (!findQuiz) {
     return { error: 'Quiz Id is invalid.' };
   }
   if (findQuiz.authUserId !== findToken.userId) {
-    return { error: 'User does not own this quiz.'};
+    return { error: 'User does not own this quiz.' };
   }
 
   if (description.length > 100) {
