@@ -68,7 +68,7 @@ let counters: Counters = {
   answerIdCounter: 0,
   questionIdCounter: 0,
   quizIdCounter: 0
-}
+};
 
 // YOU SHOULD MODIFY THIS OBJECT ABOVE ONLY
 
@@ -105,9 +105,9 @@ function setData(newData: DataStore): void {
 function setCounters(newCounters: Counters): void {
   counters = newCounters;
 }
-export { 
-  getData, 
-  setData, 
+export {
+  getData,
+  setData,
   counters,
   getCounters,
   setCounters

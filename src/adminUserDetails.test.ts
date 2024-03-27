@@ -1,10 +1,10 @@
 
-import { 
+import {
   clear,
   adminAuthRegister,
   adminUserDetails,
   adminAuthLogin,
- } from './testHelpers';
+} from './testHelpers';
 
 beforeEach(() => {
   clear();
@@ -16,11 +16,11 @@ describe('Testing GET /v1/admin/user/details', () => {
     const { jsonBody } = adminAuthRegister('Dilhanm@gmail.com', 'abCdddD123', 'Dilhan', 'Mert');
 
     token = jsonBody.token;
-  })
-  
+  });
+
   test('Correct retrieves details', () => {
-    const {statusCode, jsonBody} = adminUserDetails(token);
-    
+    const { statusCode, jsonBody } = adminUserDetails(token);
+
     expect(statusCode).toStrictEqual(200);
     expect(jsonBody).toStrictEqual(
       {
@@ -36,7 +36,7 @@ describe('Testing GET /v1/admin/user/details', () => {
   });
 
   test('Invalid token', () => {
-    expect(adminUserDetails("nuhuhwrongwrong")).toStrictEqual(
+    expect(adminUserDetails('nuhuhwrongwrong')).toStrictEqual(
       {
         statusCode: 401,
         jsonBody: { error: expect.any(String) }
@@ -45,7 +45,7 @@ describe('Testing GET /v1/admin/user/details', () => {
   });
 
   test('Retrieves correct user details', () => {
-    const { jsonBody: reg2} = adminAuthRegister('DunYao@hotmail.com', 'abCdddD123', 'DunYao', 'Foo');
+    const { jsonBody: reg2 } = adminAuthRegister('DunYao@hotmail.com', 'abCdddD123', 'DunYao', 'Foo');
     const token2 = reg2.token;
     const { statusCode, jsonBody } = adminUserDetails(token2);
 
@@ -69,7 +69,7 @@ describe('Testing GET /v1/admin/user/details', () => {
       expect(login).toStrictEqual(200);
     }
 
-    const {statusCode, jsonBody} = adminUserDetails(token);
+    const { statusCode, jsonBody } = adminUserDetails(token);
 
     expect(statusCode).toStrictEqual(200);
     expect(jsonBody).toStrictEqual(
@@ -92,7 +92,7 @@ describe('Testing GET /v1/admin/user/details', () => {
     }
 
     const { statusCode, jsonBody } = adminUserDetails(token);
-    
+
     expect(statusCode).toStrictEqual(200);
     expect(jsonBody).toStrictEqual(
       {
@@ -104,6 +104,6 @@ describe('Testing GET /v1/admin/user/details', () => {
           numFailedPasswordsSinceLastLogin: 3,
         }
       }
-    )
+    );
   });
-}); 
+});

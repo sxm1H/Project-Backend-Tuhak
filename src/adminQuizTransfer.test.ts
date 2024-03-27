@@ -1,9 +1,9 @@
 import {
-    clear,
-    adminAuthRegister,
-    adminQuizCreate,
-    adminQuizList,
-    adminQuizTransfer
+  clear,
+  adminAuthRegister,
+  adminQuizCreate,
+  adminQuizList,
+  adminQuizTransfer
 } from './testHelpers';
 
 beforeEach(() => {
@@ -57,7 +57,7 @@ describe('Testing POST /v1/admin/quiz/:quizid/transfer', () => {
       }
     );
   });
-  
+
   test('Target user owns a quiz with the same name', () => {
     adminQuizCreate(token2, 'Cool name', 'ipsum lorem');
 
@@ -67,7 +67,7 @@ describe('Testing POST /v1/admin/quiz/:quizid/transfer', () => {
         jsonBody: { error: expect.any(String) }
       }
     );
-  })
+  });
 
   test('Token invalid', () => {
     expect(adminQuizTransfer('hello', 'nick1234@gmail.com', quizId)).toStrictEqual(
@@ -79,7 +79,7 @@ describe('Testing POST /v1/admin/quiz/:quizid/transfer', () => {
   });
 
   test('User does not own quiz', () => {
-    let quizId2 = adminQuizCreate(token2, 'Very cool name', 'bing bong').jsonBody.quizId;
+    const quizId2 = adminQuizCreate(token2, 'Very cool name', 'bing bong').jsonBody.quizId;
 
     expect(adminQuizTransfer(token, 'nick1234@gmail.com', quizId2)).toStrictEqual(
       {
