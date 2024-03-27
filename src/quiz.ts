@@ -250,9 +250,9 @@ function adminQuizQuestionUpdate(questionBody: Question, token: string, quizId: 
     }
   }
   findQuestion.answers = questionBody.answers.map(answer => ({
-    answerId: counters.answerIdCounter,
+    answerId: counters.answerIdCounter++,
     answer: answer.answer,
-    colour: answer.colour,
+    colour: getRandomColour(),
     correct: answer.correct,
   }));
 
