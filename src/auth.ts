@@ -248,6 +248,7 @@ function adminUserDetailsUpdate(token: string, email: string, nameFirst: string,
   * @returns { Error Object } Error Object with information regarding the error.
 */
 function passwordChecker(userDetails: UserData, oldPassword: string, newPassword: string): ErrorObject {
+  //Error Checks for the passwords.
   if (oldPassword === newPassword) {
     return {
       error: 'New Password is the same as old passward.'
@@ -266,6 +267,7 @@ function passwordChecker(userDetails: UserData, oldPassword: string, newPassword
     };
   }
 
+  //Checking whether there is at least one letter and one number.
   let letterCounter = 0;
   let numberCounter = 0;
   for (let i = 0; i < newPassword.length; i++) {
@@ -285,7 +287,7 @@ function passwordChecker(userDetails: UserData, oldPassword: string, newPassword
       error: 'New Password must have at least one number and one letter.'
     };
   }
-
+  
   return {
     error: 'No Error'
   };

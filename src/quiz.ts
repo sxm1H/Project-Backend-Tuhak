@@ -412,9 +412,11 @@ function adminQuizDescriptionUpdate(token: string, quizId: number, description: 
   const data = getData();
   const date = Math.floor(Date.now() / 1000);
 
+  // Finding the userId and quiz.
   const findToken = data.sessions.find(ids => ids.token === token);
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
 
+  // Checking whether the userId and Quiz is valid.
   if (!findToken) {
     return { error: 'Token invalid.' };
   }
@@ -425,9 +427,11 @@ function adminQuizDescriptionUpdate(token: string, quizId: number, description: 
     return { error: 'User does not own this quiz.' };
   }
 
+  // Error Checking the description
   if (description.length > 100) {
     return { error: 'Description Too Long' };
   } else {
+  // If no errors, updating the quiz fields.
     findQuiz.description = description;
     findQuiz.timeLastEdited = date;
     return {};
