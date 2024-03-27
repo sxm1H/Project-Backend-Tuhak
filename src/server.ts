@@ -34,9 +34,7 @@ import {
   adminQuizQuestionUpdate,
   adminQuizRestore
 } from './quiz';
-import { getData, setData, counters, setCounters, getCounters } from './dataStore';
-
-
+import { getData, setData, setCounters, getCounters } from './dataStore';
 
 // Set up web app
 const app = express();
@@ -78,7 +76,6 @@ app.get('/echo', (req: Request, res: Response) => {
   const data = req.query.echo as string;
   return res.json(echo(data));
 });
-
 
 app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
@@ -123,7 +120,7 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
 });
 
 app.post('/v1/admin/quiz', (req: Request, res: Response) => {
-  const {token, name, description} = req.body;
+  const { token, name, description } = req.body;
   const result = adminQuizCreate(token, name, description);
 
   if ('error' in result) {
@@ -135,7 +132,7 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
 
   save();
   res.json(result);
-})
+});
 
 app.delete('/v1/admin/quiz/:quizId', (req: Request, res: Response) => {
   const token = req.query.token as string;
@@ -153,19 +150,18 @@ app.delete('/v1/admin/quiz/:quizId', (req: Request, res: Response) => {
 
   save();
   res.json(result);
-})
-
+});
 
 app.put('/v1/admin/quiz/:quizId/name', (req: Request, res: Response) => {
-  const {token, name} = req.body;
-  const quizId = parseInt(req.params.quizId)
+  const { token, name } = req.body;
+  const quizId = parseInt(req.params.quizId);
 
   const result = adminQuizNameUpdate(token, quizId, name);
 
   if ('error' in result) {
     if (result.error === 'Quiz ID does not refer to a quiz that this user owns.' ||
         result.error === 'Quiz ID does not refer to a valid quiz') {
-     return res.status(403).json(result);
+      return res.status(403).json(result);
     } else if (result.error === 'does not refer to valid logged in user session') {
       return res.status(401).json(result);
     } else {
@@ -175,33 +171,33 @@ app.put('/v1/admin/quiz/:quizId/name', (req: Request, res: Response) => {
 
   save();
   res.json(result);
-})
+});
 
 app.get('/v1/admin/user/details', (req: Request, res: Response) => {
-  const token = req.query.token as string
+  const token = req.query.token as string;
   const response = adminUserDetails(token);
-  
+
   if ('error' in response) {
     return res.status(401).json(response);
   }
 
   save();
   res.json(response);
-})
+});
 
 app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
-  const token = req.query.token as string
+  const token = req.query.token as string;
   const response = adminQuizTrashView(token);
-  if('error' in response) {
+  if ('error' in response) {
     return res.status(401).json(response);
   }
 
   save();
   res.json(response);
-})
+});
 
 app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
-  const {token, questionBody } = req.body;
+  const { token, questionBody } = req.body;
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
   const response = adminQuizQuestionUpdate(questionBody, token, quizId, questionId);
@@ -213,14 +209,13 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Respo
     } else {
       return res.status(400).json(response);
     }
-   
   }
 
   save();
   res.json(response);
 });
 app.put('/v1/admin/user/details', (req: Request, res: Response) => {
-  const  { token, email, nameFirst, nameLast } = req.body;
+  const { token, email, nameFirst, nameLast } = req.body;
   const response = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
 
   if ('error' in response) {
@@ -229,7 +224,7 @@ app.put('/v1/admin/user/details', (req: Request, res: Response) => {
 
   save();
   res.json(response);
-})
+});
 
 app.put('/v1/admin/user/password', (req: Request, res: Response) => {
   const { token, oldPassword, newPassword } = req.body;
@@ -253,7 +248,7 @@ app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
 
   if ('error' in response) {
     return res.status(401).json(response);
-  };
+  }
 
   save();
   res.json(response);
@@ -263,7 +258,7 @@ app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const token = req.query.token as string;
   const response = adminQuizInfo(token, quizId);
-  
+
   if ('error' in response) {
     if (response.error === 'Token invalid.') {
       return res.status(401).json(response);
@@ -273,7 +268,7 @@ app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
       return res.status(403).json(response);
     }
   }
-  
+
   save();
   res.json(response);
 });
@@ -293,10 +288,9 @@ app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
     }
   }
 
-
   save();
   res.json(response);
-})
+});
 
 app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   const { token } = req.body;
@@ -333,7 +327,7 @@ app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Re
 
 app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
-  const { token, userEmail } = req.body
+  const { token, userEmail } = req.body;
   const response = adminQuizTransfer(token, userEmail, quizId);
 
   if ('error' in response) {
@@ -345,17 +339,16 @@ app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
       return res.status(400).json(response);
     }
   }
-  
+
   save();
   res.json(response);
 });
-
 
 app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   const stringQuizIds = req.query.quizIds as string;
   const token = req.query.token as string;
   const response = adminQuizTrashEmpty(token, stringQuizIds);
-  
+
   if ('error' in response) {
     if (response.error === 'Token invalid') {
       return res.status(401).json(response);
@@ -370,13 +363,13 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   res.json(response);
 });
 
-app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response)=> {
+app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
-  const {token, newPosition} = req.body;
+  const { token, newPosition } = req.body;
 
   const response = adminQuizQuestionMove(quizId, questionId, token, newPosition);
-  
+
   if ('error' in response) {
     if (response.error === 'Token invalid.') {
       return res.status(401).json(response);
@@ -391,13 +384,12 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: 
 
   save();
   res.json(response);
-})
-
+});
 
 app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
-  const {token} = req.body;
+  const { token } = req.body;
 
   const response = adminQuizQuestionDuplicate(token, quizId, questionId);
 
@@ -417,7 +409,7 @@ app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
 
 app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
-  const {token} = req.body;
+  const { token } = req.body;
 
   const response = adminQuizRestore(token, quizId);
 
@@ -426,8 +418,8 @@ app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
       return res.status(401).json(response);
     } else if (response.error === 'Valid token, but user is not the owner of the quiz') {
       return res.status(403).json(response);
-    } else if (response.error === 'Quiz Id not currently in trash' 
-            || response.error === 'Quiz name of restored quiz already in use from active quiz') {
+    } else if (response.error === 'Quiz Id not currently in trash' ||
+            response.error === 'Quiz name of restored quiz already in use from active quiz') {
       return res.status(400).json(response);
     }
   }
@@ -435,7 +427,6 @@ app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   save();
   res.json(response);
 });
-
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

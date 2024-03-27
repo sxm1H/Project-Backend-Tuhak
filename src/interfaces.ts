@@ -98,4 +98,4 @@ export {
 };
 import {
   Question,
-} from "./dataStore"
+} from './dataStore';

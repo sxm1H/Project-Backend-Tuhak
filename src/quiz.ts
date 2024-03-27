@@ -2,7 +2,6 @@ import {
   ErrorObject,
   EmptyObject,
   QuizListReturnObject,
-  QuizListInfo,
   QuizInfoReturn,
   QuizId,
   QuizTrashReturnObject,
@@ -12,7 +11,6 @@ import {
 import {
   getData,
   Question,
-  Answer,
   counters,
 } from './dataStore';
 
@@ -33,7 +31,6 @@ function adminQuizNameUpdate(token: string, quizId: number, name: string): Error
   const isAlphanumeric = /^[a-zA-Z0-9 ]+$/.test(name);
   const date = Math.floor(Date.now() / 1000);
   let flag = false;
-
 
   for (const data of newdata.sessions) {
     if (token === data.token) {
@@ -104,10 +101,10 @@ function adminQuizNameUpdate(token: string, quizId: number, name: string): Error
 */
 function adminQuizRemove(token: string, quizId: number): ErrorObject | EmptyObject {
   const newdata = getData();
- 
+
   let flag = false;
   let currentUserId;
- 
+
   for (const data of newdata.sessions) {
     if (token === data.token) {
       currentUserId = data.userId;
@@ -115,13 +112,13 @@ function adminQuizRemove(token: string, quizId: number): ErrorObject | EmptyObje
       break;
     }
   }
- 
+
   if (!flag) {
     return {
       error: 'does not refer to valid logged in user session',
     };
   }
- 
+
   flag = false;
   for (let i = 0; i < newdata.quizzes.length; i++) {
     const data = newdata.quizzes[i];
@@ -139,13 +136,13 @@ function adminQuizRemove(token: string, quizId: number): ErrorObject | EmptyObje
       }
     }
   }
- 
+
   if (!flag) {
     return {
       error: 'Quiz ID does not refer to a valid quiz',
     };
   }
- 
+
   return { }; // Empty object
 }
 
@@ -159,8 +156,8 @@ function adminQuizRemove(token: string, quizId: number): ErrorObject | EmptyObje
  */
 function adminQuizList(token: string): ErrorObject | QuizListReturnObject {
   const newdata = getData();
-  const activeTokens = newdata.sessions
-  const searchToken = activeTokens.find(session => session.token  === token);
+  const activeTokens = newdata.sessions;
+  const searchToken = activeTokens.find(session => session.token === token);
 
   if (!searchToken) {
     return { error: 'invalid user Id' };
@@ -170,7 +167,7 @@ function adminQuizList(token: string): ErrorObject | QuizListReturnObject {
   const quizList = filteredQuizzes.map(quizzes => ({
     quizId: quizzes.quizId,
     name: quizzes.name
-  }))
+  }));
 
   return {
     quizzes: quizList
@@ -179,8 +176,8 @@ function adminQuizList(token: string): ErrorObject | QuizListReturnObject {
 
 function adminQuizTrashView(token: string): ErrorObject | QuizTrashReturnObject {
   const newdata = getData();
-  const activeTokens = newdata.sessions
-  const searchToken = activeTokens.find(session => session.token  === token);
+  const activeTokens = newdata.sessions;
+  const searchToken = activeTokens.find(session => session.token === token);
 
   if (!searchToken) {
     return { error: 'invalid user Id' };
@@ -198,7 +195,7 @@ function adminQuizTrashView(token: string): ErrorObject | QuizTrashReturnObject 
   const trashList = filteredQuizzes.map(trash => ({
     quizId: trash.quizId,
     name: trash.name
-  }))
+  }));
 
   return {
     quizzes: trashList
@@ -212,69 +209,66 @@ function adminQuizQuestionUpdate(questionBody: Question, token: string, quizId: 
   const findToken = data.sessions.find(session => session.token === token);
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
   const findQuestion = findQuiz.questions.find(question => question.questionId === questionId);
- 
+
   if (!findToken) {
-    return { error: 'Token invalid.'}
+    return { error: 'Token invalid.' };
   }
   if (!findQuiz) {
-    return { error: 'Quiz Id is invalid.'}
+    return { error: 'Quiz Id is invalid.' };
   }
   if (findQuiz.authUserId !== findToken.userId) {
     return { error: 'User does not own this quiz.' };
   }
-   if (!findQuestion) {
+  if (!findQuestion) {
     return { error: 'Questions not found.' };
   }
 
-
-
-  //Error Checks for the Question.
+  // Error Checks for the Question.
   if (questionBody.question.length > 50 || questionBody.question.length < 5) {
-    return { error: 'Question Length is not between 5 and 50.'};
+    return { error: 'Question Length is not between 5 and 50.' };
   } else if (questionBody.answers.length > 6 || questionBody.answers.length < 2) {
-    return { error: 'Number of Question Answers is not between 2 and 6.'};
+    return { error: 'Number of Question Answers is not between 2 and 6.' };
   } else if (questionBody.duration < 0) {
-    return { error: 'Question Duration is Not Positive.'};
+    return { error: 'Question Duration is Not Positive.' };
   } else if (questionBody.duration + findQuiz.duration > 180) {
-    return { error: 'Quiz Duration is Longer than 3 minutes.'};
+    return { error: 'Quiz Duration is Longer than 3 minutes.' };
   } else if (questionBody.points > 10 || questionBody.points < 1) {
-    return { error: 'Quiz Points is Not Between 1 and 10.'};
+    return { error: 'Quiz Points is Not Between 1 and 10.' };
   }
 
-  for (let answer of questionBody.answers) {
+  for (const answer of questionBody.answers) {
     if (answer.answer.length > 30 || answer.answer.length < 1) {
-      return { error: 'Question Answer Length is not Between 1 and 30.'};
+      return { error: 'Question Answer Length is not Between 1 and 30.' };
     }
   }
 
   for (let i = 0; i < questionBody.answers.length; i++) {
     for (let j = i + 1; j < questionBody.answers.length; j++) {
       if (questionBody.answers[i].answer === questionBody.answers[j].answer) {
-        return {error: 'There Are Duplicate '}
+        return { error: 'There Are Duplicate ' };
       }
     }
   }
   findQuestion.answers = questionBody.answers.map(answer => ({
-    answerId: counters.answerIdCounter, 
+    answerId: counters.answerIdCounter,
     answer: answer.answer,
-    colour: answer.colour, 
+    colour: answer.colour,
     correct: answer.correct,
   }));
- 
-   // Updating the question properties
-   findQuestion.duration = questionBody.duration;
-   findQuestion.points = questionBody.points;
-   findQuestion.question = questionBody.question;
+
+  // Updating the question properties
+  findQuestion.duration = questionBody.duration;
+  findQuestion.points = questionBody.points;
+  findQuestion.question = questionBody.question;
   // Recalculate the total duration of the quiz
 
   let totalDuration = 0;
-  for (let question of findQuiz.questions) {
+  for (const question of findQuiz.questions) {
     totalDuration += question.duration;
   }
   findQuiz.duration = totalDuration; // Update the total quiz duration
-  
-  findQuiz.timeLastEdited = date;
 
+  findQuiz.timeLastEdited = date;
 
   return {};
 }
@@ -346,7 +340,7 @@ function adminQuizInfo(token: string, quizId: number): ErrorObject | QuizInfoRet
 function adminQuizCreate(token: string, name: string, description: string): ErrorObject | QuizId {
   const newdata = getData();
   const activeTokens = newdata.sessions;
-  const searchToken = activeTokens.findIndex(session => session.token  === token);
+  const searchToken = activeTokens.findIndex(session => session.token === token);
   const isAlphanumeric = /^[a-zA-Z0-9 ]+$/.test(name);
   const date = Math.floor(Date.now() / 1000);
 
@@ -363,8 +357,8 @@ function adminQuizCreate(token: string, name: string, description: string): Erro
   }
 
   const courseData = newdata.quizzes;
-  let authUserId = activeTokens[searchToken].userId;
-  
+  const authUserId = activeTokens[searchToken].userId;
+
   for (const i of courseData) {
     if (i.authUserId === authUserId) {
       if (i.name === name) {
@@ -430,10 +424,10 @@ function adminQuizDescriptionUpdate(token: string, quizId: number, description: 
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
 
   if (!findToken) {
-    return { error: 'Token is Not Valid.'}
+    return { error: 'Token is Not Valid.' };
   }
   if (!findQuiz) {
-    return { error: 'Quiz Id is invalid.'}
+    return { error: 'Quiz Id is invalid.' };
   }
   if (findQuiz.authUserId !== findToken.userId) {
     return { error: 'Quiz Does Not Belong to User' };
@@ -450,7 +444,7 @@ function adminQuizDescriptionUpdate(token: string, quizId: number, description: 
 
 /**
   * adminQuizTransfer takes in the user's token, the quizId of the quiz they wish to transfer ownership of, and
-  * the email of the target user. If successful, the logged in user will no longer own the quiz, replaced by 
+  * the email of the target user. If successful, the logged in user will no longer own the quiz, replaced by
   * the user linked to the email.
   *
   * This function does some preliminary error checking for
@@ -468,7 +462,7 @@ function adminQuizDescriptionUpdate(token: string, quizId: number, description: 
   * @returns {object {}} Empty Object to indicidate that everything worked.
 */
 function adminQuizTransfer(token: string, userEmail: string, quizId: number): ErrorObject | EmptyObject {
-  let data = getData();
+  const data = getData();
 
   // Returns session object corresponding the given token.
   const findToken = data.sessions.find(session => session.token === token);
@@ -476,7 +470,7 @@ function adminQuizTransfer(token: string, userEmail: string, quizId: number): Er
   if (!findToken) {
     return { error: 'Token invalid.' };
   }
-  
+
   // Returns quiz object corresponding with given quizId.
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
   // Returns target user object corresponding to given userEmail.
@@ -492,12 +486,12 @@ function adminQuizTransfer(token: string, userEmail: string, quizId: number): Er
   } else if (findQuiz.authUserId !== findToken.userId) {
     return { error: 'User does not own this quiz.' };
   }
-  
+
   // Check if the user with userEmail owns any quizzes with the same name as the quiz corresponding with quizId
   for (const quiz of data.quizzes) {
     if (quiz.name === findQuiz.name) {
       if (quiz.authUserId === findTarget.userId) {
-        return { error: `${userEmail} already owns a quiz with the same name.`};
+        return { error: `${userEmail} already owns a quiz with the same name.` };
       }
     }
   }
@@ -509,7 +503,7 @@ function adminQuizTransfer(token: string, userEmail: string, quizId: number): Er
 }
 
 function getRandomColour(): string {
-  let random = Math.floor((Math.random() * (7 - 1) + 1));
+  const random = Math.floor((Math.random() * (7 - 1) + 1));
   if (random === 1) {
     return 'red';
   } else if (random === 2) {
@@ -534,56 +528,55 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody: Qu
   const findToken = data.sessions.find(ids => ids.token === token);
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
 
-  //Error Checks for Token and QuizID
+  // Error Checks for Token and QuizID
   if (!findToken) {
-    return { error: 'Token invalid.'}
+    return { error: 'Token invalid.' };
   }
   if (!findQuiz) {
-    return { error: 'Quiz Id is invalid.'}
+    return { error: 'Quiz Id is invalid.' };
   }
   if (findQuiz.authUserId !== findToken.userId) {
     return { error: 'User does not own this quiz.' };
   }
 
-  //Error Checks for the Question.
+  // Error Checks for the Question.
   if (questionBody.question.length > 50 || questionBody.question.length < 5) {
-    return { error: 'Question Length is not between 5 and 50.'};
+    return { error: 'Question Length is not between 5 and 50.' };
   } else if (questionBody.answers.length > 6 || questionBody.answers.length < 2) {
-    return { error: 'Number of Question Answers is not between 2 and 6.'};
+    return { error: 'Number of Question Answers is not between 2 and 6.' };
   } else if (questionBody.duration < 0) {
-    return { error: 'Question Duration is Not Positive.'};
+    return { error: 'Question Duration is Not Positive.' };
   } else if (questionBody.duration + findQuiz.duration > 180) {
-    return { error: 'Quiz Duration is Longer than 3 minutes.'};
+    return { error: 'Quiz Duration is Longer than 3 minutes.' };
   } else if (questionBody.points > 10 || questionBody.points < 1) {
-    return { error: 'Quiz Points is Not Between 1 and 10.'};
+    return { error: 'Quiz Points is Not Between 1 and 10.' };
   }
 
-  for (let answer of questionBody.answers) {
+  for (const answer of questionBody.answers) {
     if (answer.answer.length > 30 || answer.answer.length < 1) {
-      return { error: 'Question Answer Length is not Between 1 and 30.'};
+      return { error: 'Question Answer Length is not Between 1 and 30.' };
     }
   }
   for (let i = 0; i < questionBody.answers.length; i++) {
     for (let j = i + 1; j < questionBody.answers.length; j++) {
       if (questionBody.answers[i].answer === questionBody.answers[j].answer) {
-        return {error: 'There Are Duplicate '}
+        return { error: 'There Are Duplicate ' };
       }
     }
   }
-  //Setting Up the Question and Answers to be Pushed Onto The Datastore
-  let answerBody = [];
-  for (let answer of questionBody.answers) {
+  // Setting Up the Question and Answers to be Pushed Onto The Datastore
+  const answerBody = [];
+  for (const answer of questionBody.answers) {
     answerBody.push({
       answerId: counters.answerIdCounter,
       answer: answer.answer,
       colour: getRandomColour(),
       correct: answer.correct,
-    })
+    });
     counters.answerIdCounter++;
-  };
-  
+  }
 
-  let questionId = counters.questionIdCounter;
+  const questionId = counters.questionIdCounter;
 
   findQuiz.questions.push({
     questionId: questionId,
@@ -591,7 +584,7 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody: Qu
     duration: questionBody.duration,
     points: questionBody.points,
     answers: answerBody,
-  })
+  });
 
   counters.questionIdCounter++;
 
@@ -601,13 +594,13 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody: Qu
 
   return {
     questionId: questionId,
-  }
+  };
 }
 
 function adminQuizTrashEmpty(token: string, quizIds: string): EmptyObject | ErrorObject {
   const data = getData();
 
-  const arrayQuizIds = JSON.parse(quizIds) as number[]
+  const arrayQuizIds = JSON.parse(quizIds) as number[];
 
   for (const userQuizIds of arrayQuizIds) {
     const findIdInTrash = data.trash.find(ids => ids.quizId === userQuizIds);
@@ -625,7 +618,7 @@ function adminQuizTrashEmpty(token: string, quizIds: string): EmptyObject | Erro
     for (const trashQuizzes2 of data.trash) {
       if (userQuizIds === trashQuizzes2.quizId) {
         if (findToken.userId !== trashQuizzes2.authUserId) {
-          return { error: 'a QuizId refers to a quiz that this current user does not own'}
+          return { error: 'a QuizId refers to a quiz that this current user does not own' };
         }
       }
     }
@@ -643,39 +636,39 @@ function adminQuizQuestionMove(quizid: number, questionid: number, token: string
   const findToken = data.sessions.find(ids => ids.token === token);
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizid);
   if (!findToken) {
-    return {error: 'Token invalid.'}
-  };
+    return { error: 'Token invalid.' };
+  }
 
   if (!findQuiz) {
-    return {error: 'Quiz Id is invalid'}
-  };
+    return { error: 'Quiz Id is invalid' };
+  }
 
   if (findToken.userId !== findQuiz.authUserId) {
-    return {error: 'User does not own this quiz'}
-  };
+    return { error: 'User does not own this quiz' };
+  }
 
-  let questionsArray = findQuiz.questions;
-  const findQuestion = questionsArray.findIndex(ids => ids.questionId === questionid) 
+  const questionsArray = findQuiz.questions;
+  const findQuestion = questionsArray.findIndex(ids => ids.questionId === questionid);
 
   if (findQuestion === -1) {
-    return {error: 'Question id is invalid'}
+    return { error: 'Question id is invalid' };
   }
 
-  let quizlength = questionsArray.length;
+  const quizlength = questionsArray.length;
 
   if (newPosition < 0) {
-    return {error: 'New position cannot be negative'}
-  };
-
-  if (newPosition > (quizlength - 1)) {
-    return {error: 'New position cannot be greater than the length'}
-  };
-
-  if (newPosition === findQuestion) {
-    return {error: 'New position cannot be the same as current position'}
+    return { error: 'New position cannot be negative' };
   }
 
-  let movedquestion = questionsArray.splice(findQuestion, 1)[0];
+  if (newPosition > (quizlength - 1)) {
+    return { error: 'New position cannot be greater than the length' };
+  }
+
+  if (newPosition === findQuestion) {
+    return { error: 'New position cannot be the same as current position' };
+  }
+
+  const movedquestion = questionsArray.splice(findQuestion, 1)[0];
 
   questionsArray.splice(newPosition, 0, movedquestion);
 
@@ -690,12 +683,12 @@ function adminQuizQuestionDelete(token: string, quizId: number, questionId: numb
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
   const findQuizIndex = data.quizzes.findIndex(quiz => quiz.quizId === quizId);
 
-  //Error Checks for Token and QuizID
+  // Error Checks for Token and QuizID
   if (!findToken) {
-    return { error: 'Token invalid.'}
+    return { error: 'Token invalid.' };
   }
   if (!findQuiz) {
-    return { error: 'Quiz Id is invalid.'}
+    return { error: 'Quiz Id is invalid.' };
   }
   if (findQuiz.authUserId !== findToken.userId) {
     return { error: 'User does not own this quiz.' };
@@ -707,7 +700,7 @@ function adminQuizQuestionDelete(token: string, quizId: number, questionId: numb
     return { error: 'Question Invalid.' };
   }
 
-  //Deleting the Question
+  // Deleting the Question
   data.quizzes[findQuizIndex].questions.splice(findQuestionIndex, 1);
 
   return { };
@@ -717,83 +710,82 @@ function adminQuizQuestionDuplicate(token: string, quizId: number, questionId: n
   const data = getData();
   const findToken = data.sessions.find(ids => ids.token === token);
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
-  
+
   if (!findToken) {
-    return {error: 'Token invalid'}
-  };
+    return { error: 'Token invalid' };
+  }
 
   if (findToken.userId !== findQuiz.authUserId) {
-    return {error: 'User does not own this Quiz'}
-  };
+    return { error: 'User does not own this Quiz' };
+  }
 
   const questions = findQuiz.questions;
   const findQuestion = questions.findIndex(ids => ids.questionId === questionId);
 
   if (findQuestion === -1) {
-    return {error: 'Question id is invalid'}
-  };
+    return { error: 'Question id is invalid' };
+  }
 
-  //Get the question and create a duplicate object
-  let question = questions[findQuestion];
-  let duplicateQuestion = {...question}; 
+  // Get the question and create a duplicate object
+  const question = questions[findQuestion];
+  const duplicateQuestion = { ...question };
 
-  //inserts the duplicate question into the index next tothe orignal question
+  // inserts the duplicate question into the index next tothe orignal question
   questions.splice(findQuestion + 1, 0, duplicateQuestion);
- 
-  let date = Math.floor(Date.now()/1000);
+
+  const date = Math.floor(Date.now() / 1000);
   findQuiz.timeLastEdited = date;
-  let newQuestionId = counters.questionIdCounter++;
+  const newQuestionId = counters.questionIdCounter++;
   questions[findQuestion + 1].questionId = newQuestionId;
-  
-  //copies the Answers array for the specific question
-  let duplicateAnswers = JSON.parse(JSON.stringify(questions[findQuestion].answers))
-  
-  //Updates answerId for new answers in new duplicated question
+
+  // copies the Answers array for the specific question
+  const duplicateAnswers = JSON.parse(JSON.stringify(questions[findQuestion].answers));
+
+  // Updates answerId for new answers in new duplicated question
   questions[findQuestion + 1].answers = duplicateAnswers;
-  for (let answer of questions[findQuestion + 1].answers) {
+  for (const answer of questions[findQuestion + 1].answers) {
     answer.answerId = counters.answerIdCounter++;
   }
 
   findQuiz.duration += questions[findQuestion].duration;
 
   return {
-    newQuestionId : newQuestionId
-  }
+    newQuestionId: newQuestionId
+  };
 }
 function adminQuizRestore(token: string, quizId: number): ErrorObject | EmptyObject {
-
   const data = getData();
   const findToken = data.sessions.find(ids => ids.token === token);
   const time = Math.floor(Date.now() / 1000);
 
   if (!findToken) {
-    return { error: 'Token invalid.'};
+    return { error: 'Token invalid.' };
   }
 
-  const findQuizInTrash = data.trash.find(ids => ids.quizId === quizId) 
+  const findQuizInTrash = data.trash.find(ids => ids.quizId === quizId);
   if (!findQuizInTrash) {
-      return { error: 'Quiz Id not currently in trash' };
+    return { error: 'Quiz Id not currently in trash' };
   }
 
   for (const activeQuizzes of data.quizzes) {
     if (findQuizInTrash.name === activeQuizzes.name) {
-      return { error: 'Quiz name of restored quiz already in use from active quiz'};
+      return { error: 'Quiz name of restored quiz already in use from active quiz' };
     }
   }
 
   if (findQuizInTrash.authUserId !== findToken.userId) {
-    return { error: 'Valid token, but user is not the owner of the quiz'}
+    return { error: 'Valid token, but user is not the owner of the quiz' };
   }
 
   findQuizInTrash.timeLastEdited = time;
   data.quizzes.push(findQuizInTrash);
-  
+
   const findQuizIndex = data.trash.findIndex(trash => trash.quizId === quizId);
   data.trash.splice(findQuizIndex, 1);
 
   return {
-    
-  }
+
+  };
 }
 
 export {

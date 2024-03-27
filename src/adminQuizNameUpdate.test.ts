@@ -1,17 +1,8 @@
 import {
-  requestHelper,
   clear,
   adminAuthRegister,
-  adminAuthLogin,
-  adminUserDetails,
-  adminUserDetailsUpdate,
-  adminUserPasswordUpdate,
-  adminQuizList,
   adminQuizCreate,
-  adminQuizRemove,
-  adminQuizInfo,
   adminQuizNameUpdate,
-  adminQuizDescriptionUpdate
 } from './testHelpers';
 
 beforeEach(() => {
@@ -28,9 +19,9 @@ describe('adminQuizNameUpdate', () => {
       jsonBody: {
 
       }
-      });
+    });
   });
-/*
+  /*
   test('Comprehensive successful test case', () => {
     const user = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
     const quiz = adminQuizCreate(user.jsonBody.authUserId, 'QuizName', 'QuizDescription');
@@ -83,12 +74,12 @@ describe('adminQuizNameUpdate', () => {
     const quiz = adminQuizCreate(user.jsonBody.token, 'QuizName', 'QuizDescription');
 
     // 1234 being not a valid authUserId
-    expect(adminQuizNameUpdate(user.jsonBody.token.concat("hello"), quiz.jsonBody.quizId, 'newName')).toEqual({
+    expect(adminQuizNameUpdate(user.jsonBody.token.concat('hello'), quiz.jsonBody.quizId, 'newName')).toEqual({
       statusCode: 401,
       jsonBody: {
         error: expect.any(String)
       }
-  });
+    });
   });
 
   test('Quiz ID does not refer to a valid quiz.', () => {
@@ -121,7 +112,6 @@ describe('adminQuizNameUpdate', () => {
     const user = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
     const quiz = adminQuizCreate(user.jsonBody.token, 'QuizName', 'QuizDescription');
 
-
     // 🚫 is an emoji, therefore a invalid character
     expect(adminQuizNameUpdate(user.jsonBody.token, quiz.jsonBody.quizId, '🚫')).toEqual({
       statusCode: 400,
@@ -132,10 +122,8 @@ describe('adminQuizNameUpdate', () => {
   });
 
   test('Name is either less than 3 characters long or more than 30 characters long.', () => {
-
     const user = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
     const quiz = adminQuizCreate(user.jsonBody.token, 'QuizName', 'QuizDescription');
-
 
     // bb is two characters, therefore a invalid character
     expect(adminQuizNameUpdate(user.jsonBody.token, quiz.jsonBody.quizId, 'bb')).toEqual({
@@ -144,11 +132,9 @@ describe('adminQuizNameUpdate', () => {
         error: expect.any(String)
       }
     });
-    
   });
 
   test('Name is either less than 3 characters long or more than 30 characters long.', () => {
-
     const user = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
     const quiz = adminQuizCreate(user.jsonBody.token, 'QuizName', 'QuizDescription');
 
@@ -163,9 +149,9 @@ describe('adminQuizNameUpdate', () => {
 
   test('Name is already used by the current logged in user for another quiz.', () => {
     const user = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
-    const quizDuplicate = adminQuizCreate(user.jsonBody.token, 'duplicateName', 'quizDuplicateDescription');
+    adminQuizCreate(user.jsonBody.token, 'duplicateName', 'quizDuplicateDescription');
     const quiz = adminQuizCreate(user.jsonBody.token, 'duplicateName', 'quizDescription');
-    const error = adminQuizNameUpdate(user.jsonBody.token, quiz.jsonBody.quizId, 'duplicateName');
+    adminQuizNameUpdate(user.jsonBody.token, quiz.jsonBody.quizId, 'duplicateName');
     // duplicateName is already used
 
     expect(adminQuizNameUpdate(user.jsonBody.token, quiz.jsonBody.quizId, 'duplicateName')).toEqual({
@@ -176,4 +162,3 @@ describe('adminQuizNameUpdate', () => {
     });
   });
 });
-
