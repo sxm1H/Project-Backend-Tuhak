@@ -205,15 +205,16 @@ function adminQuizTrashView(token: string): ErrorObject | QuizTrashReturnObject 
   };
 }
 
-function adminQuizQuestionUpdate(questionBody: Question, token: string, quizId: number): ErrorObject | EmptyObject {
+function adminQuizQuestionUpdate(questionBody: Question, token: string, quizId: number, questionId: number): ErrorObject | EmptyObject {
   const data = getData();
   const date = Math.floor(Date.now() / 1000);
 
   const findToken = data.sessions.find(session => session.token === token);
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
-  const findQuestion = findQuiz.questions.find(question => question.questionId === questionBody.questionId);
+  console.log(quizId);
+  console.log(data.quizzes);
+  const findQuestion = findQuiz.questions.find(question => question.questionId === questionId);
  
-
   if (!findToken) {
     return { error: 'Token invalid.'}
   }
@@ -226,6 +227,15 @@ function adminQuizQuestionUpdate(questionBody: Question, token: string, quizId: 
    if (!findQuestion) {
     return { error: 'Questions not found.' };
   }
+
+  console.log("========================");
+  console.log(questionBody);
+  console.log(questionBody.question);
+  console.log(questionBody.duration);
+  console.log(questionBody.points);
+  console.log(questionBody.answers);
+  
+  console.log(questionBody.question.length);
 
   //Error Checks for the Question.
   if (questionBody.question.length > 50 || questionBody.question.length < 5) {
@@ -267,6 +277,7 @@ function adminQuizQuestionUpdate(questionBody: Question, token: string, quizId: 
    findQuestion.points = questionBody.points;
    findQuestion.question = questionBody.question;
   // Recalculate the total duration of the quiz
+
   let totalDuration = 0;
   for (let question of findQuiz.questions) {
     totalDuration += question.duration;
@@ -274,8 +285,9 @@ function adminQuizQuestionUpdate(questionBody: Question, token: string, quizId: 
   findQuiz.duration = totalDuration; // Update the total quiz duration
   
   findQuiz.timeLastEdited = date;
-  return {};
 
+
+  return {};
 }
 
 /**
@@ -596,6 +608,7 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody: Qu
 
   findQuiz.duration += questionBody.duration;
   findQuiz.timeLastEdited = date;
+  findQuiz.numQuestions++;
 
   return {
     questionId: questionId,

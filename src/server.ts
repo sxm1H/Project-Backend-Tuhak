@@ -200,9 +200,17 @@ app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
   res.json(response);
 })
 
-app.put('/v1/admin/quiz/:quizId/question/:questionid', (req: Request, res: Response) => {
-  const {token, quizId, questionid,questionBody } = req.body;
-  const response = adminQuizQuestionUpdate(questionBody.questionBody,token, quizId);
+app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
+  const {token, questionBody } = req.body;
+  const quizId = parseInt(req.params.quizid);
+  console.log('In server');
+  console.log(questionBody);
+  console.log(questionBody.question);
+  console.log(questionBody.duration);
+  console.log(questionBody.points);
+  console.log(questionBody.answers);
+  const questionId = parseInt(req.params.questionid);
+  const response = adminQuizQuestionUpdate(questionBody, token, quizId, questionId);
   if ('error' in response) {
     if (response.error === 'Token invalid.') {
       return res.status(401).json(response);
@@ -214,6 +222,7 @@ app.put('/v1/admin/quiz/:quizId/question/:questionid', (req: Request, res: Respo
    
   }
 
+  save();
   res.json(response);
 });
 app.put('/v1/admin/user/details', (req: Request, res: Response) => {
