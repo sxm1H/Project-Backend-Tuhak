@@ -8,18 +8,14 @@ import {
   adminAuthLogout
 } from './testHelpers';
 
+let token: string;
 beforeEach(() => {
   clear();
+
+  token = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo').jsonBody.token;
 });
 
 describe('Testing POST /v1/admin/auth/logout', () => {
-  let token: string;
-  beforeEach(() => {
-    const { jsonBody } = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo');
-
-    token = jsonBody.token;
-  });
-
   test('Successful logout', () => {
     const { statusCode, jsonBody } = adminAuthLogout(token);
 

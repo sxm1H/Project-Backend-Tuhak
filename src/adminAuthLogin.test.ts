@@ -6,12 +6,12 @@ import {
 
 beforeEach(() => {
   clear();
+
+  adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
 });
 
 describe('adminAuthLogin', () => {
   test('Successful auth login', () => {
-    adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
-
     adminAuthRegister('sami@gmail.com', 'sami1234', 'Sami', 'Hossein');
     adminAuthRegister('kyle1234@gmail.com', 'kyle1234', 'Kyle', 'Morley');
 
@@ -22,23 +22,17 @@ describe('adminAuthLogin', () => {
   });
 
   test('Email address does not exist', () => {
-    adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
     const { statusCode, jsonBody } = adminAuthLogin('DunYao@gmail.com', 'nick1234');
 
     expect(statusCode).toStrictEqual(400);
-    expect(jsonBody).toStrictEqual({
-      error: expect.any(String)
-    });
+    expect(jsonBody.error).toStrictEqual(expect.any(String));
   });
 
   test('Password is not correct for the given email.', () => {
-    adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
     const { statusCode, jsonBody } = adminAuthLogin('nick1234@gmail.com', 'notTheSamePassword');
 
     expect(statusCode).toStrictEqual(400);
-    expect(jsonBody).toStrictEqual({
-      error: expect.any(String)
-    });
+    expect(jsonBody.error).toStrictEqual(expect.any(String));
   });
 
   test.each([

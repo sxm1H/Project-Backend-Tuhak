@@ -5,23 +5,19 @@ import {
   adminQuizInfo,
 } from './testHelpers';
 
+let token: string;
+let quizId: number;
+let time: number;
 beforeEach(() => {
   clear();
+
+  token = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo').jsonBody.token;
+  quizId = adminQuizCreate(token, 'quiz1', 'lorem ipsum').jsonBody.quizId;
+
+  time = Math.floor(Date.now() / 1000);
 });
 
 describe('Testing GET /v1/admin/quiz/:quizid', () => {
-  let token: string;
-  let quizId: number;
-  let time: number;
-  beforeEach(() => {
-    const { jsonBody: reg } = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo');
-    const { jsonBody: create } = adminQuizCreate(reg.token, 'quiz1', 'lorem ipsum');
-
-    token = reg.token;
-    quizId = create.quizId;
-    time = Math.floor(Date.now() / 1000);
-  });
-
   test('Successfully retrieves info', () => {
     const { statusCode, jsonBody } = adminQuizInfo(token, quizId);
 
