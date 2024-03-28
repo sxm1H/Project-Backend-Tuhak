@@ -26,7 +26,7 @@ describe('Testing PUT /v1/admin/quiz/{quizid}/question/{questionid}/move', () =>
   test('New Position is less than 0', () => {
     const questionId = adminQuizQuestionCreate(quizId, token, 'cool question', 5, 5, [{ answer: 'Correct', correct: true }, { answer: 'Wrong', correct: false }]).jsonBody.questionId;
     const { statusCode, jsonBody } = adminQuizQuestionMove(quizId, questionId, token, -1);
-    
+
     expect(statusCode).toStrictEqual(400);
     expect(jsonBody.error).toStrictEqual(expect.any(String));
   });
@@ -34,7 +34,7 @@ describe('Testing PUT /v1/admin/quiz/{quizid}/question/{questionid}/move', () =>
   test('New Position is more than number of questions', () => {
     const questionId = adminQuizQuestionCreate(quizId, token, 'cool question', 5, 5, [{ answer: 'Correct', correct: true }, { answer: 'Wrong', correct: false }]).jsonBody.questionId;
     const { statusCode, jsonBody } = adminQuizQuestionMove(quizId, questionId, token, 2);
-    
+
     expect(statusCode).toStrictEqual(400);
     expect(jsonBody.error).toStrictEqual(expect.any(String));
   });
@@ -42,7 +42,7 @@ describe('Testing PUT /v1/admin/quiz/{quizid}/question/{questionid}/move', () =>
   test('New Position is the same position', () => {
     const questionId = adminQuizQuestionCreate(quizId, token, 'cool question', 5, 5, [{ answer: 'Correct', correct: true }, { answer: 'Wrong', correct: false }]).jsonBody.questionId;
     const { statusCode, jsonBody } = adminQuizQuestionMove(quizId, questionId, token, 0);
-    
+
     expect(statusCode).toStrictEqual(400);
     expect(jsonBody.error).toStrictEqual(expect.any(String));
   });
@@ -51,7 +51,7 @@ describe('Testing PUT /v1/admin/quiz/{quizid}/question/{questionid}/move', () =>
     const quest1 = adminQuizQuestionCreate(quizId, token, 'cool question', 5, 5, [{ answer: 'Correct', correct: true }, { answer: 'Wrong', correct: false }]);
     adminQuizQuestionCreate(quizId, token, 'cool question', 5, 4, [{ answer: 'Correct', correct: true }, { answer: 'Wrong', correct: false }]);
     const { statusCode, jsonBody } = adminQuizQuestionMove(quizId, quest1.jsonBody.questionId, token + 'POGGERS', 1);
-    
+
     expect(statusCode).toStrictEqual(401);
     expect(jsonBody.error).toStrictEqual(expect.any(String));
   });

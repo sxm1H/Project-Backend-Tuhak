@@ -1,4 +1,3 @@
-import { Token } from 'yaml/dist/parse/cst';
 import {
   clear,
   adminAuthRegister,

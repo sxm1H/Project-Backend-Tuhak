@@ -25,7 +25,7 @@ describe('Testing DELETE /v1/admin/quiz/:quizid/question/:questionid', () => {
       statusCode: 200,
     });
     expect(adminQuizInfo(token, quizId).jsonBody.questions).toStrictEqual([]);
-  })
+  });
 
   test('Test Successful: Successfully Deleted a Question from a Quiz', () => {
     expect(adminQuizQuestionDelete(token, quizId, questionId)).toStrictEqual({

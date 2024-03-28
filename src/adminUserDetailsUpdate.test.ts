@@ -86,7 +86,7 @@ describe('adminUserDetailsUpdate', () => {
   test.each([
     ['hehegmail.com', 'Nicktheless', 'sheesh'],
     ['', 'Nicktheless', 'sheesh']
-  ])('Invalid email: ${email}', (email, nameFirst, nameLast) => {
+  ])('Testing invalid email', (email, nameFirst, nameLast) => {
     const { statusCode, jsonBody } = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
 
     expect(statusCode).toStrictEqual(400);
@@ -97,7 +97,7 @@ describe('adminUserDetailsUpdate', () => {
     ['nick@gmail.com', '', 'sheesh'],
     ['nick@gmail.com', '109328674', 'sheesh'],
     ['nick@gmail.com', 'asdjalkdsjflaskjdgflasjdghffalksdjfalsdkjfh', 'sheesh']
-  ])('Invalid first name: ${nameFirst}', (email, nameFirst, nameLast) => {
+  ])('Testing invalid first name', (email, nameFirst, nameLast) => {
     const { statusCode, jsonBody } = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
 
     expect(statusCode).toStrictEqual(400);
@@ -108,7 +108,7 @@ describe('adminUserDetailsUpdate', () => {
     ['nick@gmail.com', 'Nicktheless', ''],
     ['nick@gmail.com', 'Nicktheless', '10923864'],
     ['nick@gmail.com', 'Nicktheless', 'akjdshfgkasdhgfkashdgflasdhfglasdfglasdfhg']
-  ])('Invalid last name: ${nameLast}', (email, nameFirst, nameLast) => {
+  ])('Testing invalid last name', (email, nameFirst, nameLast) => {
     const { statusCode, jsonBody } = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
 
     expect(statusCode).toStrictEqual(400);
@@ -120,5 +120,5 @@ describe('adminUserDetailsUpdate', () => {
 
     expect(statusCode).toStrictEqual(401);
     expect(jsonBody.error).toStrictEqual(expect.any(String));
-  }); 
+  });
 });
