@@ -2,7 +2,6 @@ import { getData, counters } from './dataStore';
 import validator from 'validator';
 import {
   ErrorObject,
-  EmptyObject,
   TokenReturn,
   UserDetailsReturnObject,
   UserData
@@ -154,7 +153,7 @@ function adminUserDetails(token: string): ErrorObject | UserDetailsReturnObject 
   * @returns  {string} if there is an error occurs error string returned
   * @returns  {} if function is succesful returns empty object
 */
-function adminUserDetailsUpdate(token: string, email: string, nameFirst: string, nameLast: string): ErrorObject | EmptyObject {
+function adminUserDetailsUpdate(token: string, email: string, nameFirst: string, nameLast: string): ErrorObject | Record<string, never> {
   const data = getData();
 
   const sessionDetails = data.sessions.find(sessionId => sessionId.token === token);
@@ -248,7 +247,7 @@ function adminUserDetailsUpdate(token: string, email: string, nameFirst: string,
   * @returns { Error Object } Error Object with information regarding the error.
 */
 function passwordChecker(userDetails: UserData, oldPassword: string, newPassword: string): ErrorObject {
-  //Error Checks for the passwords.
+  // Error Checks for the passwords.
   if (oldPassword === newPassword) {
     return {
       error: 'New Password is the same as old passward.'
@@ -267,7 +266,7 @@ function passwordChecker(userDetails: UserData, oldPassword: string, newPassword
     };
   }
 
-  //Checking whether there is at least one letter and one number.
+  // Checking whether there is at least one letter and one number.
   let letterCounter = 0;
   let numberCounter = 0;
   for (let i = 0; i < newPassword.length; i++) {
@@ -287,7 +286,7 @@ function passwordChecker(userDetails: UserData, oldPassword: string, newPassword
       error: 'New Password must have at least one number and one letter.'
     };
   }
-  
+
   return {
     error: 'No Error'
   };
@@ -312,7 +311,7 @@ function passwordChecker(userDetails: UserData, oldPassword: string, newPassword
   * @returns {object {error: string}} Error Object with information regarding the error.
   * @returns {} Empty Object to indicidate that everything worked.
 */
-function adminUserPasswordUpdate(token: string, oldPassword: string, newPassword: string): ErrorObject | EmptyObject {
+function adminUserPasswordUpdate(token: string, oldPassword: string, newPassword: string): ErrorObject | Record<string, never> {
   const data = getData();
   // Finding the token.
   const findToken = data.sessions.find(sessionId => sessionId.token === token);
@@ -357,7 +356,7 @@ function adminUserPasswordUpdate(token: string, oldPassword: string, newPassword
   * @returns {object {error: string}} Error Object with information regarding the error.
   * @returns {object {}} Empty Object to indicidate that everything worked.
 */
-function adminAuthLogout(token: string): ErrorObject | EmptyObject {
+function adminAuthLogout(token: string): ErrorObject | Record<string, never> {
   const data = getData();
   const findTokenIndex = data.sessions.findIndex(session => session.token === token);
 

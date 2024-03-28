@@ -1,6 +1,5 @@
 import {
   ErrorObject,
-  EmptyObject,
   QuizListReturnObject,
   QuizInfoReturn,
   QuizId,
@@ -25,7 +24,7 @@ import {
   * @returns {object { }} returns empty object if no error and parameters match specified criteria.
   * @returns {object {error: string}} returns specified error message
 */
-function adminQuizNameUpdate(token: string, quizId: number, name: string): ErrorObject | EmptyObject {
+function adminQuizNameUpdate(token: string, quizId: number, name: string): ErrorObject | Record<string, never> {
   const newdata = getData();
   let searchUserId;
   const isAlphanumeric = /^[a-zA-Z0-9 ]+$/.test(name);
@@ -99,7 +98,7 @@ function adminQuizNameUpdate(token: string, quizId: number, name: string): Error
   * @returns {object { }} returns empty object if function went successful
   * @returns {object {error: string}} returns specified error message
 */
-function adminQuizRemove(token: string, quizId: number): ErrorObject | EmptyObject {
+function adminQuizRemove(token: string, quizId: number): ErrorObject | Record<string, never> {
   const newdata = getData();
 
   let flag = false;
@@ -202,7 +201,7 @@ function adminQuizTrashView(token: string): ErrorObject | QuizTrashReturnObject 
   };
 }
 
-function adminQuizQuestionUpdate(questionBody: Question, token: string, quizId: number, questionId: number): ErrorObject | EmptyObject {
+function adminQuizQuestionUpdate(questionBody: Question, token: string, quizId: number, questionId: number): ErrorObject | Record<string, never> {
   const data = getData();
   const date = Math.floor(Date.now() / 1000);
 
@@ -408,7 +407,7 @@ function adminQuizCreate(token: string, name: string, description: string): Erro
  * @returns { Error Object } -  Object containing the key 'error' and the value being the relevant error message
  * @returns { Empty Object } - Empty Object to indicate succesful addition of the question.
 */
-function adminQuizDescriptionUpdate(token: string, quizId: number, description: string): ErrorObject | EmptyObject {
+function adminQuizDescriptionUpdate(token: string, quizId: number, description: string): ErrorObject | Record<string, never> {
   const data = getData();
   const date = Math.floor(Date.now() / 1000);
 
@@ -457,7 +456,7 @@ function adminQuizDescriptionUpdate(token: string, quizId: number, description: 
   * @returns {object {error: string}} Error Object with information regarding the error.
   * @returns {object {}} Empty Object to indicidate that everything worked.
 */
-function adminQuizTransfer(token: string, userEmail: string, quizId: number): ErrorObject | EmptyObject {
+function adminQuizTransfer(token: string, userEmail: string, quizId: number): ErrorObject | Record<string, never> {
   const data = getData();
 
   // Returns session object corresponding the given token.
@@ -532,11 +531,11 @@ function getRandomColour(): string {
  * Following the error checks, the question will then be pushed onto the relevant quiz's question
  * array, and the quiz duration, last edited and number of questions field in the quiz object
  * is then updated.
- * 
+ *
  * @param { number } quizId - Contains the relevant Quiz Id.
  * @param { string } token - Contains the user's current session token.
  * @param { Question } questionBody - An object containing question, duration, points and answers.
- * 
+ *
  * @returns { Error Object } -  Object containing the key 'error' and the value being the relevant error message
  * @returns { Empty Object } - Empty Object to indicate succesful addition of the question.
  */
@@ -545,7 +544,7 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody: Qu
   const data = getData();
   const date = Math.floor(Date.now() / 1000);
 
-  //Obtaining the relevant quiz and relevant authUserId.
+  // Obtaining the relevant quiz and relevant authUserId.
   const findToken = data.sessions.find(ids => ids.token === token);
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
 
@@ -620,7 +619,7 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody: Qu
   };
 }
 
-function adminQuizTrashEmpty(token: string, quizIds: string): EmptyObject | ErrorObject {
+function adminQuizTrashEmpty(token: string, quizIds: string): Record<string, never> | ErrorObject {
   const data = getData();
 
   const arrayQuizIds = JSON.parse(quizIds) as number[];
@@ -655,7 +654,7 @@ function adminQuizTrashEmpty(token: string, quizIds: string): EmptyObject | Erro
   return {};
 }
 
-function adminQuizQuestionMove(quizid: number, questionid: number, token: string, newPosition: number): EmptyObject | ErrorObject {
+function adminQuizQuestionMove(quizid: number, questionid: number, token: string, newPosition: number): Record<string, never> | ErrorObject {
   const data = getData();
   const findToken = data.sessions.find(ids => ids.token === token);
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizid);
@@ -703,23 +702,23 @@ function adminQuizQuestionMove(quizid: number, questionid: number, token: string
 
 /**
  * adminQuizQuestionDelete takens in the user's current token, relevant quizId and the questionId
- * of the question they want to change. Function begins by iteration through the sessions array and 
+ * of the question they want to change. Function begins by iteration through the sessions array and
  * the quizzes array to find the relevant authUserId and quiz. Then it does the following error checks:
  * 1. Is the token valid ?
  * 2. Is the Quiz Id valid ?
  * 3. Does the User Own This Quiz ?
  * Following that, the relevant question's index is obtained and is then checked to see whether the question exists.
  * If it does, the question is then deleted.
- * 
+ *
  * @param { string } token - Contains the user's current session token.
  * @param { number } quizId - Contains the relevant quiz Id.
  * @param { number } questionId - Contains the relevant question Id.
- * 
+ *
  * @returns { Error Object } -  Object containing the key 'error' and the value being the relevant error message
  * @returns { Empty Object } - Empty Object to indicate succesful addition of the question.
  */
 
-function adminQuizQuestionDelete(token: string, quizId: number, questionId: number): ErrorObject | EmptyObject {
+function adminQuizQuestionDelete(token: string, quizId: number, questionId: number): ErrorObject | Record<string, never> {
   const data = getData();
 
   // Finds the authUserId, quiz and that quiz's index.
@@ -741,7 +740,7 @@ function adminQuizQuestionDelete(token: string, quizId: number, questionId: numb
   // Finds the relevant question's index.
   const findQuestionIndex = data.quizzes[findQuizIndex].questions.findIndex(question => question.questionId === questionId);
 
-  //If it doesn't exist, returns an error.
+  // If it doesn't exist, returns an error.
   if (findQuestionIndex === -1) {
     return { error: 'Question Invalid.' };
   }
@@ -799,7 +798,7 @@ function adminQuizQuestionDuplicate(token: string, quizId: number, questionId: n
     newQuestionId: newQuestionId
   };
 }
-function adminQuizRestore(token: string, quizId: number): ErrorObject | EmptyObject {
+function adminQuizRestore(token: string, quizId: number): ErrorObject | Record<string, never> {
   const data = getData();
   const findToken = data.sessions.find(ids => ids.token === token);
   const time = Math.floor(Date.now() / 1000);

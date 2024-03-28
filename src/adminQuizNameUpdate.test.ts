@@ -74,7 +74,7 @@ describe('adminQuizNameUpdate', () => {
     const quiz = adminQuizCreate(user.jsonBody.token, 'QuizName', 'QuizDescription');
 
     // 1234 being not a valid authUserId
-    expect(adminQuizNameUpdate(user.jsonBody.token.concat('hello'), quiz.jsonBody.quizId, 'newName')).toEqual({
+    expect(adminQuizNameUpdate(user.jsonBody.token + 'hello', quiz.jsonBody.quizId, 'newName')).toEqual({
       statusCode: 401,
       jsonBody: {
         error: expect.any(String)

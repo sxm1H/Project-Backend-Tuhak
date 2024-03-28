@@ -2,10 +2,6 @@ interface ErrorObject {
   error: string;
 }
 
-interface EmptyObject {
-
-}
-
 interface AdminId {
   authUserId: number;
 }
@@ -71,7 +67,7 @@ interface QuizId {
 
 interface RequestHelperReturnType {
   statusCode: number;
-  jsonBody?: Record<string, any>;
+  jsonBody?: Record<string, never>;
   error?: string;
 }
 
@@ -81,7 +77,6 @@ interface DuplicateQuestionReturn {
 
 export {
   ErrorObject,
-  EmptyObject,
   AdminId,
   TokenReturn,
   UserDetails,

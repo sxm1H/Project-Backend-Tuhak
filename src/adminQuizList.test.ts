@@ -20,7 +20,7 @@ describe('Test GET /v1/admin/quiz/list', () => {
 
   test('non valid user id with users', () => {
     const { jsonBody: { token } } = adminAuthRegister('pain@gmail.com', 'Wowowowow123', 'Alex', 'Hirsch');
-    const { statusCode, jsonBody } = adminQuizList(token.concat('Hello'));
+    const { statusCode, jsonBody } = adminQuizList(token + 'Hello');
     expect(statusCode).toStrictEqual(401);
     expect(jsonBody).toStrictEqual({
       error: expect.any(String)

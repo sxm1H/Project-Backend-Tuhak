@@ -66,7 +66,7 @@ describe('Test GET /v1/admin/quiz/list', () => {
     const { jsonBody: { token } } = adminAuthRegister('fakerT1@gmail.com', 'pass123word', 'Smith', 'John');
     const { jsonBody: { quizId } } = adminQuizCreate(token, name, description);
     adminQuizRemove(token, quizId);
-    const { statusCode, jsonBody } = adminQuizTrashView(token + 1);
+    const { statusCode, jsonBody } = adminQuizTrashView(token + '1');
     expect(statusCode).toStrictEqual(401);
     expect(jsonBody).toStrictEqual({
       error: expect.any(String)

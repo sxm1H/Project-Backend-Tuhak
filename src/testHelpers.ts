@@ -8,7 +8,7 @@ const SERVER_URL = `${url}:${port}`;
 // 'wrapper.test.ts' in the week5-server-example respository.
 interface RequestHelperReturnType {
     statusCode: number;
-    jsonBody?: Record<string, any>;
+    jsonBody?: Record<string, never>;
     error?: string;
 }
 
@@ -34,7 +34,7 @@ const requestHelper = (
       jsonBody: JSON.parse(bodyString),
       statusCode: res.statusCode,
     };
-  } catch (error: any) {
+  } catch (error) {
     bodyObject = {
       error: `\
   Server responded with ${res.statusCode}, but body is not JSON!
