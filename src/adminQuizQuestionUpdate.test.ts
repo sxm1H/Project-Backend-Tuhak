@@ -77,11 +77,13 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
                 answerId: expect.any(Number),
                 answer: 'Valorant',
                 correct: true,
+                colour: expect.any(String)
               },
               {
                 answerId: expect.any(Number),
                 answer: 'Video Games',
                 correct: false,
+                colour: expect.any(String)
               }
             ],
           }
@@ -124,16 +126,19 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
                 answerId: expect.any(Number),
                 answer: 'a1update',
                 correct: true,
+                colour: expect.any(String)
               },
               {
                 answerId: expect.any(Number),
                 answer: 'a2update',
                 correct: false,
+                colour: expect.any(String)
               },
               {
                 answerId: expect.any(Number),
                 answer: 'a3update',
                 correct: false,
+                colour: expect.any(String)
               }
             ],
           },
@@ -147,11 +152,13 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
                 answerId: expect.any(Number),
                 answer: 'a1update',
                 correct: true,
+                colour: expect.any(String)
               },
               {
                 answerId: expect.any(Number),
                 answer: 'a2update',
                 correct: false,
+                colour: expect.any(String)
               }
             ],
           },
@@ -165,11 +172,13 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
                 answerId: expect.any(Number),
                 answer: 'a1update',
                 correct: true,
+                colour: expect.any(String)
               },
               {
                 answerId: expect.any(Number),
                 answer: 'a2update',
                 correct: false,
+                colour: expect.any(String)
               }
             ],
           },
@@ -183,11 +192,13 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
                 answerId: expect.any(Number),
                 answer: 'a1update',
                 correct: true,
+                colour: expect.any(String)
               },
               {
                 answerId: expect.any(Number),
                 answer: 'a2update',
                 correct: false,
+                colour: expect.any(String)
               }
             ],
           },
