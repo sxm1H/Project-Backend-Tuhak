@@ -4,6 +4,7 @@ import {
   adminQuizCreate,
   adminQuizQuestionDelete,
   adminQuizQuestionCreate,
+  adminQuizInfo,
 } from './testHelpers';
 
 beforeEach(() => {
@@ -19,6 +20,15 @@ describe('Testing DELETE /v1/admin/quiz/:quizid/question/:questionid', () => {
     quizId = adminQuizCreate(token, 'Australian Cities', 'lorem ipsum').jsonBody.quizId;
     questionId = adminQuizQuestionCreate(quizId, token, 'Question1', 5, 5, [{ answer: 'Melb', correct: true }, { answer: 'Syd', correct: false }]).jsonBody.questionId;
   });
+  
+  test('Comprehensive Test Successful: Successfully Deleting a Question from a Quiz, then Checking QuizInfo', () => {
+    expect(adminQuizQuestionDelete(token, quizId, questionId)).toStrictEqual({
+      jsonBody: {},
+      statusCode: 200,
+    });
+    expect(adminQuizInfo(token, quizId).jsonBody.questions).toStrictEqual([]);
+  })
+
   test('Test Successful: Successfully Deleted a Question from a Quiz', () => {
     expect(adminQuizQuestionDelete(token, quizId, questionId)).toStrictEqual({
       jsonBody: {},
