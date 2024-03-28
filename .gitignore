@@ -5,8 +5,6 @@ build
 coverage/
 .nyc_output
 results/
-counters.json
-database.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -6,15 +6,17 @@ import {
   adminQuizList,
 } from './testHelpers';
 
+let token: string;
+let quizId: number;
 beforeEach(() => {
   clear();
+
+  token = adminAuthRegister('nick@gmail.com', 'nick1234', 'Nicholas', 'Sebastian').jsonBody.token;
+  quizId = adminQuizCreate(token, 'Cities of Australia', 'good quiz').jsonBody.quizId;
 });
 
 describe('adminQuizRemove', () => {
   test('Successful test', () => {
-    const { jsonBody: { token } } = adminAuthRegister('nick@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
-    const { jsonBody: { quizId } } = adminQuizCreate(token, 'Cities of Australia', 'good quiz');
-
     expect(adminQuizRemove(token, quizId)).toStrictEqual({
       jsonBody: {},
       statusCode: 200,
@@ -22,9 +24,6 @@ describe('adminQuizRemove', () => {
   });
 
   test('authUserId is not a valid user', () => {
-    const { jsonBody: { token } } = adminAuthRegister('nick@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
-    const { jsonBody: { quizId } } = adminQuizCreate(token, 'Cities of Australia', 'good quiz');
-
     expect(adminQuizRemove(token + 'hello', quizId)).toStrictEqual({
       statusCode: 401,
       jsonBody: { error: expect.any(String) }
@@ -32,8 +31,6 @@ describe('adminQuizRemove', () => {
   });
 
   test('QuizId is not a valid quiz.', () => {
-    const { jsonBody: { token } } = adminAuthRegister('nick@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
-
     expect(adminQuizRemove(token, 1234)).toStrictEqual({
       statusCode: 403,
       jsonBody: { error: expect.any(String) }
@@ -41,61 +38,56 @@ describe('adminQuizRemove', () => {
   });
 
   test('Quiz ID does not refer to a quiz that this user owns.', () => {
-    const { jsonBody: { token } } = adminAuthRegister('nick@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
-    const token1 = adminAuthRegister('DunYao@gmail.com', 'DunYao1234', 'DunYao', 'Foo');
-    const { jsonBody: { quizId } } = adminQuizCreate(token, 'Cities of Australia', 'good quiz'); // nick's quiz
+    const token1 = adminAuthRegister('DunYao@gmail.com', 'DunYao1234', 'DunYao', 'Foo').jsonBody.token;
 
-    expect(adminQuizRemove(token1.jsonBody.token, quizId)).toStrictEqual({
+    expect(adminQuizRemove(token1, quizId)).toStrictEqual({
       statusCode: 403,
       jsonBody: { error: expect.any(String) }
     });
   });
 
   test('Successful quiz remove - comprehensive test', () => {
-    const userId = adminAuthRegister('nick@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
-    const quiz = adminQuizCreate(userId.jsonBody.token, 'Cities of Australia', 'good quiz');
-
-    expect(adminQuizList(userId.jsonBody.token)).toStrictEqual({
+    expect(adminQuizList(token)).toStrictEqual({
       statusCode: 200,
       jsonBody: {
         quizzes: [
           {
-            quizId: quiz.jsonBody.quizId,
+            quizId: quizId,
             name: 'Cities of Australia'
           }
         ]
       }
     });
 
-    const quizToDelete = adminQuizCreate(userId.jsonBody.token, 'i will be gone soon', 'goodbye');
+    const quizId2 = adminQuizCreate(token, 'i will be gone soon', 'goodbye').jsonBody.quizId;
 
-    expect(adminQuizList(userId.jsonBody.token)).toStrictEqual({
+    expect(adminQuizList(token)).toStrictEqual({
       statusCode: 200,
       jsonBody: {
         quizzes: [
           {
-            quizId: quiz.jsonBody.quizId,
+            quizId: quizId,
             name: 'Cities of Australia'
           },
           {
-            quizId: quizToDelete.jsonBody.quizId,
+            quizId: quizId2,
             name: 'i will be gone soon'
           }
         ]
       }
     });
 
-    expect(adminQuizRemove(userId.jsonBody.token, quizToDelete.jsonBody.quizId)).toStrictEqual({
+    expect(adminQuizRemove(token, quizId2)).toStrictEqual({
       statusCode: 200,
       jsonBody: {}
     });
 
-    expect(adminQuizList(userId.jsonBody.token)).toStrictEqual({
+    expect(adminQuizList(token)).toStrictEqual({
       statusCode: 200,
       jsonBody: {
         quizzes: [
           {
-            quizId: quiz.jsonBody.quizId,
+            quizId: quizId,
             name: 'Cities of Australia'
           }
         ]

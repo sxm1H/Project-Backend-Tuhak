@@ -7,19 +7,16 @@ import {
   adminQuizQuestionDuplicate,
 } from './testHelpers';
 
+let token: string;
+let quizId: number;
 beforeEach(() => {
   clear();
+
+  token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody.token;
+  quizId = adminQuizCreate(token, 'cool quiz', 'cool desc').jsonBody.quizId;
 });
 
 describe('Testing POST /v1/admin/quiz/:quizid/question/:questionid/duplicate', () => {
-  let token: string;
-  let quizId: number;
-
-  beforeEach(() => {
-    token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody.token;
-    quizId = adminQuizCreate(token, 'cool quiz', 'cool desc').jsonBody.quizId;
-  });
-
   test('Question Id does not refer to valid question', () => {
     const { statusCode, jsonBody } = adminQuizQuestionDuplicate(token, quizId, 1);
     expect(statusCode).toStrictEqual(400);

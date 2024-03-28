@@ -7,20 +7,18 @@ import {
   adminQuizQuestionUpdate,
 } from './testHelpers';
 
+let token: string;
+let quizId: number;
+let questionId: number;
 beforeEach(() => {
   clear();
+
+  token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody.token;
+  quizId = adminQuizCreate(token, 'Australian Cities', 'lorem ipsum').jsonBody.quizId;
+  questionId = adminQuizQuestionCreate(quizId, token, 'What is the best city in Australia', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]).jsonBody.questionId;
 });
 
 describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
-  let token: string;
-  let quizId: number;
-  let questionId: number;
-  beforeEach(() => {
-    token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody.token;
-    quizId = adminQuizCreate(token, 'Australian Cities', 'lorem ipsum').jsonBody.quizId;
-    questionId = adminQuizQuestionCreate(quizId, token, 'What is the best city in Australia', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]).jsonBody.questionId;
-  });
-
   test('Test Successful: Successfully Updating One Question', () => {
     const question = 'What is the best things to do in your spare time';
     const duration = 4;

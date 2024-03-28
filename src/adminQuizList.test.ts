@@ -5,30 +5,21 @@ import {
   adminQuizCreate,
 } from './testHelpers';
 
+let token: string;
 beforeEach(() => {
   clear();
+
+  token = adminAuthRegister('pain@gmail.com', 'Wowowowow123', 'Alex', 'Hirsch').jsonBody.token;
 });
 
 describe('Test GET /v1/admin/quiz/list', () => {
-  test('Non valid User Id', () => {
-    const { statusCode, jsonBody } = adminQuizList('999999999999999');
+  test('Token invalid', () => {
+    const { statusCode, jsonBody } = adminQuizList(token + '1');
     expect(statusCode).toStrictEqual(401);
-    expect(jsonBody).toStrictEqual({
-      error: expect.any(String)
-    });
-  });
-
-  test('non valid user id with users', () => {
-    const { jsonBody: { token } } = adminAuthRegister('pain@gmail.com', 'Wowowowow123', 'Alex', 'Hirsch');
-    const { statusCode, jsonBody } = adminQuizList(token + 'Hello');
-    expect(statusCode).toStrictEqual(401);
-    expect(jsonBody).toStrictEqual({
-      error: expect.any(String)
-    });
+    expect(jsonBody.error).toStrictEqual(expect.any(String));
   });
 
   test('User Id Quiz List successfully accessed', () => {
-    const { jsonBody: { token } } = adminAuthRegister('pogchamp@gmail.com', 'thisisvalidpassword1', 'Steve', 'Jobs');
     const { statusCode, jsonBody } = adminQuizList(token);
     expect(statusCode).toStrictEqual(200);
     expect(jsonBody).toStrictEqual({

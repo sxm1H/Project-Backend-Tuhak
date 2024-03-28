@@ -6,18 +6,16 @@ import {
   adminQuizInfo,
 } from './testHelpers';
 
+let token: string;
+let quizId: number;
 beforeEach(() => {
   clear();
+
+  token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody.token;
+  quizId = adminQuizCreate(token, 'Australian Cities', 'lorem ipsum').jsonBody.quizId;
 });
 
 describe('Testing PUT v1/admin/quiz/:quizid/description', () => {
-  let token: string;
-  let quizId: number;
-  beforeEach(() => {
-    token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody.token;
-    quizId = adminQuizCreate(token, 'Australian Cities', 'lorem ipsum').jsonBody.quizId;
-  });
-
   test('Comprehensive Test Successful: Using Quiz Info to check whether the desc has been updated', () => {
     expect(adminQuizDescriptionUpdate(token, quizId, 'lorem ipsum decorum')).toStrictEqual({
       jsonBody: { },

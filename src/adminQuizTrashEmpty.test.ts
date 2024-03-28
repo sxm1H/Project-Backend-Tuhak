@@ -7,21 +7,19 @@ import {
   adminQuizList,
 } from './testHelpers';
 
+let token: string;
+let quizId: number;
 beforeEach(() => {
   clear();
+
+  const { jsonBody: reg } = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo');
+  const { jsonBody: create } = adminQuizCreate(reg.token, 'quiz1', 'lorem ipsum');
+
+  token = reg.token;
+  quizId = create.quizId;
 });
 
 describe('Testing DELETE /v1/admin/quiz/trash/empty', () => {
-  let token: string;
-  let quizId: number;
-  beforeEach(() => {
-    const { jsonBody: reg } = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo');
-    const { jsonBody: create } = adminQuizCreate(reg.token, 'quiz1', 'lorem ipsum');
-
-    token = reg.token;
-    quizId = create.quizId;
-  });
-
   test('Successfully emptys trash', () => {
     expect(adminQuizList(token)).toStrictEqual({
       statusCode: 200,
