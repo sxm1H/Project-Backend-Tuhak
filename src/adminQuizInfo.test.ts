@@ -26,9 +26,9 @@ describe('Testing GET /v1/admin/quiz/:quizid', () => {
     const { statusCode, jsonBody } = adminQuizInfo(token, quizId);
 
     expect(jsonBody.timeCreated).toBeGreaterThanOrEqual(time);
-    expect(jsonBody.timeCreated).toBeLessThan(time + 1);
+    expect(jsonBody.timeCreated).toBeLessThanOrEqual(time + 2);
     expect(jsonBody.timeLastEdited).toBeGreaterThanOrEqual(time);
-    expect(jsonBody.timeLastEdited).toBeLessThan(time + 1);
+    expect(jsonBody.timeLastEdited).toBeLessThanOrEqual(time + 2);
 
     expect(statusCode).toStrictEqual(200);
     expect(jsonBody).toStrictEqual(

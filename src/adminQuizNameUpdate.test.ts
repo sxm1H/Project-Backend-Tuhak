@@ -3,6 +3,7 @@ import {
   adminAuthRegister,
   adminQuizCreate,
   adminQuizNameUpdate,
+  adminQuizList,
 } from './testHelpers';
 
 beforeEach(() => {
@@ -14,61 +15,74 @@ describe('adminQuizNameUpdate', () => {
     const user = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
     const quiz = adminQuizCreate(user.jsonBody.token, 'QuizName', 'QuizDescription');
 
-    expect(adminQuizNameUpdate(user.jsonBody.token, quiz.jsonBody.quizId, 'newName')).toEqual({
+    expect(adminQuizNameUpdate(user.jsonBody.token, quiz.jsonBody.quizId, 'newName')).toStrictEqual({
       statusCode: 200,
-      jsonBody: {
-
-      }
+      jsonBody: {}
     });
   });
-  /*
+
   test('Comprehensive successful test case', () => {
     const user = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
-    const quiz = adminQuizCreate(user.jsonBody.authUserId, 'QuizName', 'QuizDescription');
-    let quizList = adminQuizList(userReg.authUserId);
+    const quiz = adminQuizCreate(user.jsonBody.token, 'QuizName', 'QuizDescription');
+    let quizList = adminQuizList(user.jsonBody.token);
 
     expect(quizList).toStrictEqual({
-      quizzes: [
-        {
-          quizId: quiz.quizId,
-          name: 'QuizName'
-        }
-      ]
+      jsonBody: {
+        quizzes: [
+          {
+            quizId: quiz.jsonBody.quizId,
+            name: 'QuizName'
+          }
+        ]
+      },
+      statusCode: 200
     });
 
-    const quiz2 = adminQuizCreate(userReg.authUserId, 'new quiz hello', 'hihihihi');
+    const quiz2 = adminQuizCreate(user.jsonBody.token, 'new quiz hello', 'hihihihi');
 
-    expect(adminQuizNameUpdate(userReg.authUserId, quiz.quizId, 'newName')).toEqual({});
-    quizList = adminQuizList(userReg.authUserId);
+    expect(adminQuizNameUpdate(user.jsonBody.token, quiz.jsonBody.quizId, 'newName')).toStrictEqual({
+      jsonBody: {},
+      statusCode: 200
+    });
+    quizList = adminQuizList(user.jsonBody.token);
     expect(quizList).toStrictEqual({
-      quizzes: [
-        {
-          quizId: quiz.quizId,
-          name: 'newName'
-        },
-        {
-          quizId: quiz2.quizId,
-          name: 'new quiz hello'
-        }
-      ]
+      jsonBody: {
+        quizzes: [
+          {
+            quizId: quiz.jsonBody.quizId,
+            name: 'newName'
+          },
+          {
+            quizId: quiz2.jsonBody.quizId,
+            name: 'new quiz hello'
+          }
+        ]
+      },
+      statusCode: 200
     });
 
-    expect(adminQuizNameUpdate(userReg.authUserId, quiz2.quizId, 'omg new name')).toEqual({});
-    quizList = adminQuizList(userReg.authUserId);
+    expect(adminQuizNameUpdate(user.jsonBody.token, quiz2.jsonBody.quizId, 'omg new name')).toStrictEqual({
+      jsonBody: {},
+      statusCode: 200
+    });
+    quizList = adminQuizList(user.jsonBody.token);
     expect(quizList).toStrictEqual({
-      quizzes: [
-        {
-          quizId: quiz.quizId,
-          name: 'newName'
-        },
-        {
-          quizId: quiz2.quizId,
-          name: 'omg new name'
-        }
-      ]
+      jsonBody: {
+        quizzes: [
+          {
+            quizId: quiz.jsonBody.quizId,
+            name: 'newName'
+          },
+          {
+            quizId: quiz2.jsonBody.quizId,
+            name: 'omg new name'
+          }
+        ]
+      },
+      statusCode: 200
     });
   });
-*/
+
   test('Token session is not a valid user', () => {
     const user = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
     const quiz = adminQuizCreate(user.jsonBody.token, 'QuizName', 'QuizDescription');

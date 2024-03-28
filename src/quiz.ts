@@ -17,7 +17,7 @@ import {
   * <Given a registered user's id, a quizId that is valid, and a name that matches specified
   * criteria, the quizId specified will have their name changed to the name parameter>
   *
-  * @param {number} authUserId - UserId which may or not be registered in the data
+  * @param {number} token - the token created in adminAuthRegister.
   * @param {number} quizId - quizId that may or may not correlate with a quiz in the data.
   * @param {string} name - string that User wants the specified quizId to change the name to
   *
@@ -86,13 +86,19 @@ function adminQuizNameUpdate(token: string, quizId: number, name: string): Error
     };
   }
 
-  return { }; // Empty object
+  return {}; // Empty object
 }
 
 /**
   * <Given a registered userId and quizId, delete the quiz from data storage.>
+  * <In addition, the quiz will be sent to the trash in data, which can be retrieved
+  * or permanantly deleted from data in the future"
   *
-  * @param {number} authUserId - userId which may or may not be registered in the data
+  * It should check for if :
+  *    - the Token is valid/User is logged in
+  *    - the quizId does not refer to a quiz that the user owns
+  *    - Quiz Id does not refer to a quiz
+  * @param {Number} token - the token created in adminAuthRegister.
   * @param {number} quizId - quizId which may or may not be registered in the data
   *
   * @returns {object { }} returns empty object if function went successful
@@ -142,14 +148,15 @@ function adminQuizRemove(token: string, quizId: number): ErrorObject | Record<st
     };
   }
 
-  return { }; // Empty object
+  return {}; // Empty object
 }
 
 /**
  * The function will return a list of quizes in the datastore containing information about
  * its quizId and its name, given a valid User Id.
  * It should return an error if the user Id is not valid.
- * @param {Number} authUserId - the user Id created from adminAuthRegister
+ * @param {Number} token - the token created in adminAuthRegister.
+ *
  * @return {Object {error: string}} - If an error is occurs, it will return an error object with a string
  * @return {Object {quizzes: Array}} - an Array of quizzes ojects that have quizId and name
  */
@@ -173,6 +180,14 @@ function adminQuizList(token: string): ErrorObject | QuizListReturnObject {
   };
 }
 
+/**
+ * The function will return an array of quizzes that are in the trash array given a valid token.
+ * It should return an error if any of these parameters are invalid.
+ * @param {Number} token - the token created in adminAuthRegister.
+ *
+ * @return {Object {error: string}} - If an error is occurs, it will return an error object with a string
+ * @return {Object {quizzes: Array}} -an Array of quizzes ojects that have quizId and name
+ */
 function adminQuizTrashView(token: string): ErrorObject | QuizTrashReturnObject {
   const newdata = getData();
   const activeTokens = newdata.sessions;
@@ -182,25 +197,24 @@ function adminQuizTrashView(token: string): ErrorObject | QuizTrashReturnObject 
     return { error: 'invalid user Id' };
   }
 
-  // const trashlist = newdata.trash.map(trash => ({
-  //   quizId: trash.quizId,
-  //   name: trash.name,
-  // }));
-  // return {
-  //   trash: trashlist
-  // };
-
   const filteredQuizzes = newdata.trash.filter(quiz => quiz.authUserId === searchToken.userId);
   const trashList = filteredQuizzes.map(trash => ({
     quizId: trash.quizId,
     name: trash.name
   }));
 
-  return {
-    quizzes: trashList
-  };
+  return { quizzes: trashList };
 }
 
+/**
+ * The function will return an empty object while updating the values given in the questionBody
+ * given valid token, quizId and questionId
+ * It should return an error if any of these parameters are invalid.
+ * @param {array} Question - the question array created in adminQuizQuestionCreate.
+ *
+ * @returns {Object {error: string}} - If an error is occurs, it will return an error object with a string
+ * @returns {} - on succesful calling of this function it will return an empty object
+ */
 function adminQuizQuestionUpdate(questionBody: Question, token: string, quizId: number, questionId: number): ErrorObject | Record<string, never> {
   const data = getData();
   const date = Math.floor(Date.now() / 1000);
@@ -248,6 +262,7 @@ function adminQuizQuestionUpdate(questionBody: Question, token: string, quizId: 
       }
     }
   }
+
   findQuestion.answers = questionBody.answers.map(answer => ({
     answerId: counters.answerIdCounter++,
     answer: answer.answer,
@@ -332,7 +347,6 @@ function adminQuizInfo(token: string, quizId: number): ErrorObject | QuizInfoRet
  *
  * @return {object {error: string}} - returns an error string if an the correct error
  * is encountered
- *
  * @return {object {quizId: number}} - returns a quiz Id object that contains the unique quiz Id relating
  * to the created quiz.
  */
@@ -383,9 +397,7 @@ function adminQuizCreate(token: string, name: string, description: string): Erro
     duration: 0,
   });
 
-  return {
-    quizId: counters.quizIdCounter,
-  };
+  return { quizId: counters.quizIdCounter };
 }
 
 /**
@@ -447,7 +459,7 @@ function adminQuizDescriptionUpdate(token: string, quizId: number, description: 
   *   2. Is the email valid
   *   3. Does the email belong to the logged in user
   *   4. Does the user actually own the quiz
-  *   5. Does the  target user own a quiz of the same name.
+  *   5. Does the target user own a quiz of the same name.
   *
   * @param {string} token - This is the user's token for their session.
   * @param {string} userEmail - Email belonging to the target user.
@@ -614,11 +626,22 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody: Qu
   findQuiz.timeLastEdited = date;
   findQuiz.numQuestions++;
 
-  return {
-    questionId: questionId,
-  };
+  return { questionId: questionId };
 }
 
+/**
+ * adminQuizQuestionMove moves a question in a user's Quiz to a new spot in the array and updating the
+ * quiz in the process. Before emptying the trash, the functions should check if
+ *  - The token is valid
+ *  - the quiz from the array are all quizIds are in the trash
+ *  - the QuizId refers to a quiz that this current user does not own
+ *
+ * @param {string} quizIds - A string representing a JSONified array of quiz id numbers
+ * @param {string} token - the token of the user emptying the trash
+ *
+ * @returns {object {error: string}} - Returns when one of the error condtions are met
+ * @returns {object {}} - returns an empty object if everything worked
+ */
 function adminQuizTrashEmpty(token: string, quizIds: string): Record<string, never> | ErrorObject {
   const data = getData();
 
@@ -654,6 +677,25 @@ function adminQuizTrashEmpty(token: string, quizIds: string): Record<string, nev
   return {};
 }
 
+/**
+ * adminQuizQuestionMove moves a question in a user's Quiz to a new spot in the array and updating the
+ * quiz in the process. Before moving the question the functions should check that
+ *  - The token is valid
+ *  - the Quiz is exists/ is valid
+ *  - The user owns the quiz being modified
+ *  - The question being moved exists
+ *  - The new position being moved is not negative
+ *  - The new position is not greater than the amount of quizes
+ *  - The new position is not the same as its current position
+ *
+ * @param {number} quizid - Quiz id of the quiz being modified
+ * @param {number} questionid - the question being moved
+ * @param {string} token - the token of the user moving the quiz
+ * @param {number} newPosition - the new position the user wishes to move question to
+ *
+ * @return {object {error: string}} - Returns when one of the error condtions are met
+ * @return {object {}} - this should return an empty object
+ */
 function adminQuizQuestionMove(quizid: number, questionid: number, token: string, newPosition: number): Record<string, never> | ErrorObject {
   const data = getData();
   const findToken = data.sessions.find(ids => ids.token === token);
@@ -691,8 +733,10 @@ function adminQuizQuestionMove(quizid: number, questionid: number, token: string
     return { error: 'New position cannot be the same as current position' };
   }
 
+  // Removes corresponding question out of the array
   const movedquestion = questionsArray.splice(findQuestion, 1)[0];
 
+  // adds the question back to a new position
   questionsArray.splice(newPosition, 0, movedquestion);
 
   const date = Math.floor(Date.now() / 1000);
@@ -717,7 +761,6 @@ function adminQuizQuestionMove(quizid: number, questionid: number, token: string
  * @returns { Error Object } -  Object containing the key 'error' and the value being the relevant error message
  * @returns { Empty Object } - Empty Object to indicate succesful addition of the question.
  */
-
 function adminQuizQuestionDelete(token: string, quizId: number, questionId: number): ErrorObject | Record<string, never> {
   const data = getData();
 
@@ -748,9 +791,24 @@ function adminQuizQuestionDelete(token: string, quizId: number, questionId: numb
   // Deleting the Question
   data.quizzes[findQuizIndex].questions.splice(findQuestionIndex, 1);
 
-  return { };
+  return {};
 }
 
+/**
+ * adminQuizquestionDuplicate should duplicate a question the user chooses and insert it right next to the orignal question
+ * It should then update the last time the quiz was edited. It should also have a new unique question Id.
+ * It should check for if :
+ *    - the Token is valid/User is logged in
+ *    - The User editing the quiz owns the quiz
+ *    - The Question exists/ Question Id is valid
+ *
+ * @param {string} token - Token of the user updating the quiz
+ * @param {number} quizId - The Quiz the user wants to update
+ * @param {number} questionId - the Question from that quiz the user wishes to duplicat
+ *
+ * @return {object {error: string}} - returns when one of the error condtions are met
+ * @return {object {newQuestionId: number}} - An object containing the new question Id of the duplicated quiz
+ */
 function adminQuizQuestionDuplicate(token: string, quizId: number, questionId: number): ErrorObject | DuplicateQuestionReturn {
   const data = getData();
   const findToken = data.sessions.find(ids => ids.token === token);
@@ -794,10 +852,24 @@ function adminQuizQuestionDuplicate(token: string, quizId: number, questionId: n
 
   findQuiz.duration += questions[findQuestion].duration;
 
-  return {
-    newQuestionId: newQuestionId
-  };
+  return { newQuestionId: newQuestionId };
 }
+
+/**
+ * adminQuizRestore restores a particular quiz from the trash back to an active quiz.
+ * This function also updates the 'timeLastEdited' variable within the quiz
+ * It should check for if :
+ *    - the Token is valid/User is logged in
+ *    - the quizId is not currently in the trash
+ *    - Quiz name of restored quiz already in use from active quiz
+ *    - Valid token, but user is not the owner of the quiz
+ *
+ * @param {string} token - Token of the user updating the quiz
+ * @param {number} quizId - The Quiz the user wants to update
+ *
+ * @return {object {error: string}} - returns when one of the error condtions are met
+ * @return {} - Return an empty object which indicates everything worked
+ */
 function adminQuizRestore(token: string, quizId: number): ErrorObject | Record<string, never> {
   const data = getData();
   const findToken = data.sessions.find(ids => ids.token === token);
@@ -828,9 +900,7 @@ function adminQuizRestore(token: string, quizId: number): ErrorObject | Record<s
   const findQuizIndex = data.trash.findIndex(trash => trash.quizId === quizId);
   data.trash.splice(findQuizIndex, 1);
 
-  return {
-
-  };
+  return {};
 }
 
 export {

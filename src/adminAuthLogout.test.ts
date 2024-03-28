@@ -33,19 +33,19 @@ describe('Testing POST /v1/admin/auth/logout', () => {
       }
     );
 
-    // expect(adminUserDetailsUpdate(token, 'dunyao@unsw.edu.au', 'Sam', 'Jeong')).toStrictEqual(
-    //   {
-    //     statusCode: 401,
-    //     jsonBody: { error: expect.any(String) }
-    //   }
-    // );
+    expect(adminUserDetailsUpdate(token, 'dunyao@unsw.edu.au', 'Sam', 'Jeong')).toStrictEqual(
+      {
+        statusCode: 401,
+        jsonBody: { error: expect.any(String) }
+      }
+    );
 
-    // expect(adminUserPasswordUpdate(token, 'abcd1234', '1234abcd')).toStrictEqual(
-    //   {
-    //     statusCode: 400,
-    //     jsonBody: { error: expect.any(String) }
-    //   }
-    // );
+    expect(adminUserPasswordUpdate(token, 'abcd1234', '1234abcd')).toStrictEqual(
+      {
+        statusCode: 401,
+        jsonBody: { error: expect.any(String) }
+      }
+    );
   });
 
   test('Successful logout with multiple sessions', () => {
