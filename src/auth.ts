@@ -2,7 +2,6 @@ import { getData, counters } from './dataStore';
 import validator from 'validator';
 import {
   ErrorObject,
-  EmptyObject,
   TokenReturn,
   UserDetailsReturnObject,
   UserData
@@ -69,9 +68,7 @@ function adminAuthRegister(email: string, password: string, nameFirst: string, n
     numFailedPasswordsSinceLastLogin: 0,
   });
 
-  return {
-    token: token,
-  };
+  return { token: token };
 }
 
 /**
@@ -154,22 +151,19 @@ function adminUserDetails(token: string): ErrorObject | UserDetailsReturnObject 
   * @returns  {string} if there is an error occurs error string returned
   * @returns  {} if function is succesful returns empty object
 */
-function adminUserDetailsUpdate(token: string, email: string, nameFirst: string, nameLast: string): ErrorObject | EmptyObject {
+function adminUserDetailsUpdate(token: string, email: string, nameFirst: string, nameLast: string): ErrorObject | Record<string, never> {
   const data = getData();
 
   const sessionDetails = data.sessions.find(sessionId => sessionId.token === token);
+
   if (!(sessionDetails)) {
-    return {
-      error: 'Token is invalid.'
-    };
+    return { error: 'Token is invalid.' };
   }
 
   for (let i = 0; i < data.user.length; i++) {
     if (data.user[i].email === email) {
       if (sessionDetails.userId !== data.user[i].userId) {
-        return {
-          error: 'Email is already in use.',
-        };
+        return { error: 'Email is already in use.' };
       }
     }
   }
@@ -178,33 +172,15 @@ function adminUserDetailsUpdate(token: string, email: string, nameFirst: string,
   const indexToUpdate = data.user.findIndex(user => user.userId === userId);
 
   if (validator.isEmail(email) === false) {
-    return {
-      error: 'Invalid email.',
-    };
-  }
-
-  if (!nameFirst.match(/^[A-Za-z'" -]+$/)) {
-    return {
-      error: 'Invalid characters in first name.',
-    };
-  }
-
-  if (nameFirst.length < 2 || nameFirst.length > 20) {
-    return {
-      error: 'Invalid first name length.',
-    };
-  }
-
-  if (!nameLast.match(/^[A-Za-z'" -]+$/)) {
-    return {
-      error: 'Invalid characters in last name.',
-    };
-  }
-
-  if (nameLast.length < 2 || nameLast.length > 20) {
-    return {
-      error: 'Invalid last name length.',
-    };
+    return { error: 'Invalid email.' };
+  } else if (!nameFirst.match(/^[A-Za-z'" -]+$/)) {
+    return { error: 'Invalid characters in first name.' };
+  } else if (nameFirst.length < 2 || nameFirst.length > 20) {
+    return { error: 'Invalid first name length.' };
+  } else if (!nameLast.match(/^[A-Za-z'" -]+$/)) {
+    return { error: 'Invalid characters in last name.' };
+  } else if (nameLast.length < 2 || nameLast.length > 20) {
+    return { error: 'Invalid last name length.' };
   }
 
   data.user[indexToUpdate].email = email;
@@ -248,26 +224,20 @@ function adminUserDetailsUpdate(token: string, email: string, nameFirst: string,
   * @returns { Error Object } Error Object with information regarding the error.
 */
 function passwordChecker(userDetails: UserData, oldPassword: string, newPassword: string): ErrorObject {
-  //Error Checks for the passwords.
+  // Error Checks for the passwords.
   if (oldPassword === newPassword) {
-    return {
-      error: 'New Password is the same as old passward.'
-    };
+    return { error: 'New Password is the same as old passward.' };
   }
   for (let i = 0; i < userDetails.passwordHistory.length; i++) {
     if (newPassword === userDetails.passwordHistory[i]) {
-      return {
-        error: 'Password has already been used before.'
-      };
+      return { error: 'Password has already been used before.' };
     }
   }
   if (newPassword.length < 8) {
-    return {
-      error: 'New Password must be at least 8 characters long.',
-    };
+    return { error: 'New Password must be at least 8 characters long.' };
   }
 
-  //Checking whether there is at least one letter and one number.
+  // Checking whether there is at least one letter and one number.
   let letterCounter = 0;
   let numberCounter = 0;
   for (let i = 0; i < newPassword.length; i++) {
@@ -283,14 +253,10 @@ function passwordChecker(userDetails: UserData, oldPassword: string, newPassword
   }
 
   if (letterCounter === 0 || numberCounter === 0) {
-    return {
-      error: 'New Password must have at least one number and one letter.'
-    };
+    return { error: 'New Password must have at least one number and one letter.' };
   }
-  
-  return {
-    error: 'No Error'
-  };
+
+  return { error: 'No Error' };
 }
 
 /**
@@ -310,16 +276,14 @@ function passwordChecker(userDetails: UserData, oldPassword: string, newPassword
   * @param {string} newPassword - User's new password.
   *
   * @returns {object {error: string}} Error Object with information regarding the error.
-  * @returns {} Empty Object to indicidate that everything worked.
+  * @returns {} Empty Object to indicate that everything worked.
 */
-function adminUserPasswordUpdate(token: string, oldPassword: string, newPassword: string): ErrorObject | EmptyObject {
+function adminUserPasswordUpdate(token: string, oldPassword: string, newPassword: string): ErrorObject | Record<string, never> {
   const data = getData();
   // Finding the token.
   const findToken = data.sessions.find(sessionId => sessionId.token === token);
   if (!(findToken)) {
-    return {
-      error: 'Token invalid'
-    };
+    return { error: 'Token invalid' };
   }
 
   // Getting the userInfo
@@ -327,9 +291,7 @@ function adminUserPasswordUpdate(token: string, oldPassword: string, newPassword
 
   // Checking if the current pass was entered correctly.
   if (oldPassword !== userInfo.password) {
-    return {
-      error: 'Password Entered Is Incorrect.'
-    };
+    return { error: 'Password Entered Is Incorrect.' };
   }
 
   // Passing into Helper To Do The Rest of the Error Checks.
@@ -357,7 +319,7 @@ function adminUserPasswordUpdate(token: string, oldPassword: string, newPassword
   * @returns {object {error: string}} Error Object with information regarding the error.
   * @returns {object {}} Empty Object to indicidate that everything worked.
 */
-function adminAuthLogout(token: string): ErrorObject | EmptyObject {
+function adminAuthLogout(token: string): ErrorObject | Record<string, never> {
   const data = getData();
   const findTokenIndex = data.sessions.findIndex(session => session.token === token);
 

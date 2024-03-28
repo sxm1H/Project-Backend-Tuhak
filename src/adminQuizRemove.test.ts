@@ -25,7 +25,7 @@ describe('adminQuizRemove', () => {
     const { jsonBody: { token } } = adminAuthRegister('nick@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
     const { jsonBody: { quizId } } = adminQuizCreate(token, 'Cities of Australia', 'good quiz');
 
-    expect(adminQuizRemove(token.concat('hello'), quizId)).toStrictEqual({
+    expect(adminQuizRemove(token + 'hello', quizId)).toStrictEqual({
       statusCode: 401,
       jsonBody: { error: expect.any(String) }
     });

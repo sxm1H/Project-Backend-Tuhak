@@ -19,7 +19,7 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
   });
 
   test('Comprehensive Test Successful: Creating a Question and Checking adminQuizInfo', () => {
-    const response = adminQuizQuestionCreate(quizId, token, 'question1', 5, 4, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }])
+    const response = adminQuizQuestionCreate(quizId, token, 'question1', 5, 4, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]);
     expect(response).toStrictEqual({
       jsonBody: {
         questionId: expect.any(Number),
@@ -48,10 +48,10 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
           }
         ]
       }
-    ])
+    ]);
     expect(response2.jsonBody.duration).toStrictEqual(5);
     expect(response2.jsonBody.numQuestions).toStrictEqual(1);
-  })
+  });
 
   test.each([
     ['What is the best city in Australia', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]],

@@ -59,7 +59,7 @@ describe('Test PUT /v1/admin/quiz/{quizid}/question/{questionid}/move', () => {
     const { jsonBody: { quizId } } = adminQuizCreate(token, 'cool name', 'cool description');
     const quest1 = adminQuizQuestionCreate(quizId, token, 'cool question', 5, 5, [{ answer: 'Correct', correct: true }, { answer: 'Wrong', correct: false }]);
     adminQuizQuestionCreate(quizId, token, 'cool question', 5, 4, [{ answer: 'Correct', correct: true }, { answer: 'Wrong', correct: false }]);
-    const { statusCode, jsonBody } = adminQuizQuestionMove(quizId, quest1.jsonBody.questionId, token.concat('POGGERS'), 1);
+    const { statusCode, jsonBody } = adminQuizQuestionMove(quizId, quest1.jsonBody.questionId, token + 'POGGERS', 1);
     expect(statusCode).toStrictEqual(401);
     expect(jsonBody).toStrictEqual({
       error: expect.any(String)

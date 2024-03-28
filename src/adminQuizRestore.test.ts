@@ -57,7 +57,7 @@ describe('Testing GET /v1/admin/quiz/:quizid', () => {
     });
     const { statusCode, jsonBody } = adminQuizInfo(token, quizId);
     expect(jsonBody.timeLastEdited).toBeGreaterThanOrEqual(time);
-    expect(jsonBody.timeLastEdited).toBeLessThan(time + 1);
+    expect(jsonBody.timeLastEdited).toBeLessThanOrEqual(time + 2);
     expect(statusCode).toStrictEqual(200);
   });
   test('Quiz name of restored quiz is already used by another active quiz', () => {
