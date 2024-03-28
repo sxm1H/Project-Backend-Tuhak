@@ -6,20 +6,18 @@ import {
   adminQuizTransfer
 } from './testHelpers';
 
+let token: string;
+let token2: string;
+let quizId: number;
 beforeEach(() => {
   clear();
+
+  token = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo').jsonBody.token;
+  token2 = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian').jsonBody.token;
+  quizId = adminQuizCreate(token, 'Cool name', 'lorem ipsum').jsonBody.quizId;
 });
 
 describe('Testing POST /v1/admin/quiz/:quizid/transfer', () => {
-  let token: string;
-  let token2: string;
-  let quizId: number;
-  beforeEach(() => {
-    token = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo').jsonBody.token;
-    token2 = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian').jsonBody.token;
-    quizId = adminQuizCreate(token, 'Cool name', 'lorem ipsum').jsonBody.quizId;
-  });
-
   test('Successful transfer', () => {
     expect(adminQuizTransfer(token, 'nick1234@gmail.com', quizId)).toStrictEqual(
       {

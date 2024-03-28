@@ -6,18 +6,14 @@ import {
   adminAuthLogin,
 } from './testHelpers';
 
+let token: string;
 beforeEach(() => {
   clear();
+
+  token = adminAuthRegister('Dilhanm@gmail.com', 'abCdddD123', 'Dilhan', 'Mert').jsonBody.token;
 });
 
 describe('Testing GET /v1/admin/user/details', () => {
-  let token: string;
-  beforeEach(() => {
-    const { jsonBody } = adminAuthRegister('Dilhanm@gmail.com', 'abCdddD123', 'Dilhan', 'Mert');
-
-    token = jsonBody.token;
-  });
-
   test('Correct retrieves details', () => {
     const { statusCode, jsonBody } = adminUserDetails(token);
 

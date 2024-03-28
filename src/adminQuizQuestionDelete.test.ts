@@ -6,19 +6,18 @@ import {
   adminQuizQuestionCreate,
 } from './testHelpers';
 
+let token: string;
+let quizId: number;
+let questionId: number;
 beforeEach(() => {
   clear();
+
+  token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody.token;
+  quizId = adminQuizCreate(token, 'Australian Cities', 'lorem ipsum').jsonBody.quizId;
+  questionId = adminQuizQuestionCreate(quizId, token, 'Question1', 5, 5, [{ answer: 'Melb', correct: true }, { answer: 'Syd', correct: false }]).jsonBody.questionId;
 });
 
 describe('Testing DELETE /v1/admin/quiz/:quizid/question/:questionid', () => {
-  let token: string;
-  let quizId: number;
-  let questionId: number;
-  beforeEach(() => {
-    token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody.token;
-    quizId = adminQuizCreate(token, 'Australian Cities', 'lorem ipsum').jsonBody.quizId;
-    questionId = adminQuizQuestionCreate(quizId, token, 'Question1', 5, 5, [{ answer: 'Melb', correct: true }, { answer: 'Syd', correct: false }]).jsonBody.questionId;
-  });
   test('Test Successful: Successfully Deleted a Question from a Quiz', () => {
     expect(adminQuizQuestionDelete(token, quizId, questionId)).toStrictEqual({
       jsonBody: {},

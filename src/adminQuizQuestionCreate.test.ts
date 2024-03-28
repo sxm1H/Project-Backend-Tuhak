@@ -6,18 +6,16 @@ import {
   adminQuizInfo,
 } from './testHelpers';
 
+let token: string;
+let quizId: number;
 beforeEach(() => {
   clear();
+
+  token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody.token;
+  quizId = adminQuizCreate(token, 'Australian Cities', 'lorem ipsum').jsonBody.quizId;
 });
 
 describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
-  let token: string;
-  let quizId: number;
-  beforeEach(() => {
-    token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody.token;
-    quizId = adminQuizCreate(token, 'Australian Cities', 'lorem ipsum').jsonBody.quizId;
-  });
-
   test('Comprehensive Test Successful: Creating a Question and Checking adminQuizInfo', () => {
     const response = adminQuizQuestionCreate(quizId, token, 'question1', 5, 4, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]);
     expect(response).toStrictEqual({

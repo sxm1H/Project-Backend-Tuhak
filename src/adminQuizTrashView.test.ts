@@ -6,9 +6,13 @@ import {
   adminQuizRemove,
 } from './testHelpers';
 
+let token: string;
 beforeEach(() => {
   clear();
+
+  token = adminAuthRegister('fakerT1@gmail.com', 'pass123word', 'Smith', 'John').jsonBody.token;
 });
+
 describe('Test GET /v1/admin/quiz/list', () => {
   test.each([
     {
@@ -20,7 +24,6 @@ describe('Test GET /v1/admin/quiz/list', () => {
       description: ''
     }
   ])('Successful Quiz Created', ({ name, description }) => {
-    const { jsonBody: { token } } = adminAuthRegister('fakerT1@gmail.com', 'pass123word', 'Smith', 'John');
     const { jsonBody: { quizId } } = adminQuizCreate(token, name, description);
     adminQuizRemove(token, quizId);
     const { statusCode, jsonBody } = adminQuizTrashView(token);
@@ -44,7 +47,6 @@ describe('Test GET /v1/admin/quiz/list', () => {
       description: ''
     }
   ])('Empty Token', ({ name, description }) => {
-    const { jsonBody: { token } } = adminAuthRegister('fakerT1@gmail.com', 'pass123word', 'Smith', 'John');
     const { jsonBody: { quizId } } = adminQuizCreate(token, name, description);
     adminQuizRemove(token, quizId);
     const { statusCode, jsonBody } = adminQuizTrashView('');
@@ -63,7 +65,6 @@ describe('Test GET /v1/admin/quiz/list', () => {
       description: ''
     }
   ])('Wrong token', ({ name, description }) => {
-    const { jsonBody: { token } } = adminAuthRegister('fakerT1@gmail.com', 'pass123word', 'Smith', 'John');
     const { jsonBody: { quizId } } = adminQuizCreate(token, name, description);
     adminQuizRemove(token, quizId);
     const { statusCode, jsonBody } = adminQuizTrashView(token + '1');
