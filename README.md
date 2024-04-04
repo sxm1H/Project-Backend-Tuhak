@@ -10,6 +10,7 @@
 
 * 20/02: Removing unnecessary `user.js` file
 * 02/04: Point out a new error condition for two existing iteration 2 routes.
+* 04/04: Point out a new error condition for another iteration 2 route.
 
 ## 🫡 0. Aims:
 
@@ -1250,6 +1251,7 @@ Iteration 3 builds off all of the work you've completed in iteration 1 and 2. If
 * `POST /v2/admin/quiz/{quizid}/question` has a different input type.
 * `DELETE /v2/admin/quiz/{quizId}/question/{questionId}` has a new error condition.
 * `POST /v2/admin/quiz/{quizId}/transfer` has a new error condition.
+* `DELETE /v2/admin/quiz/{quizid}` has a new error condition.
 
 Iteration 2 routes and Iteration 3 routes do not need to be interoperable. You can assume that for a given usage of your system, once someone is using iteration 3 routes they can be assumed to not be calling any iteration 2 routes. In this way we need iteration 2 routes to still function properly, but in a way that is fine to be isolated from iteration 3 routes.
 
