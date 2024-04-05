@@ -510,7 +510,7 @@ function adminQuizTransfer(token: string, userEmail: string, quizId: number): Er
 }
 
 function getRandomColour(): string {
-  const random = Math.floor((Math.random() * (7 - 1) + 1));
+  const random = Math.floor((Math.random() * (8 - 1) + 1));
   if (random === 1) {
     return 'red';
   } else if (random === 2) {
@@ -523,7 +523,7 @@ function getRandomColour(): string {
     return 'purple';
   } else if (random === 6) {
     return 'brown';
-  } else if (random === 7) {
+  } else {
     return 'orange';
   }
 }
