@@ -659,6 +659,20 @@ function adminQuizTrashEmpty(token: string, quizIds: string): Record<string, nev
     return { error: 'Token invalid' };
   }
 
+  console.log(data.quizzes);
+  console.log(data.trash);
+  for (const userQuizIds of arrayQuizIds) {
+    const doesQuizExistInQuizzes = data.quizzes.find(quiz => quiz.quizId === userQuizIds);
+    const doesQuizExistInTrash = data.trash.find(quiz => quiz.quizId === userQuizIds);
+    console.log(doesQuizExistInQuizzes, doesQuizExistInTrash);
+    if (!doesQuizExistInQuizzes) {
+      if (!doesQuizExistInTrash) {
+        console.log(userQuizIds);
+        return { error: 'QuizId Is Invalid'};
+      }
+    }
+  }
+
   for (const userQuizIds of arrayQuizIds) {
     for (const trashQuizzes2 of data.trash) {
       if (userQuizIds === trashQuizzes2.quizId) {

@@ -377,7 +377,9 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
       return res.status(403).json(response);
     } else if (response.error === 'One or more of the Quiz IDs is not currently in the trash') {
       return res.status(400).json(response);
-    } 
+    } else if (response.error === 'QuizId Is Invalid') {
+      return res.status(403).json(response);
+    }
   }
 
   save();
