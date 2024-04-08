@@ -580,7 +580,7 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody: Qu
     return { error: 'Question Length is not between 5 and 50.' };
   } else if (questionBody.answers.length > 6 || questionBody.answers.length < 2) {
     return { error: 'Number of Question Answers is not between 2 and 6.' };
-  } else if (questionBody.duration < 0) {
+  } else if (questionBody.duration <= 0) {
     return { error: 'Question Duration is Not Positive.' };
   } else if (questionBody.duration + findQuiz.duration > 180) {
     return { error: 'Quiz Duration is Longer than 3 minutes.' };
