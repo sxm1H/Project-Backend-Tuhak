@@ -143,4 +143,15 @@ describe('Testing DELETE /v1/admin/quiz/trash/empty', () => {
       },
     });
   });
+
+  test('Test Unsuccessful: Invalid QuizId', () => {
+    adminQuizRemove(token, quizId);
+    const stringArray = `[${-1}]`;
+    expect(adminQuizTrashEmpty(token, stringArray)).toStrictEqual({
+      statusCode: 403,
+      jsonBody: {
+        error: expect.any(String)
+      },
+    });
+  });
 });

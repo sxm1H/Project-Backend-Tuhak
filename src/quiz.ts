@@ -221,13 +221,14 @@ function adminQuizQuestionUpdate(questionBody: Question, token: string, quizId: 
 
   const findToken = data.sessions.find(session => session.token === token);
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  if (!findQuiz) {
+    return { error: 'Quiz Id is invalid.' };
+  }
+  
   const findQuestion = findQuiz.questions.find(question => question.questionId === questionId);
 
   if (!findToken) {
     return { error: 'Token invalid.' };
-  }
-  if (!findQuiz) {
-    return { error: 'Quiz Id is invalid.' };
   }
   if (findQuiz.authUserId !== findToken.userId) {
     return { error: 'User does not own this quiz.' };
@@ -237,11 +238,14 @@ function adminQuizQuestionUpdate(questionBody: Question, token: string, quizId: 
   }
 
   // Error Checks for the Question.
-  if (questionBody.question.length > 50 || questionBody.question.length < 5) {
+  const trueAnswers = questionBody.answers.find(bool => bool.correct === true);
+  if (!trueAnswers) {
+    return { error: 'No True Answers' };
+  } else if (questionBody.question.length > 50 || questionBody.question.length < 5) {
     return { error: 'Question Length is not between 5 and 50.' };
   } else if (questionBody.answers.length > 6 || questionBody.answers.length < 2) {
     return { error: 'Number of Question Answers is not between 2 and 6.' };
-  } else if (questionBody.duration < 0) {
+  } else if (questionBody.duration <= 0) {
     return { error: 'Question Duration is Not Positive.' };
   } else if (questionBody.duration + findQuiz.duration > 180) {
     return { error: 'Quiz Duration is Longer than 3 minutes.' };
@@ -574,11 +578,14 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody: Qu
   }
 
   // Error Checks for the Question.
-  if (questionBody.question.length > 50 || questionBody.question.length < 5) {
+  const correctAnswers = questionBody.answers.find(bool => bool.correct === true);
+  if (!correctAnswers) {
+    return { error: 'No Correct Answers' };
+  } else if (questionBody.question.length > 50 || questionBody.question.length < 5) {
     return { error: 'Question Length is not between 5 and 50.' };
   } else if (questionBody.answers.length > 6 || questionBody.answers.length < 2) {
     return { error: 'Number of Question Answers is not between 2 and 6.' };
-  } else if (questionBody.duration < 0) {
+  } else if (questionBody.duration <= 0) {
     return { error: 'Question Duration is Not Positive.' };
   } else if (questionBody.duration + findQuiz.duration > 180) {
     return { error: 'Quiz Duration is Longer than 3 minutes.' };
@@ -648,17 +655,21 @@ function adminQuizTrashEmpty(token: string, quizIds: string): Record<string, nev
   const data = getData();
 
   const arrayQuizIds = JSON.parse(quizIds) as number[];
-
-  for (const userQuizIds of arrayQuizIds) {
-    const findIdInTrash = data.trash.find(ids => ids.quizId === userQuizIds);
-    if (!findIdInTrash) {
-      return { error: 'One or more of the Quiz IDs is not currently in the trash' };
-    }
-  }
-
+  
   const findToken = data.sessions.find(ids => ids.token === token);
   if (!findToken) {
     return { error: 'Token invalid' };
+  }
+
+  for (const userQuizIds of arrayQuizIds) {
+    const doesQuizExistInQuizzes = data.quizzes.find(quiz => quiz.quizId === userQuizIds);
+    const doesQuizExistInTrash = data.trash.find(quiz => quiz.quizId === userQuizIds);
+    if (!doesQuizExistInQuizzes) {
+      if (!doesQuizExistInTrash) {
+        console.log(userQuizIds);
+        return { error: 'QuizId Is Invalid'};
+      }
+    }
   }
 
   for (const userQuizIds of arrayQuizIds) {
@@ -668,6 +679,13 @@ function adminQuizTrashEmpty(token: string, quizIds: string): Record<string, nev
           return { error: 'a QuizId refers to a quiz that this current user does not own' };
         }
       }
+    }
+  }
+
+  for (const userQuizIds of arrayQuizIds) {
+    const findIdInTrash = data.trash.find(ids => ids.quizId === userQuizIds);
+    if (!findIdInTrash) {
+      return { error: 'One or more of the Quiz IDs is not currently in the trash' };
     }
   }
 
@@ -881,7 +899,12 @@ function adminQuizRestore(token: string, quizId: number): ErrorObject | Record<s
     return { error: 'Token invalid.' };
   }
 
+  const findQuizInQuizzes = data.quizzes.find(quiz => quiz.quizId === quizId);
   const findQuizInTrash = data.trash.find(ids => ids.quizId === quizId);
+  if (!findQuizInQuizzes && !findQuizInTrash) {
+    return { error: 'Quiz Does Not Exist'};
+  } 
+  
   if (!findQuizInTrash) {
     return { error: 'Quiz Id not currently in trash' };
   }

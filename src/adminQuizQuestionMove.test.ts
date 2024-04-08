@@ -73,4 +73,14 @@ describe('Testing PUT /v1/admin/quiz/{quizid}/question/{questionid}/move', () =>
     expect(statusCode).toStrictEqual(403);
     expect(jsonBody.error).toStrictEqual(expect.any(String));
   });
+
+  test('Test Unsuccessful: Invalid Quiz Id', () => {
+    const questionId = adminQuizQuestionCreate(quizId, token, 'cool question', 5, 5, [{ answer: 'Correct', correct: true }, { answer: 'Wrong', correct: false }]).jsonBody.questionId;
+    expect(adminQuizQuestionMove(-1, questionId, token, 1)).toStrictEqual({
+      jsonBody: {
+        error: expect.any(String),
+      },
+      statusCode: 403,
+    });
+  });
 });

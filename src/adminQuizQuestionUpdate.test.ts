@@ -323,7 +323,7 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
     const question = 'What is the best city in Australia';
     const duration = 5;
     const points = 1;
-    const answers = [{ answer: 'Sydney', correct: false }, { answer: 'Sydney', correct: true }];
+    const answers = [{ answer: 'Sydney', correct: false }, { answer: 'Melb', correct: false }];
     expect(adminQuizQuestionUpdate(question, duration, points, answers, token, quizId, questionId)).toStrictEqual({
       jsonBody: {
         error: expect.any(String),
@@ -343,4 +343,30 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
       statusCode: 401,
     });
   });
+
+  test('Test Unsuccessful: Invalid Quiz Id', () => {
+    let question = 'Question1';
+    let points = 4;
+    let duration = 3;
+    let answers = [{answer: 'Sydney', correct: true}, {answer: 'NSW', correct: false}];
+    expect(adminQuizQuestionUpdate(question, duration, points, answers, token, -1, questionId)).toStrictEqual({
+      jsonBody: {
+        error: expect.any(String),
+      },
+      statusCode: 403,
+    });
+  });
+  
+  test('Test Unsuccessful: Invalid QuestionId', () => {
+    let question = 'Question1';
+    let points = 4;
+    let duration = 3;
+    let answers = [{answer: 'Sydney', correct: true}, {answer: 'NSW', correct: false}];
+    expect(adminQuizQuestionUpdate(question, duration, points, answers, token, quizId, -1)).toStrictEqual({
+      jsonBody: {
+        error: expect.any(String),
+      },
+      statusCode: 400,
+    });
+  })
 });
