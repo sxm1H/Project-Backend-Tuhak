@@ -220,14 +220,17 @@ function adminQuizQuestionUpdate(questionBody: Question, token: string, quizId: 
   const date = Math.floor(Date.now() / 1000);
 
   const findToken = data.sessions.find(session => session.token === token);
+  
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  if (!findQuiz) {
+    console.log('hello');
+    return { error: 'Quiz Id is invalid.' };
+  }
+
   const findQuestion = findQuiz.questions.find(question => question.questionId === questionId);
 
   if (!findToken) {
     return { error: 'Token invalid.' };
-  }
-  if (!findQuiz) {
-    return { error: 'Quiz Id is invalid.' };
   }
   if (findQuiz.authUserId !== findToken.userId) {
     return { error: 'User does not own this quiz.' };
