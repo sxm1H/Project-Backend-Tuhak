@@ -105,7 +105,8 @@ describe('Testing GET /v1/admin/quiz/:quizid', () => {
       },
       statusCode: 200
     });
-    expect(adminQuizRestore(token, quizId + 1)).toStrictEqual(
+    const quizId2 = adminQuizCreate(token, 'Qu1', 'dsdasas').jsonBody.quizId;
+    expect(adminQuizRestore(token, quizId2)).toStrictEqual(
       {
         statusCode: 400,
         jsonBody: { error: expect.any(String) }
@@ -167,4 +168,14 @@ describe('Testing GET /v1/admin/quiz/:quizid', () => {
       }
     );
   });
+
+  test('Test Unsuccessful: Invalid QuizId', () => { 
+    adminQuizRemove(token, quizId);
+    expect(adminQuizRestore(token, -1)).toStrictEqual(
+      {
+        statusCode: 403,
+        jsonBody: { error: expect.any(String) }
+      }
+    );
+  })
 });

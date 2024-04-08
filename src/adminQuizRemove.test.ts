@@ -94,4 +94,13 @@ describe('adminQuizRemove', () => {
       }
     });
   });
+
+  test('Test Unsuccessful: Invalid Quiz Id', () => {
+    expect(adminQuizRemove(token, -1)).toStrictEqual({
+      jsonBody: {
+        error: expect.any(String),
+      },
+      statusCode: 403,
+    });
+  })
 });

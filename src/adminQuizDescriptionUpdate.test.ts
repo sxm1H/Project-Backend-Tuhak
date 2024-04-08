@@ -64,7 +64,7 @@ describe('Testing PUT v1/admin/quiz/:quizid/description', () => {
       jsonBody: {
         error: expect.any(String)
       },
-      statusCode: 400,
+      statusCode: 403,
     });
   });
 
