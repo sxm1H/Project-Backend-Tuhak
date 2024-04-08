@@ -16,6 +16,14 @@ beforeEach(() => {
 });
 
 describe('Testing PUT /v1/admin/quiz/{quizid}/question/{questionid}/move', () => {
+  test('Successful question move', () => {
+    const questionId = adminQuizQuestionCreate(quizId, token, 'cool question', 5, 5, [{ answer: 'Correct', correct: true }, { answer: 'Wrong', correct: false }]).jsonBody.questionId;
+    adminQuizQuestionCreate(quizId, token, 'cool question', 5, 5, [{ answer: 'Correct', correct: true }, { answer: 'Wrong', correct: false }]);
+    const { statusCode, jsonBody } = adminQuizQuestionMove(quizId, questionId, token, 1);
+    expect(statusCode).toStrictEqual(200);
+    expect(jsonBody).toStrictEqual({});
+  });
+
   test('Question Id is does not refer to valid question', () => {
     const { statusCode, jsonBody } = adminQuizQuestionMove(quizId, 10, token, 1);
 
@@ -64,13 +72,5 @@ describe('Testing PUT /v1/admin/quiz/{quizid}/question/{questionid}/move', () =>
     const { statusCode, jsonBody } = adminQuizQuestionMove(quizId2, questionId, token, 1);
     expect(statusCode).toStrictEqual(403);
     expect(jsonBody.error).toStrictEqual(expect.any(String));
-  });
-
-  test('Successful question move', () => {
-    const questionId = adminQuizQuestionCreate(quizId, token, 'cool question', 5, 5, [{ answer: 'Correct', correct: true }, { answer: 'Wrong', correct: false }]).jsonBody.questionId;
-    adminQuizQuestionCreate(quizId, token, 'cool question', 5, 5, [{ answer: 'Correct', correct: true }, { answer: 'Wrong', correct: false }]);
-    const { statusCode, jsonBody } = adminQuizQuestionMove(quizId, questionId, token, 1);
-    expect(statusCode).toStrictEqual(200);
-    expect(jsonBody).toStrictEqual({});
   });
 });

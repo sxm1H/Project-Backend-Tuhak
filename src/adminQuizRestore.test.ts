@@ -57,6 +57,7 @@ describe('Testing GET /v1/admin/quiz/:quizid', () => {
     expect(jsonBody.timeLastEdited).toBeLessThanOrEqual(time + 2);
     expect(statusCode).toStrictEqual(200);
   });
+
   test('Quiz name of restored quiz is already used by another active quiz', () => {
     expect(adminQuizList(token)).toStrictEqual({
       jsonBody: {
@@ -84,6 +85,7 @@ describe('Testing GET /v1/admin/quiz/:quizid', () => {
       }
     );
   });
+
   test('Quiz ID refers to quiz not in trash', () => {
     expect(adminQuizList(token)).toStrictEqual({
       jsonBody: {
@@ -110,32 +112,7 @@ describe('Testing GET /v1/admin/quiz/:quizid', () => {
       }
     );
   });
-  test('Quiz ID refers to quiz not in trash', () => {
-    expect(adminQuizList(token)).toStrictEqual({
-      jsonBody: {
-        quizzes: [
-          {
-            quizId: quizId,
-            name: 'quiz1'
-          }
-        ]
-      },
-      statusCode: 200
-    });
-    adminQuizRemove(token, quizId);
-    expect(adminQuizList(token)).toStrictEqual({
-      jsonBody: {
-        quizzes: []
-      },
-      statusCode: 200
-    });
-    expect(adminQuizRestore(token, quizId + 1)).toStrictEqual(
-      {
-        statusCode: 400,
-        jsonBody: { error: expect.any(String) }
-      }
-    );
-  });
+
   test('User is not logged in', () => {
     expect(adminQuizList(token)).toStrictEqual({
       jsonBody: {
@@ -162,6 +139,7 @@ describe('Testing GET /v1/admin/quiz/:quizid', () => {
       }
     );
   });
+
   test('Valid token, but user not owner of quiz', () => {
     expect(adminQuizList(token)).toStrictEqual({
       jsonBody: {
