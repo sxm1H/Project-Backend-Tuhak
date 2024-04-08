@@ -653,14 +653,7 @@ function adminQuizTrashEmpty(token: string, quizIds: string): Record<string, nev
   const data = getData();
 
   const arrayQuizIds = JSON.parse(quizIds) as number[];
-
-  for (const userQuizIds of arrayQuizIds) {
-    const findIdInTrash = data.trash.find(ids => ids.quizId === userQuizIds);
-    if (!findIdInTrash) {
-      return { error: 'One or more of the Quiz IDs is not currently in the trash' };
-    }
-  }
-
+  
   const findToken = data.sessions.find(ids => ids.token === token);
   if (!findToken) {
     return { error: 'Token invalid' };
@@ -673,6 +666,13 @@ function adminQuizTrashEmpty(token: string, quizIds: string): Record<string, nev
           return { error: 'a QuizId refers to a quiz that this current user does not own' };
         }
       }
+    }
+  }
+
+  for (const userQuizIds of arrayQuizIds) {
+    const findIdInTrash = data.trash.find(ids => ids.quizId === userQuizIds);
+    if (!findIdInTrash) {
+      return { error: 'One or more of the Quiz IDs is not currently in the trash' };
     }
   }
 

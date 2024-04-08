@@ -89,6 +89,8 @@ app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
       return res.status(401).json(response);
     } else if (response.error === 'User does not own this quiz.') {
       return res.status(403).json(response);
+    } else if (response.error === 'Quiz Id is invalid.') {
+      return res.status(403).json(response);
     } else {
       return res.status(400).json(response);
     }
@@ -366,6 +368,8 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const response = adminQuizTrashEmpty(token, stringQuizIds);
 
+  console.log(response);
+
   if ('error' in response) {
     if (response.error === 'Token invalid') {
       return res.status(401).json(response);
@@ -373,7 +377,7 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
       return res.status(403).json(response);
     } else if (response.error === 'One or more of the Quiz IDs is not currently in the trash') {
       return res.status(400).json(response);
-    }
+    } 
   }
 
   save();
