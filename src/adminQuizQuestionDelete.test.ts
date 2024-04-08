@@ -56,6 +56,15 @@ describe('Testing DELETE /v1/admin/quiz/:quizid/question/:questionid', () => {
     });
   });
 
+  test('Test Unsuccessful: Quiz Id Invalid', () => {
+    expect(adminQuizQuestionDelete(token, -1000000000, questionId)).toStrictEqual(
+      {
+        statusCode: 403,
+        jsonBody: { error: expect.any(String) }
+      }
+    );
+  });
+
   test.each([
     [-1],
     [123123],
