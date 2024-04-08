@@ -238,11 +238,14 @@ function adminQuizQuestionUpdate(questionBody: Question, token: string, quizId: 
   }
 
   // Error Checks for the Question.
-  if (questionBody.question.length > 50 || questionBody.question.length < 5) {
+  const trueAnswers = questionBody.answers.find(bool => bool.correct === true);
+  if (!trueAnswers) {
+    return { error: 'No True Answers' };
+  } else if (questionBody.question.length > 50 || questionBody.question.length < 5) {
     return { error: 'Question Length is not between 5 and 50.' };
   } else if (questionBody.answers.length > 6 || questionBody.answers.length < 2) {
     return { error: 'Number of Question Answers is not between 2 and 6.' };
-  } else if (questionBody.duration < 0) {
+  } else if (questionBody.duration <= 0) {
     return { error: 'Question Duration is Not Positive.' };
   } else if (questionBody.duration + findQuiz.duration > 180) {
     return { error: 'Quiz Duration is Longer than 3 minutes.' };
