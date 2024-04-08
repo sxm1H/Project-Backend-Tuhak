@@ -37,6 +37,7 @@ describe('Test GET /v1/admin/quiz/list', () => {
       ]
     });
   });
+
   test.each([
     {
       name: 'good name',
@@ -55,6 +56,7 @@ describe('Test GET /v1/admin/quiz/list', () => {
       error: expect.any(String)
     });
   });
+
   test.each([
     {
       name: 'good name',

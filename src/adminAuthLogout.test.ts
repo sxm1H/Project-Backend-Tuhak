@@ -82,7 +82,7 @@ describe('Testing POST /v1/admin/auth/logout', () => {
   });
 
   test('Invalid token', () => {
-    expect(adminAuthLogout('hello')).toStrictEqual(
+    expect(adminAuthLogout(token + 'hello')).toStrictEqual(
       {
         statusCode: 401,
         jsonBody: { error: expect.any(String) }

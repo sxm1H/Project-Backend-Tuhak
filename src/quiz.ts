@@ -9,9 +9,9 @@ import {
 } from './interfaces';
 import {
   getData,
-  Question,
   counters,
 } from './dataStore';
+import { Question } from './interfaces';
 
 /**
   * <Given a registered user's id, a quizId that is valid, and a name that matches specified
@@ -50,7 +50,7 @@ function adminQuizNameUpdate(token: string, quizId: number, name: string): Error
   }
 
   if (name.length < 3 || name.length > 30) {
-    return { error: 'Quiz Name must be more than 2 chracters and less than 31 characters long' };
+    return { error: 'Quiz Name must be more than 2 characters and less than 31 characters long' };
   }
 
   const courseData = newdata.quizzes;
@@ -366,7 +366,7 @@ function adminQuizCreate(token: string, name: string, description: string): Erro
   }
 
   if (name.length < 3 || name.length > 30) {
-    return { error: 'Quiz Name must be more than 2 chracters and less than 31 characters long' };
+    return { error: 'Quiz Name must be more than 2 characters and less than 31 characters long' };
   }
 
   const courseData = newdata.quizzes;
@@ -510,7 +510,7 @@ function adminQuizTransfer(token: string, userEmail: string, quizId: number): Er
 }
 
 function getRandomColour(): string {
-  const random = Math.floor((Math.random() * (8 - 1) + 1));
+  const random = Math.floor((Math.random() * 7 + 1));
   if (random === 1) {
     return 'red';
   } else if (random === 2) {

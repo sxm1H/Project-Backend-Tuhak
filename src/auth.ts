@@ -282,7 +282,7 @@ function adminUserPasswordUpdate(token: string, oldPassword: string, newPassword
   const data = getData();
   // Finding the token.
   const findToken = data.sessions.find(sessionId => sessionId.token === token);
-  if (!(findToken)) {
+  if (!findToken) {
     return { error: 'Token invalid' };
   }
 
