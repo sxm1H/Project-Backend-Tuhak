@@ -818,6 +818,8 @@ function adminQuizQuestionDuplicate(token: string, quizId: number, questionId: n
 
   if (!findToken) {
     return { error: 'Token invalid' };
+  } else if (!findQuiz) {
+    return { error: 'Quiz Id does not refer to an existing quiz.'};
   }
 
   if (findToken.userId !== findQuiz.authUserId) {

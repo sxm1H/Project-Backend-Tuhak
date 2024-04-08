@@ -38,6 +38,15 @@ describe('Testing POST /v1/admin/quiz/:quizid/question/:questionid/duplicate', (
     });
   });
 
+  test('Quiz Id does not refer to existing quiz', () => {
+    expect(adminQuizQuestionDuplicate(token, -100000000, 1)).toStrictEqual(
+      {
+        statusCode: 403,
+        jsonBody: { error: expect.any(String) }
+      }
+    );
+  });
+
   test('Token is invalid', () => {
     const { jsonBody: { questionId } } = adminQuizQuestionCreate(quizId, token, 'cool question', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]);
     const { statusCode, jsonBody } = adminQuizQuestionDuplicate(token.concat('POG'), quizId, questionId);
