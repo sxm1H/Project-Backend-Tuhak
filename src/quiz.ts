@@ -490,7 +490,9 @@ function adminQuizTransfer(token: string, userEmail: string, quizId: number): Er
   const findUser = data.user.find(user => user.userId === findToken.userId);
 
   // Error checks userEmail and permissions.
-  if (!findTarget) {
+  if (!findQuiz) {
+    return { error: 'Quiz Id is invalid.' };
+  } else if (!findTarget) {
     return { error: `${userEmail} does not belong to any users.` };
   } else if (findUser.email === userEmail) {
     return { error: `${userEmail} belongs to the current logged user.` };
@@ -790,11 +792,9 @@ function adminQuizQuestionDelete(token: string, quizId: number, questionId: numb
   // Error Checks for Token and QuizID
   if (!findToken) {
     return { error: 'Token invalid.' };
-  }
-  if (!findQuiz) {
+  } else if (!findQuiz) {
     return { error: 'Quiz Id is invalid.' };
-  }
-  if (findQuiz.authUserId !== findToken.userId) {
+  } else if (findQuiz.authUserId !== findToken.userId) {
     return { error: 'User does not own this quiz.' };
   }
 
@@ -834,6 +834,8 @@ function adminQuizQuestionDuplicate(token: string, quizId: number, questionId: n
 
   if (!findToken) {
     return { error: 'Token invalid' };
+  } else if (!findQuiz) {
+    return { error: 'Quiz Id is invalid.' };
   }
 
   if (findToken.userId !== findQuiz.authUserId) {

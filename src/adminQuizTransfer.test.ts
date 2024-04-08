@@ -3,7 +3,8 @@ import {
   adminAuthRegister,
   adminQuizCreate,
   adminQuizList,
-  adminQuizTransfer
+  adminQuizTransfer,
+  adminQuizRemove
 } from './testHelpers';
 
 let token: string;
@@ -68,7 +69,7 @@ describe('Testing POST /v1/admin/quiz/:quizid/transfer', () => {
   });
 
   test('Token invalid', () => {
-    expect(adminQuizTransfer('hello', 'nick1234@gmail.com', quizId)).toStrictEqual(
+    expect(adminQuizTransfer(token + 'hello', 'nick1234@gmail.com', quizId)).toStrictEqual(
       {
         statusCode: 401,
         jsonBody: { error: expect.any(String) }
@@ -80,6 +81,17 @@ describe('Testing POST /v1/admin/quiz/:quizid/transfer', () => {
     const quizId2 = adminQuizCreate(token2, 'Very cool name', 'bing bong').jsonBody.quizId;
 
     expect(adminQuizTransfer(token, 'nick1234@gmail.com', quizId2)).toStrictEqual(
+      {
+        statusCode: 403,
+        jsonBody: { error: expect.any(String) }
+      }
+    );
+  });
+
+  test('Quiz does not exist', () => {
+    adminQuizRemove(token, quizId);
+
+    expect(adminQuizTransfer(token, 'nick1234@gmail.com', quizId)).toStrictEqual(
       {
         statusCode: 403,
         jsonBody: { error: expect.any(String) }

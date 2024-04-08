@@ -354,6 +354,8 @@ app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
       return res.status(401).json(response);
     } else if (response.error === 'User does not own this quiz.') {
       return res.status(403).json(response);
+    } else if (response.error === 'Quiz Id is invalid.') {
+      return res.status(403).json(response);
     } else {
       return res.status(400).json(response);
     }
@@ -421,7 +423,9 @@ app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
       return res.status(401).json(response);
     } else if (response.error === 'User does not own this Quiz') {
       return res.status(403).json(response);
-    } else if (response.error === 'Question id is invalid') {
+    } else if (response.error === 'Quiz Id is invalid.') {
+      return res.status(403).json(response);
+    } else {
       return res.status(400).json(response);
     }
   }
