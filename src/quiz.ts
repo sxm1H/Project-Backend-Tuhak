@@ -487,7 +487,7 @@ function adminQuizTransfer(token: string, userEmail: string, quizId: number): Er
 
   // Error checks userEmail and permissions.
   if (!findQuiz) {
-    return { error: 'Quiz Id is invalid.'};
+    return { error: 'Quiz Id is invalid.' };
   } else if (!findTarget) {
     return { error: `${userEmail} does not belong to any users.` };
   } else if (findUser.email === userEmail) {
@@ -817,7 +817,7 @@ function adminQuizQuestionDuplicate(token: string, quizId: number, questionId: n
   if (!findToken) {
     return { error: 'Token invalid' };
   } else if (!findQuiz) {
-    return { error: 'Quiz Id is invalid.'};
+    return { error: 'Quiz Id is invalid.' };
   }
 
   if (findToken.userId !== findQuiz.authUserId) {

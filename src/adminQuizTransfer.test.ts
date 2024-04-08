@@ -90,7 +90,7 @@ describe('Testing POST /v1/admin/quiz/:quizid/transfer', () => {
 
   test('Quiz does not exist', () => {
     adminQuizRemove(token, quizId);
-    
+
     expect(adminQuizTransfer(token, 'nick1234@gmail.com', quizId)).toStrictEqual(
       {
         statusCode: 403,
