@@ -576,7 +576,10 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody: Qu
   }
 
   // Error Checks for the Question.
-  if (questionBody.question.length > 50 || questionBody.question.length < 5) {
+  const correctAnswers = questionBody.answers.find(bool => bool.correct === true);
+  if (!correctAnswers) {
+    return { error: 'No Correct Answers' };
+  } else if (questionBody.question.length > 50 || questionBody.question.length < 5) {
     return { error: 'Question Length is not between 5 and 50.' };
   } else if (questionBody.answers.length > 6 || questionBody.answers.length < 2) {
     return { error: 'Number of Question Answers is not between 2 and 6.' };

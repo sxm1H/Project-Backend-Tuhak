@@ -148,7 +148,7 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
     const question = 'What is the best city in Australia';
     const duration = 5;
     const points = 1;
-    const answers = [{ answer: 'Sydney', correct: false }, { answer: 'Sydney', correct: true }];
+    const answers = [{ answer: 'Sydney', correct: false }, { answer: 'Melbourne', correct: false }];
     expect(adminQuizQuestionCreate(quizId, token, question, duration, points, answers)).toStrictEqual({
       jsonBody: {
         error: expect.any(String),
