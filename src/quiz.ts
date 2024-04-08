@@ -486,7 +486,9 @@ function adminQuizTransfer(token: string, userEmail: string, quizId: number): Er
   const findUser = data.user.find(user => user.userId === findToken.userId);
 
   // Error checks userEmail and permissions.
-  if (!findTarget) {
+  if (!findQuiz) {
+    return { error: 'Quiz Id does not refer to an existing quiz.'};
+  } else if (!findTarget) {
     return { error: `${userEmail} does not belong to any users.` };
   } else if (findUser.email === userEmail) {
     return { error: `${userEmail} belongs to the current logged user.` };
