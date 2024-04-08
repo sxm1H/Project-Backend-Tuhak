@@ -1,3 +1,60 @@
+interface Counters {
+  sessionIdCounter: number;
+  answerIdCounter: number;
+  questionIdCounter: number;
+  quizIdCounter: number;
+}
+
+interface DataStore {
+  user: User[];
+  quizzes: Quiz[];
+  sessions: Sessions[];
+  trash: Quiz[];
+}
+
+interface User {
+  email: string;
+  password: string;
+  nameFirst: string;
+  nameLast: string;
+  userId: number;
+  passwordHistory: string[];
+  numSuccessfulLogins: number;
+  numFailedPasswordsSinceLastLogin: number;
+}
+
+interface Quiz {
+  quizId: number;
+  name: string;
+  description: string;
+  authUserId: number;
+  timeCreated: number;
+  timeLastEdited: number;
+  numQuestions: number;
+  questions: Question[];
+  duration: number;
+}
+
+interface Question {
+  questionId?: number;
+  question: string;
+  duration: number;
+  points: number;
+  answers: Answer[];
+}
+
+interface Answer {
+  answerId?: number;
+  answer: string;
+  colour?: string;
+  correct: boolean;
+}
+
+interface Sessions {
+  userId: number;
+  token: string;
+}
+
 interface ErrorObject {
   error: string;
 }
@@ -76,6 +133,13 @@ interface DuplicateQuestionReturn {
 }
 
 export {
+  Counters,
+  DataStore,
+  User,
+  Quiz,
+  Question,
+  Answer,
+  Sessions,
   ErrorObject,
   AdminId,
   TokenReturn,
@@ -91,6 +155,3 @@ export {
   QuestionId,
   DuplicateQuestionReturn,
 };
-import {
-  Question,
-} from './dataStore';

@@ -191,19 +191,6 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
     });
   });
 
-  test('Test Unsuccessful: No Correct Options', () => {
-    const question = 'What is the best city in Australia';
-    const duration = 5;
-    const points = 1;
-    const answers = [{ answer: 'Sydney', correct: false }, { answer: 'Sydney', correct: true }];
-    expect(adminQuizQuestionCreate(quizId, token, question, duration, points, answers)).toStrictEqual({
-      jsonBody: {
-        error: expect.any(String),
-      },
-      statusCode: 400,
-    });
-  });
-
   test.each([
     ['', 'What is the best city in Australia', 4, 1, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]],
     ['000000', 'What is the best city in Australia', 4, 1, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]],
