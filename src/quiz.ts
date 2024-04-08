@@ -659,12 +659,9 @@ function adminQuizTrashEmpty(token: string, quizIds: string): Record<string, nev
     return { error: 'Token invalid' };
   }
 
-  console.log(data.quizzes);
-  console.log(data.trash);
   for (const userQuizIds of arrayQuizIds) {
     const doesQuizExistInQuizzes = data.quizzes.find(quiz => quiz.quizId === userQuizIds);
     const doesQuizExistInTrash = data.trash.find(quiz => quiz.quizId === userQuizIds);
-    console.log(doesQuizExistInQuizzes, doesQuizExistInTrash);
     if (!doesQuizExistInQuizzes) {
       if (!doesQuizExistInTrash) {
         console.log(userQuizIds);
@@ -900,7 +897,12 @@ function adminQuizRestore(token: string, quizId: number): ErrorObject | Record<s
     return { error: 'Token invalid.' };
   }
 
+  const findQuizInQuizzes = data.quizzes.find(quiz => quiz.quizId === quizId);
   const findQuizInTrash = data.trash.find(ids => ids.quizId === quizId);
+  if (!findQuizInQuizzes && !findQuizInTrash) {
+    return { error: 'Quiz Does Not Exist'};
+  } 
+  
   if (!findQuizInTrash) {
     return { error: 'Quiz Id not currently in trash' };
   }

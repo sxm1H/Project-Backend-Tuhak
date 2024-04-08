@@ -441,8 +441,9 @@ app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
       return res.status(401).json(response);
     } else if (response.error === 'Valid token, but user is not the owner of the quiz') {
       return res.status(403).json(response);
-    } else if (response.error === 'Quiz Id not currently in trash' ||
-            response.error === 'Quiz name of restored quiz already in use from active quiz') {
+    } else if (response.error === 'Quiz Does Not Exist') {
+      return res.status(403).json(response);
+    } else {
       return res.status(400).json(response);
     }
   }
