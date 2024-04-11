@@ -458,6 +458,8 @@ app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
 });
 
 // ==================== UNDERNEATH IS V2 FUNCTIONS ====================
+// == ANY FUNCTION THAT IS COMMENTED OUT REQUIRES IMPLEMENTATION SINCE INPUT / OUTPUT IS DIFFERENT ==
+// 6 function should be commented out (specifics of these functions found in 5. index of README)
 
 app.post('/v2/admin/auth/logout', (req: Request, res: Response) => {
   const token = req.headers.token as string;
@@ -546,42 +548,47 @@ app.post('/v2/admin/quiz', (req: Request, res: Response) => {
   res.json(result);
 });
 
-app.delete('/v2/admin/quiz/:quizId', (req: Request, res: Response) => {
-  const token = req.headers.token as string;
-  const quizId = parseInt(req.params.quizId);
+//// One new 400 error check (END state checking)
+//
+// app.delete('/v2/admin/quiz/:quizId', (req: Request, res: Response) => {
+//   const token = req.headers.token as string;
+//   const quizId = parseInt(req.params.quizId);
 
-  const result = adminQuizRemove(token, quizId);
+//   const result = adminQuizRemove(token, quizId);
 
-  if ('error' in result) {
-    if (result.error === 'does not refer to valid logged in user session') {
-      return res.status(401).json(result);
-    } else {
-      return res.status(403).json(result);
-    }
-  }
+//   if ('error' in result) {
+//     if (result.error === 'does not refer to valid logged in user session') {
+//       return res.status(401).json(result);
+//     } else {
+//       return res.status(403).json(result);
+//     }
+//   }
 
-  save();
-  res.json(result);
-});
+//   save();
+//   res.json(result);
+// });
 
-app.get('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizid);
-  const token = req.headers.token as string;
-  const response = adminQuizInfo(token, quizId);
+///////// Requires a new implementation which puts questionUrl in both quiz and question
+// which probably means that we will have to update more than just 6 functions
+//
+// app.get('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
+//   const quizId = parseInt(req.params.quizid);
+//   const token = req.headers.token as string;
+//   const response = v2AdminQuizInfo(token, quizId);
 
-  if ('error' in response) {
-    if (response.error === 'Token invalid.') {
-      return res.status(401).json(response);
-    } else if (response.error === 'Quiz Id invalid.') {
-      return res.status(400).json(response);
-    } else if (response.error === 'User does not own this quiz.') {
-      return res.status(403).json(response);
-    }
-  }
+//   if ('error' in response) {
+//     if (response.error === 'Token invalid.') {
+//       return res.status(401).json(response);
+//     } else if (response.error === 'Quiz Id invalid.') {
+//       return res.status(400).json(response);
+//     } else if (response.error === 'User does not own this quiz.') {
+//       return res.status(403).json(response);
+//     }
+//   }
 
-  save();
-  res.json(response);
-});
+//   save();
+//   res.json(response);
+// });
 
 app.put('/v2/admin/quiz/:quizId/name', (req: Request, res: Response) => {
   const token = req.headers.token as string;
@@ -684,94 +691,104 @@ app.delete('/v2/admin/quiz/trash/empty', (req: Request, res: Response) => {
   res.json(response);
 });
 
-app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizid);
-  const token = req.headers.token as string;
-  const { userEmail } = req.body;
-  const response = adminQuizTransfer(token, userEmail, quizId);
+//// Only one error -  checking for END state
+//
+// app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
+//   const quizId = parseInt(req.params.quizid);
+//   const token = req.headers.token as string;
+//   const { userEmail } = req.body;
+//   const response = adminQuizTransfer(token, userEmail, quizId);
 
-  if ('error' in response) {
-    if (response.error === 'Token invalid.') {
-      return res.status(401).json(response);
-    } else if (response.error === 'User does not own this quiz.') {
-      return res.status(403).json(response);
-    } else if (response.error === 'Quiz Id is invalid.') {
-      return res.status(403).json(response);
-    } else {
-      return res.status(400).json(response);
-    }
-  }
+//   if ('error' in response) {
+//     if (response.error === 'Token invalid.') {
+//       return res.status(401).json(response);
+//     } else if (response.error === 'User does not own this quiz.') {
+//       return res.status(403).json(response);
+//     } else if (response.error === 'Quiz Id is invalid.') {
+//       return res.status(403).json(response);
+//     } else {
+//       return res.status(400).json(response);
+//     }
+//   }
 
-  save();
-  res.json(response);
-});
+//   save();
+//   res.json(response);
+// });
 
-app.post('/v2/admin/quiz/:quizid/question', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizid);
-  const token = req.headers.token as string;
-  const { questionBody } = req.body;
-  const response = adminQuizQuestionCreate(quizId, token, questionBody);
 
-  if ('error' in response) {
-    if (response.error === 'Token invalid.') {
-      return res.status(401).json(response);
-    } else if (response.error === 'User does not own this quiz.') {
-      return res.status(403).json(response);
-    } else if (response.error === 'Quiz Id is invalid.') {
-      return res.status(403).json(response);
-    } else {
-      return res.status(400).json(response);
-    }
-  }
+//// Requires new implementation to input thumbnail parameters into the question
+//
+//// Also more errors zZzZz
+// app.post('/v2/admin/quiz/:quizid/question', (req: Request, res: Response) => {
+//   const quizId = parseInt(req.params.quizid);
+//   const token = req.headers.token as string;
+//   const { questionBody, thumbnailUrl } = req.body;
+//   const response = v2AdminQuizQuestionCreate(quizId, token, questionBody, thumbnailUrl);
 
-  save();
-  res.json(response);
-});
+//   if ('error' in response) {
+//     if (response.error === 'Token invalid.') {
+//       return res.status(401).json(response);
+//     } else if (response.error === 'User does not own this quiz.') {
+//       return res.status(403).json(response);
+//     } else if (response.error === 'Quiz Id is invalid.') {
+//       return res.status(403).json(response);
+//     } else {
+//       return res.status(400).json(response);
+//     }
+//   }
 
-app.put('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
-  const token = req.headers.token as string;
-  const { questionBody } = req.body;
-  const quizId = parseInt(req.params.quizid);
-  const questionId = parseInt(req.params.questionid);
-  const response = adminQuizQuestionUpdate(questionBody, token, quizId, questionId);
-  if ('error' in response) {
-    if (response.error === 'Token invalid.') {
-      return res.status(401).json(response);
-    } else if (response.error === 'User does not own this quiz.') {
-      return res.status(403).json(response);
-    } else if (response.error === 'Quiz Id is invalid.'){
-      return res.status(403).json(response);
-    } else {
-      return res.status(400).json(response);
-    }
-  }
+//   save();
+//   res.json(response);
+// });
 
-  save();
-  res.json(response);
-});
+//// This simply just requires a new thumbnail parameter (new function in quiz.ts, prepended w/ v2)
+//
+// app.put('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
+//   const token = req.headers.token as string;
+//   const { questionBody, thumbnailUrl } = req.body;
+//   const quizId = parseInt(req.params.quizid);
+//   const questionId = parseInt(req.params.questionid);
+//   const response = v2AdminQuizQuestionUpdate(questionBody, token, quizId, questionId, thumbnailUrl);
+//   if ('error' in response) {
+//     if (response.error === 'Token invalid.') {
+//       return res.status(401).json(response);
+//     } else if (response.error === 'User does not own this quiz.') {
+//       return res.status(403).json(response);
+//     } else if (response.error === 'Quiz Id is invalid.'){
+//       return res.status(403).json(response);
+//     } else {
+//       return res.status(400).json(response);
+//     }
+//   }
 
-app.delete('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
-  const token = req.headers.token as string;
-  const quizId = parseInt(req.params.quizid);
-  const questionId = parseInt(req.params.questionid);
+//   save();
+//   res.json(response);
+// });
 
-  const response = adminQuizQuestionDelete(token, quizId, questionId);
+//// Simply just one new error check (END state of a quiz)
+//
+// app.delete('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
+//   const token = req.headers.token as string;
+//   const quizId = parseInt(req.params.quizid);
+//   const questionId = parseInt(req.params.questionid);
 
-  if ('error' in response) {
-    if (response.error === 'Token invalid.') {
-      return res.status(401).json(response);
-    } else if (response.error === 'User does not own this quiz.') {
-      return res.status(403).json(response);
-    } else if (response.error === 'Quiz Id is invalid.') {
-      return res.status(403).json(response);
-    } else {
-      return res.status(400).json(response);
-    }
-  }
+//   const response = adminQuizQuestionDelete(token, quizId, questionId);
 
-  save();
-  res.json(response);
-});
+//   if ('error' in response) {
+//     if (response.error === 'Token invalid.') {
+//       return res.status(401).json(response);
+//     } else if (response.error === 'User does not own this quiz.') {
+//       return res.status(403).json(response);
+//     } else if (response.error === 'Quiz Id is invalid.') {
+//       return res.status(403).json(response);
+//     } else {
+//       return res.status(400).json(response);
+//     }
+//   }
+
+//   save();
+//   res.json(response);
+// });
 
 app.put('/v2/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response) => {
   const token = req.headers.token as string;
