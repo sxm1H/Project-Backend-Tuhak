@@ -6,6 +6,7 @@ import {
   UserDetailsReturnObject,
   UserData
 } from './interfaces';
+import HTTPError from 'http-errors';
 
 /**
   * Registers a user with a given email, password, first name and last name. The function pushes
@@ -28,21 +29,21 @@ function adminAuthRegister(email: string, password: string, nameFirst: string, n
 
   // Error checking for all inputs
   if (findEmail) {
-    return { error: 'Email is already in use.' };
+    throw HTTPError(400, 'Email is already in use.');
   } else if (validator.isEmail(email) === false) {
-    return { error: 'Invalid email.' };
+    throw HTTPError(400, 'Invalid email.');
   } else if (!nameFirst.match(/^[A-Za-z'" -]+$/)) {
-    return { error: 'Invalid characters in first name.' };
+    throw HTTPError(400, 'Invalid characters in first name.');
   } else if (nameFirst.length < 2 || nameFirst.length > 20) {
-    return { error: 'Invalid first name length.' };
+    throw HTTPError(400, 'Invalid first name length.');
   } else if (!nameLast.match(/^[A-Za-z'" -]+$/)) {
-    return { error: 'Invalid characters in last name.' };
+    throw HTTPError(400, 'Invalid characters in last name.');
   } else if (nameLast.length < 2 || nameLast.length > 20) {
-    return { error: 'Invalid last name length.' };
+    throw HTTPError(400, 'Invalid last name length.');
   } else if (password.length < 8) {
-    return { error: 'Password must be at least 8 characters long.' };
+    throw HTTPError(400, 'Password must be at least 8 characters long.');
   } else if (!password.match(/[A-Za-z]/) || !password.match(/[0-9]/)) {
-    return { error: 'Password must have at least one number and one letter.' };
+    throw HTTPError(400, 'Password must have at least one number and one letter.');
   }
 
   // Generation of authUserId and token
