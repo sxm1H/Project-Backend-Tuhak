@@ -9,7 +9,7 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
-import { clear } from './iter2/iter2Other';
+import { clear } from './other';
 import {
   adminAuthLogin,
   adminAuthRegister,
@@ -17,7 +17,7 @@ import {
   adminUserDetailsUpdate,
   adminUserPasswordUpdate,
   adminAuthLogout
-} from './iter2/iter2Auth';
+} from './authIter2';
 import {
   adminQuizNameUpdate,
   adminQuizRemove,
@@ -34,8 +34,8 @@ import {
   adminQuizTrashView,
   adminQuizQuestionUpdate,
   adminQuizRestore
-} from './iter2/iter2Quiz';
-import { getData, setData, setCounters, getCounters } from './iter2/iter2DataStore';
+} from './quizIter2';
+import { getData, setData, setCounters, getCounters } from './dataStore';
 
 // Set up web app
 const app = express();
