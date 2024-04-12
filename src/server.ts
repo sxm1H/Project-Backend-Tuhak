@@ -548,13 +548,13 @@ app.post('/v2/admin/quiz', (req: Request, res: Response) => {
   res.json(result);
 });
 
-//// One new 400 error check (END state checking)
-//
+// // One new 400 error check (END state checking)
+
 // app.delete('/v2/admin/quiz/:quizId', (req: Request, res: Response) => {
 //   const token = req.headers.token as string;
 //   const quizId = parseInt(req.params.quizId);
 
-//   const result = adminQuizRemove(token, quizId);
+//   const result = v2AdminQuizRemove(token, quizId);
 
 //   if ('error' in result) {
 //     if (result.error === 'does not refer to valid logged in user session') {
@@ -568,9 +568,9 @@ app.post('/v2/admin/quiz', (req: Request, res: Response) => {
 //   res.json(result);
 // });
 
-///////// Requires a new implementation which puts questionUrl in both quiz and question
+// /////// Requires a new implementation which puts questionUrl in both quiz and question
 // which probably means that we will have to update more than just 6 functions
-//
+
 // app.get('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
 //   const quizId = parseInt(req.params.quizid);
 //   const token = req.headers.token as string;
