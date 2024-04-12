@@ -356,7 +356,7 @@
 //       statusCode: 403,
 //     });
 //   });
-  
+
 //   test('Test Unsuccessful: Invalid QuestionId', () => {
 //     let question = 'Question1';
 //     let points = 4;
@@ -372,5 +372,5 @@
 // });
 
 test('temp', () => {
-  expect(2+2).toBe(4);
+  expect(2 + 2).toBe(4);
 });

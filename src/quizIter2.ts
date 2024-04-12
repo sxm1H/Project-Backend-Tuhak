@@ -224,7 +224,7 @@ function adminQuizQuestionUpdate(questionBody: Question, token: string, quizId: 
   if (!findQuiz) {
     return { error: 'Quiz Id is invalid.' };
   }
-  
+
   const findQuestion = findQuiz.questions.find(question => question.questionId === questionId);
 
   if (!findToken) {
@@ -655,7 +655,7 @@ function adminQuizTrashEmpty(token: string, quizIds: string): Record<string, nev
   const data = getData();
 
   const arrayQuizIds = JSON.parse(quizIds) as number[];
-  
+
   const findToken = data.sessions.find(ids => ids.token === token);
   if (!findToken) {
     return { error: 'Token invalid' };
@@ -667,7 +667,7 @@ function adminQuizTrashEmpty(token: string, quizIds: string): Record<string, nev
     if (!doesQuizExistInQuizzes) {
       if (!doesQuizExistInTrash) {
         console.log(userQuizIds);
-        return { error: 'QuizId Is Invalid'};
+        return { error: 'QuizId Is Invalid' };
       }
     }
   }
@@ -902,9 +902,9 @@ function adminQuizRestore(token: string, quizId: number): ErrorObject | Record<s
   const findQuizInQuizzes = data.quizzes.find(quiz => quiz.quizId === quizId);
   const findQuizInTrash = data.trash.find(ids => ids.quizId === quizId);
   if (!findQuizInQuizzes && !findQuizInTrash) {
-    return { error: 'Quiz Does Not Exist'};
-  } 
-  
+    return { error: 'Quiz Does Not Exist' };
+  }
+
   if (!findQuizInTrash) {
     return { error: 'Quiz Id not currently in trash' };
   }
