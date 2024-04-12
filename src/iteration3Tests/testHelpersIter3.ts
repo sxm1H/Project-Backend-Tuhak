@@ -1,77 +1,66 @@
 import request, { HttpVerb } from 'sync-request-curl';
 import { port, url } from '../config.json';
 import { Answer } from '../interfaces';
+import { IncomingHttpHeaders } from 'http';
+import HTTPError from 'http-errors';
 
 const SERVER_URL = `${url}:${port}`;
+const TIMEOUT_MS = 20000;
 
-// The 'RequestHelperReturnType' inteface and 'requestHelper' have been referenced from the file
-// 'wrapper.test.ts' in the week5-server-example respository.
-interface RequestHelperReturnType {
-    statusCode: number;
-    jsonBody?: Record<string, never>;
-    error?: string;
-}
-
+// This 'requestHelper' function has been referenced from quiz.test.ts from lab08_quiz.
 const requestHelper = (
   method: HttpVerb,
   path: string,
-  payload: object = {}
-): RequestHelperReturnType => {
+  payload: object = {},
+  headers: IncomingHttpHeaders = {}
+): any => {
   let qs = {};
   let json = {};
-  if (['GET', 'DELETE'].includes(method)) {
+  if (['GET', 'DELETE'].includes(method.toUpperCase())) {
     qs = payload;
   } else {
     // PUT/POST
     json = payload;
   }
-  const res = request(method, SERVER_URL + path, { qs, json, timeout: 20000 });
-  const bodyString = res.body.toString();
-  let bodyObject: RequestHelperReturnType;
+
+  const url = SERVER_URL + path;
+  const res = request(method, url, { qs, json, headers, timeout: TIMEOUT_MS });
+
+  let responseBody: any;
   try {
-    // Return if valid JSON, in our own custom format
-    bodyObject = {
-      jsonBody: JSON.parse(bodyString),
-      statusCode: res.statusCode,
-    };
-  } catch (error) {
-    bodyObject = {
-      error: `\
-  Server responded with ${res.statusCode}, but body is not JSON!
-  
-  GIVEN:
-  ${bodyString}.
-  
-  REASON:
-  ${error.message}.
-  
-  HINT:
-  Did you res.json(undefined)?`,
-      statusCode: res.statusCode,
-    };
+    responseBody = JSON.parse(res.body.toString());
+  } catch (err: any) {
+    if (res.statusCode === 200) {
+      throw HTTPError(500,
+        `Non-jsonifiable body despite code 200: '${res.body}'.\nCheck that you are not doing res.json(undefined) instead of res.json({}), e.g. in '/clear'`
+      );
+    }
+    responseBody = { error: `Failed to parse JSON: '${err.message}'` };
   }
-  if ('error' in bodyObject) {
-    // Return the error in a custom structure for testing later
-    return { statusCode: res.statusCode, error: bodyObject.error };
+
+  const errorMessage = `[${res.statusCode}] ` + responseBody?.error || responseBody || 'No message specified!';
+
+  // NOTE: the error is rethrown in the test below. This is useful becasuse the
+  // test suite will halt (stop) if there's an error, rather than carry on and
+  // potentially failing on a different expect statement without useful outputs
+  switch (res.statusCode) {
+    case 400: // BAD_REQUEST
+    case 401: // UNAUTHORIZED
+      throw HTTPError(res.statusCode, errorMessage);
+    case 404: // NOT_FOUND
+      throw HTTPError(res.statusCode, `Cannot find '${url}' [${method}]\nReason: ${errorMessage}\n\nHint: Check that your server.ts have the correct path AND method`);
+    case 500: // INTERNAL_SERVER_ERROR
+      throw HTTPError(res.statusCode, errorMessage + '\n\nHint: Your server crashed. Check the server log!\n');
+    default:
+      if (res.statusCode !== 200) {
+        throw HTTPError(res.statusCode, errorMessage + `\n\nSorry, no idea! Look up the status code ${res.statusCode} online!\n`);
+      }
   }
-  return bodyObject;
+  return responseBody;
 };
 
 /// ////////////////////////////////////WRAPPER FUNCTIONS////////////////////////////////////////////
 // ============================================================================================== //
-
-const clear = () => {
-  return requestHelper('DELETE', '/v1/clear');
-};
-
-const adminAuthRegister = (email: string, password: string, nameFirst: string, nameLast: string) => {
-  return requestHelper('POST', '/v1/admin/auth/register', { email, password, nameFirst, nameLast });
-};
-
-const adminAuthLogin = (email: string, password: string) => {
-  return requestHelper('POST', '/v1/admin/auth/login', { email, password });
-};
-
 const adminUserDetails = (token: string) => {
   return requestHelper('GET', '/v1/admin/user/details', { token });
 };
@@ -162,10 +151,6 @@ const adminQuizRestore = (token: string, quizId: number) => {
 // ============================================================================================== //
 
 export {
-  requestHelper,
-  clear,
-  adminAuthRegister,
-  adminAuthLogin,
   adminUserDetails,
   adminUserDetailsUpdate,
   adminUserPasswordUpdate,

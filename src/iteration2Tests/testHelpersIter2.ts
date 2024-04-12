@@ -4,15 +4,10 @@ import { Answer } from '../interfaces';
 import HTTPError from 'http-errors';
 
 const SERVER_URL = `${url}:${port}`;
+const TIMEOUT_MS = 20000;
 
 // The 'RequestHelperReturnType' inteface and 'requestHelper' have been referenced from the file
 // 'wrapper.test.ts' in the week5-server-example respository.
-// interface RequestHelperReturnType {
-//     statusCode: number;
-//     jsonBody?: Record<string, never>;
-//     error?: string;
-// }
-
 const requestHelper = (
   method: HttpVerb,
   path: string,
@@ -26,7 +21,7 @@ const requestHelper = (
     // PUT/POST
     json = payload;
   }
-  const res = request(method, SERVER_URL + path, { qs, json, timeout: 20000 });
+  const res = request(method, SERVER_URL + path, { qs, json, timeout: TIMEOUT_MS });
   const bodyString = res.body.toString();
 
   let responseBody: any;
