@@ -6,12 +6,12 @@ import {
   QuizTrashReturnObject,
   QuestionId,
   DuplicateQuestionReturn,
-} from './interfaces';
+} from './iter2Interfaces';
 import {
   getData,
   counters,
-} from './dataStore';
-import { Question } from './interfaces';
+} from './iter2DataStore';
+import { Question } from './iter2Interfaces';
 
 /**
   * <Given a registered user's id, a quizId that is valid, and a name that matches specified

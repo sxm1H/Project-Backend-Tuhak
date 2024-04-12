@@ -1,11 +1,11 @@
-import { getData, counters } from './dataStore';
+import { getData, counters } from './iter2DataStore';
 import validator from 'validator';
 import {
   ErrorObject,
   TokenReturn,
   UserDetailsReturnObject,
   UserData
-} from './interfaces';
+} from './iter2Interfaces';
 
 /**
   * Registers a user with a given email, password, first name and last name. The function pushes
