@@ -4,7 +4,7 @@
 //   adminQuizList,
 //   adminQuizCreate,
 // } from './testHelpersIter2';
-
+// import HTTPError from 'http-errors';
 // let token: string;
 // beforeEach(() => {
 //   clear();
@@ -14,33 +14,23 @@
 
 // describe('Test GET /v1/admin/quiz/list', () => {
 //   test('Token invalid', () => {
-//     const { statusCode, jsonBody } = adminQuizList(token + '1');
-//     expect(statusCode).toStrictEqual(401);
-//     expect(jsonBody.error).toStrictEqual(expect.any(String));
+//     expect(() => adminQuizList(token + '1')).toThrow(HTTPError[401]);
 //   });
 
 //   test('User Id Quiz List successfully accessed', () => {
-//     const { statusCode, jsonBody } = adminQuizList(token);
-//     expect(statusCode).toStrictEqual(200);
-//     expect(jsonBody).toStrictEqual({
+//     expect(adminQuizList(token)).toStrictEqual({
 //       quizzes: []
 //     });
 
-//     const { jsonBody: { quizId } } = adminQuizCreate(token, 'creative name', 'description');
+//     const id = adminQuizCreate(token, 'creative name', 'description');
 //     const list2 = adminQuizList(token);
-
-//     expect(list2.statusCode).toStrictEqual(200);
-//     expect(list2.jsonBody).toStrictEqual({
-//       quizzes: [
-//         {
-//           quizId: quizId,
-//           name: 'creative name'
-//         }
-//       ]
+//     expect(list2).toStrictEqual({
+//       quizId: id,
+//       name: 'creative name'
 //     });
 //   });
 // });
 
 test('temp', () => {
-  expect(2+2).toBe(4);
+  expect(2 + 2).toBe(4);
 });

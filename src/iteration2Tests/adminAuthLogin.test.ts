@@ -3,6 +3,7 @@
 //   adminAuthRegister,
 //   adminAuthLogin,
 // } from './testHelpersIter2';
+// import HTTPError from 'http-errors';
 
 // beforeEach(() => {
 //   clear();
@@ -15,24 +16,17 @@
 //     adminAuthRegister('sami@gmail.com', 'sami1234', 'Sami', 'Hossein');
 //     adminAuthRegister('kyle1234@gmail.com', 'kyle1234', 'Kyle', 'Morley');
 
-//     const { statusCode, jsonBody } = adminAuthLogin('nick1234@gmail.com', 'nick1234');
-
-//     expect(statusCode).toStrictEqual(200);
-//     expect(jsonBody.token).toStrictEqual(expect.any(String));
+//     expect(adminAuthLogin('nick1234@gmail.com', 'nick1234')).toStrictEqual({
+//       token: expect.any(String)
+//     });
 //   });
 
 //   test('Email address does not exist', () => {
-//     const { statusCode, jsonBody } = adminAuthLogin('DunYao@gmail.com', 'nick1234');
-
-//     expect(statusCode).toStrictEqual(400);
-//     expect(jsonBody.error).toStrictEqual(expect.any(String));
+//     expect(() => adminAuthLogin('DunYao@gmail.com', 'nick1234')).toThrow(HTTPError[400]);
 //   });
 
 //   test('Password is not correct for the given email.', () => {
-//     const { statusCode, jsonBody } = adminAuthLogin('nick1234@gmail.com', 'notTheSamePassword');
-
-//     expect(statusCode).toStrictEqual(400);
-//     expect(jsonBody.error).toStrictEqual(expect.any(String));
+//     expect(() => adminAuthLogin('nick1234@gmail.com', 'notTheSamePassword')).toThrow(HTTPError[400]);
 //   });
 
 //   test.each([
@@ -42,16 +36,12 @@
 //     { email: 'Samuel1234@gmail.com', password: 'Samuel1234', firstName: 'Samuel', lastName: 'Jeong' },
 //     { email: 'Dilhan1234@gmail.com', password: 'Dilhan1234', firstName: 'Dilhan', lastName: 'Mert' }
 //   ])('Comprehensive successful tests - testing multiple users IDs are returned correctly', ({ email, password, firstName, lastName }) => {
-//     adminAuthRegister(email, password, firstName, lastName);
-
-//     const { statusCode, jsonBody } = adminAuthLogin(email, password);
-
-//     // Customized test message for each user
-//     expect(statusCode).toStrictEqual(200);
-//     expect(jsonBody.token).toStrictEqual(expect.any(String));
+//     expect(adminAuthRegister(email, password, firstName, lastName)).toStrictEqual({
+//       token: expect.any(String)
+//     })
 //   });
 // });
 
 test('temp', () => {
-  expect(2+2).toBe(4);
+  expect(2 + 2).toBe(4);
 });

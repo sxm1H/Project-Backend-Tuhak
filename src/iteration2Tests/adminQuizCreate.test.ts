@@ -3,7 +3,7 @@
 //   adminAuthRegister,
 //   adminQuizCreate,
 // } from './testHelpersIter2';
-
+// import HTTPError from 'http-errors';
 // let token: string;
 // beforeEach(() => {
 //   clear();
@@ -13,9 +13,7 @@
 
 // describe('Testing POST /v1/admin/quiz', () => {
 //   test('Token was not valid', () => {
-//     const { statusCode, jsonBody } = adminQuizCreate(token + '1', 'amazing Quiz', 'the quiz Id is not a number');
-//     expect(statusCode).toStrictEqual(401);
-//     expect(jsonBody).toStrictEqual({
+//     expect(adminQuizCreate(token + '1', 'amazing Quiz', 'the quiz Id is not a number')).toStrictEqual({
 //       error: expect.any(String)
 //     });
 //   });
@@ -34,9 +32,7 @@
 //       description: 'percentage Quiz'
 //     }
 //   ])('Quiz name has invalid characters', ({ name, description }) => {
-//     const { statusCode, jsonBody } = adminQuizCreate(token, name, description);
-//     expect(statusCode).toStrictEqual(400);
-//     expect(jsonBody.error).toStrictEqual(expect.any(String));
+//     expect(() => adminQuizCreate(token, name, description)).toThrow(HTTPError[400]);
 //   });
 
 //   test.each([
@@ -53,22 +49,17 @@
 //       description: 'Blank quiz'
 //     }
 //   ])('Check Quiz name is between valid character limit', ({ name, description }) => {
-//     const { statusCode, jsonBody } = adminQuizCreate(token, name, description);
-//     expect(statusCode).toStrictEqual(400);
-//     expect(jsonBody.error).toStrictEqual(expect.any(String));
+//     expect(() => adminQuizCreate(token, name, description)).toThrow(HTTPError[400]);
 //   });
 
 //   test('Check if Quiz Name already exists', () => {
-//     adminQuizCreate(token, 'Cool Quiz', 'The best quiz in the world');
-//     const { statusCode, jsonBody } = adminQuizCreate(token, 'Cool Quiz', 'Another cool quiz');
-//     expect(statusCode).toStrictEqual(400);
-//     expect(jsonBody.error).toStrictEqual(expect.any(String));
+//     expect(() => adminQuizCreate(token, 'Cool Quiz', 'The best quiz in the world')).toThrow(HTTPError[400]);
 //   });
 
 //   test('Quiz Description is too long', () => {
-//     const { statusCode, jsonBody } = adminQuizCreate(token, 'Too Long', 'Lorem ipsum dolor sit amet. Eos deleniti inventore est illo eligendi ut excepturi molestiae aut vero quas. Et dolorum doloremque ad reprehenderit adipisci qui voluptatem harum');
-//     expect(statusCode).toStrictEqual(400);
-//     expect(jsonBody.error).toStrictEqual(expect.any(String));
+//     expect(() => adminQuizCreate(token, 'Too Long',
+//     'Lorem ipsum dolor sit amet. Eos deleniti inventore est illo eligendi ut excepturi molestiae aut vero quas. Et dolorum doloremque ad reprehenderit adipisci qui voluptatem harum')).
+//     toThrow(HTTPError[400]);
 //   });
 
 //   test.each([
@@ -81,12 +72,9 @@
 //       description: ''
 //     }
 //   ])('Successful Quiz Created', ({ name, description }) => {
-//     const { statusCode, jsonBody } = adminQuizCreate(token, name, description);
-//     expect(statusCode).toStrictEqual(200);
-//     expect(jsonBody.quizId).toStrictEqual(expect.any(Number));
+//     expect(adminQuizCreate(token, name, description)).toStrictEqual(expect.any(Number));
 //   });
 // });
-
 test('temp', () => {
-  expect(2+2).toBe(4);
+  expect(2 + 2).toBe(4);
 });

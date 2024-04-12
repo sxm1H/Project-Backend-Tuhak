@@ -8,27 +8,29 @@
 // let token: string;
 // let quizId: number;
 // let time: number;
+
+// import HTTPError from 'http-errors';
+
 // beforeEach(() => {
 //   clear();
 
-//   token = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo').jsonBody.token;
-//   quizId = adminQuizCreate(token, 'quiz1', 'lorem ipsum').jsonBody.quizId;
+//   token = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo').token;
+//   quizId = adminQuizCreate(token, 'quiz1', 'lorem ipsum').quizId;
 
 //   time = Math.floor(Date.now() / 1000);
 // });
 
 // describe('Testing GET /v1/admin/quiz/:quizid', () => {
 //   test('Successfully retrieves info', () => {
-//     const { statusCode, jsonBody } = adminQuizInfo(token, quizId);
 
-//     expect(jsonBody.timeCreated).toBeGreaterThanOrEqual(time);
-//     expect(jsonBody.timeCreated).toBeLessThanOrEqual(time + 2);
-//     expect(jsonBody.timeLastEdited).toBeGreaterThanOrEqual(time);
-//     expect(jsonBody.timeLastEdited).toBeLessThanOrEqual(time + 2);
+//     const info = adminQuizInfo(token, quizId);
 
-//     expect(statusCode).toStrictEqual(200);
-//     expect(jsonBody).toStrictEqual(
-//       {
+//     expect(info.timeCreated).toBeGreaterThanOrEqual(time);
+//     expect(info.timeCreated).toBeLessThanOrEqual(time + 2);
+//     expect(info.timeLastEdited).toBeGreaterThanOrEqual(time);
+//     expect(info.timeLastEdited).toBeLessThanOrEqual(time + 2);
+
+//     expect(info).toStrictEqual({
 //         quizId: expect.any(Number),
 //         name: expect.any(String),
 //         timeCreated: expect.any(Number),
@@ -37,39 +39,22 @@
 //         duration: expect.any(Number),
 //         questions: [],
 //         numQuestions: 0
-//       }
-//     );
+//     });
 //   });
 
 //   test('Invalid token', () => {
-//     expect(adminQuizInfo('hello', quizId)).toStrictEqual(
-//       {
-//         statusCode: 401,
-//         jsonBody: { error: expect.any(String) }
-//       }
-//     );
+//     expect(() => adminQuizInfo('hello', quizId)).toThrow(HTTPError[401]);
 //   });
 
 //   test('Invalid quizId)', () => {
-//     expect(adminQuizInfo(token, -2)).toStrictEqual(
-//       {
-//         statusCode: 400,
-//         jsonBody: { error: expect.any(String) }
-//       }
-//     );
+//     expect(() => adminQuizInfo(token, -2)).toThrow(HTTPError[400]);
 //   });
 
 //   test('User does not own quiz', () => {
-//     const { jsonBody: { token: token2 } } = adminAuthRegister('sami@unsw.edu.au', '1234abcd', 'Sami', 'Hossain');
-//     expect(adminQuizInfo(token2, quizId)).toStrictEqual(
-//       {
-//         statusCode: 403,
-//         jsonBody: { error: expect.any(String) }
-//       }
-//     );
+//     expect(() => adminAuthRegister('sami@unsw.edu.au', '1234abcd', 'Sami', 'Hossain')).toThrow(HTTPError[403]);
 //   });
 // });
 
 test('temp', () => {
-  expect(2+2).toBe(4);
+  expect(2 + 2).toBe(4);
 });
