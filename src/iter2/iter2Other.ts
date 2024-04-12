@@ -1,4 +1,4 @@
-import { setData } from './dataStore';
+import { setData } from './iter2DataStore';
 
 /**
  * clear() will clear the current database of data - used for jest tests.

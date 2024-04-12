@@ -2,7 +2,7 @@
 import {
   Counters,
   DataStore,
-} from './interfaces';
+} from './iter2Interfaces';
 
 let data: DataStore = {
   user: [],

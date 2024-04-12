@@ -1,6 +1,6 @@
 import request, { HttpVerb } from 'sync-request-curl';
-import { port, url } from './config.json';
-import { Answer } from './interfaces';
+import { port, url } from '../../config.json';
+import { Answer } from '../iter2Interfaces';
 
 const SERVER_URL = `${url}:${port}`;
 
