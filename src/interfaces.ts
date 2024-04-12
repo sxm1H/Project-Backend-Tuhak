@@ -33,6 +33,7 @@ interface Quiz {
   numQuestions: number;
   questions: Question[];
   duration: number;
+  thumbnailUrl?: string;
 }
 
 interface Question {
@@ -41,6 +42,7 @@ interface Question {
   duration: number;
   points: number;
   answers: Answer[];
+  thumbnailUrl?: string;
 }
 
 interface Answer {
