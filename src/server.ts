@@ -215,7 +215,7 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Respo
       return res.status(401).json(response);
     } else if (response.error === 'User does not own this quiz.') {
       return res.status(403).json(response);
-    } else if (response.error === 'Quiz Id is invalid.'){
+    } else if (response.error === 'Quiz Id is invalid.') {
       return res.status(403).json(response);
     } else {
       return res.status(400).json(response);
@@ -691,7 +691,7 @@ app.delete('/v2/admin/quiz/trash/empty', (req: Request, res: Response) => {
   res.json(response);
 });
 
-//// Only one error -  checking for END state
+/// / Only one error -  checking for END state
 //
 // app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
 //   const quizId = parseInt(req.params.quizid);
@@ -715,10 +715,9 @@ app.delete('/v2/admin/quiz/trash/empty', (req: Request, res: Response) => {
 //   res.json(response);
 // });
 
-
-//// Requires new implementation to input thumbnail parameters into the question
+/// / Requires new implementation to input thumbnail parameters into the question
 //
-//// Also more errors zZzZz
+/// / Also more errors zZzZz
 // app.post('/v2/admin/quiz/:quizid/question', (req: Request, res: Response) => {
 //   const quizId = parseInt(req.params.quizid);
 //   const token = req.headers.token as string;
@@ -741,7 +740,7 @@ app.delete('/v2/admin/quiz/trash/empty', (req: Request, res: Response) => {
 //   res.json(response);
 // });
 
-//// This simply just requires a new thumbnail parameter (new function in quiz.ts, prepended w/ v2)
+/// / This simply just requires a new thumbnail parameter (new function in quiz.ts, prepended w/ v2)
 //
 // app.put('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
 //   const token = req.headers.token as string;
@@ -765,7 +764,7 @@ app.delete('/v2/admin/quiz/trash/empty', (req: Request, res: Response) => {
 //   res.json(response);
 // });
 
-//// Simply just one new error check (END state of a quiz)
+/// / Simply just one new error check (END state of a quiz)
 //
 // app.delete('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
 //   const token = req.headers.token as string;
