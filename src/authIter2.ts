@@ -86,10 +86,10 @@ function adminAuthLogin(email: string, password: string): ErrorObject | TokenRet
   const findUser = newData.user.find(user => user.email === email);
 
   if (!findUser) {
-    return { error: 'Email address does not exist.' };
+    throw HTTPError(400, 'Email address does not exist.');
   } else if (findUser.password !== password) {
     findUser.numFailedPasswordsSinceLastLogin++;
-    return { error: 'Password is not correct for the given email.' };
+    throw HTTPError(400, 'Password is not correct for the given email.');
   }
 
   findUser.numFailedPasswordsSinceLastLogin = 0;
@@ -126,7 +126,7 @@ function adminUserDetails(token: string): ErrorObject | UserDetailsReturnObject 
   const findToken = data.sessions.find(sessions => sessions.token === token);
 
   if (!findToken) {
-    return { error: 'Token invalid' };
+    throw HTTPError(401, 'Token invalid');
   }
 
   const findUser = data.user.find(user => user.userId === findToken.userId);
@@ -158,13 +158,13 @@ function adminUserDetailsUpdate(token: string, email: string, nameFirst: string,
   const sessionDetails = data.sessions.find(sessionId => sessionId.token === token);
 
   if (!(sessionDetails)) {
-    return { error: 'Token is invalid.' };
+    throw HTTPError(401, 'Token invalid');
   }
 
   for (let i = 0; i < data.user.length; i++) {
     if (data.user[i].email === email) {
       if (sessionDetails.userId !== data.user[i].userId) {
-        return { error: 'Email is already in use.' };
+        throw HTTPError(400, 'Email is already in use.');
       }
     }
   }
@@ -173,15 +173,15 @@ function adminUserDetailsUpdate(token: string, email: string, nameFirst: string,
   const indexToUpdate = data.user.findIndex(user => user.userId === userId);
 
   if (validator.isEmail(email) === false) {
-    return { error: 'Invalid email.' };
+    throw HTTPError(400, 'Invalid email.');
   } else if (!nameFirst.match(/^[A-Za-z'" -]+$/)) {
-    return { error: 'Invalid characters in first name.' };
+    throw HTTPError(400, 'Invalid characters in first name.');
   } else if (nameFirst.length < 2 || nameFirst.length > 20) {
-    return { error: 'Invalid first name length.' };
+    throw HTTPError(400, 'Invalid first name length.');
   } else if (!nameLast.match(/^[A-Za-z'" -]+$/)) {
-    return { error: 'Invalid characters in last name.' };
+    throw HTTPError(400, 'Invalid characters in last name.');
   } else if (nameLast.length < 2 || nameLast.length > 20) {
-    return { error: 'Invalid last name length.' };
+    throw HTTPError(400, 'Invalid last name length.');
   }
 
   data.user[indexToUpdate].email = email;
@@ -224,18 +224,18 @@ function adminUserDetailsUpdate(token: string, email: string, nameFirst: string,
   *
   * @returns { Error Object } Error Object with information regarding the error.
 */
-function passwordChecker(userDetails: UserData, oldPassword: string, newPassword: string): ErrorObject {
+function passwordChecker(userDetails: UserData, oldPassword: string, newPassword: string): Record<string, never> {
   // Error Checks for the passwords.
   if (oldPassword === newPassword) {
-    return { error: 'New Password is the same as old passward.' };
+    throw HTTPError(400, 'New Password is the same as old passward.');
   }
   for (let i = 0; i < userDetails.passwordHistory.length; i++) {
     if (newPassword === userDetails.passwordHistory[i]) {
-      return { error: 'Password has already been used before.' };
+      throw HTTPError(400, 'Password has already been used before.');
     }
   }
   if (newPassword.length < 8) {
-    return { error: 'New Password must be at least 8 characters long.' };
+    throw HTTPError(400, 'New Password must be at least 8 characters long.');
   }
 
   // Checking whether there is at least one letter and one number.
@@ -254,10 +254,10 @@ function passwordChecker(userDetails: UserData, oldPassword: string, newPassword
   }
 
   if (letterCounter === 0 || numberCounter === 0) {
-    return { error: 'New Password must have at least one number and one letter.' };
+    throw HTTPError(400, 'New Password must have at least one number and one letter.');
   }
 
-  return { error: 'No Error' };
+  return {};
 }
 
 /**
@@ -284,7 +284,7 @@ function adminUserPasswordUpdate(token: string, oldPassword: string, newPassword
   // Finding the token.
   const findToken = data.sessions.find(sessionId => sessionId.token === token);
   if (!findToken) {
-    return { error: 'Token invalid' };
+    throw HTTPError(401, 'Token invalid');
   }
 
   // Getting the userInfo
@@ -292,20 +292,16 @@ function adminUserPasswordUpdate(token: string, oldPassword: string, newPassword
 
   // Checking if the current pass was entered correctly.
   if (oldPassword !== userInfo.password) {
-    return { error: 'Password Entered Is Incorrect.' };
+    throw HTTPError(400, 'Password Entered Is Incorrect.');
   }
 
   // Passing into Helper To Do The Rest of the Error Checks.
-  const newPassIsOk = passwordChecker(userInfo, oldPassword, newPassword);
+  passwordChecker(userInfo, oldPassword, newPassword);
 
   // Now checking the contents of the return.
-  if (newPassIsOk.error !== 'No Error') {
-    return newPassIsOk;
-  } else {
-    userInfo.passwordHistory.push(newPassword);
-    userInfo.password = newPassword;
-    return {};
-  }
+  userInfo.passwordHistory.push(newPassword);
+  userInfo.password = newPassword;
+  return {};
 }
 
 /**
@@ -326,7 +322,7 @@ function adminAuthLogout(token: string): ErrorObject | Record<string, never> {
 
   // Error checking: token invalid
   if (findTokenIndex === -1) {
-    return { error: 'Token invalid.' };
+    throw HTTPError(401, 'Token invalid');
   }
 
   // Deletes the session object and shuffles the array accordingly.

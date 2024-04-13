@@ -20,7 +20,7 @@
 // describe('Testing POST /v1/admin/auth/logout', () => {
 //   test('Successful logout', () => {
 //     expect(adminAuthLogout(token)).toStrictEqual({});
-    
+
 //     expect(() => adminUserDetails(token)).toThrow(HTTPError[401]);
 
 //     expect(() => adminUserDetails(token)).toThrow(HTTPError[401]);
