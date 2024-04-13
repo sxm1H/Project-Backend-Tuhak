@@ -22,7 +22,6 @@ const requestHelper = (
     json = payload;
   }
   const res = request(method, SERVER_URL + path, { qs, json, timeout: TIMEOUT_MS });
-  const bodyString = res.body.toString();
 
   let responseBody: any;
   try {

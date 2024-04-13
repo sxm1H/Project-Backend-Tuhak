@@ -20,7 +20,7 @@
 // describe('Testing POST /v1/admin/auth/logout', () => {
 //   test('Successful logout', () => {
 //     expect(adminAuthLogout(token)).toStrictEqual({});
-    
+
 //     expect(() => adminUserDetails(token)).toThrow(HTTPError[401]);
 
 //     expect(() => adminUserDetails(token)).toThrow(HTTPError[401]);
@@ -66,8 +66,4 @@
 
 test('temp', () => {
   expect(2 + 2).toBe(4);
-<<<<<<< HEAD
 });
-=======
-});
->>>>>>> 5bf0826c9ea057c387ef4fddfb021fc93acc5761

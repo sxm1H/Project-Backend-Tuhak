@@ -213,16 +213,15 @@ function adminQuizQuestionUpdate(questionBody: Question, token: string, quizId: 
   if (!findToken) {
     throw HTTPError(401, 'Token is empty or invalid');
   }
-  
+
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
-  
+
   if (!findQuiz) {
     throw HTTPError(403, 'Quiz ID does not refer to a valid quiz');
   }
 
   const findQuestion = findQuiz.questions.find(question => question.questionId === questionId);
 
-  
   if (findQuiz.authUserId !== findToken.userId) {
     throw HTTPError(403, 'User does not own this quiz.');
   }
@@ -432,12 +431,12 @@ function adminQuizDescriptionUpdate(token: string, quizId: number, description: 
     throw HTTPError(403, 'Quiz Id is invalid.');
   }
   if (findQuiz.authUserId !== findToken.userId) {
-    throw HTTPError(403, 'User does not own this quiz.'); 
+    throw HTTPError(403, 'User does not own this quiz.');
   }
 
   // Error Checking the description
   if (description.length > 100) {
-    throw HTTPError(400, 'Description is longer than 100 characters'); 
+    throw HTTPError(400, 'Description is longer than 100 characters');
   } else {
   // If no errors, updating the quiz fields.
     findQuiz.description = description;
