@@ -78,8 +78,7 @@ describe('Testing GET /v1/admin/quiz/:quizid', () => {
 
   test('Quiz ID refers to quiz not in trash', () => {
     expect(adminQuizList(token)).toStrictEqual({
-      quizzes: 
-      [
+      quizzes: [
         {
           quizId: quizId,
           name: 'quiz1'
