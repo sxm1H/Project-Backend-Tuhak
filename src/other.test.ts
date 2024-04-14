@@ -1,29 +1,24 @@
-// import { clear, adminAuthRegister } from './iteration2Tests/testHelpersIter2';
+import { clear, adminAuthRegister } from './iteration2Tests/testHelpersIter2';
+import HTTPError from 'http-errors';
 
-// beforeEach(() => {
-//   clear();
-// });
+beforeEach(() => {
+  clear();
+});
 
-// describe('Testing DELETE /v1/clear', () => {
-//   test('Successful login after clear of same id', () => {
-//     expect(adminAuthRegister('nick@gmail.com', 'nick12345', 'Nicholas', 'Sebastian')).toStrictEqual(
-//       {
-//         statusCode: 200,
-//         jsonBody: { token: expect.any(String) }
-//       }
-//     );
+describe('Testing DELETE /v1/clear', () => {
+  test('Successful login after clear of same id', () => {
+    expect(adminAuthRegister('nick@gmail.com', 'nick12345', 'Nicholas', 'Sebastian')).toStrictEqual(
+      { token: expect.any(String) }
+    );
 
-//     clear();
+    clear();
 
-//     // Should expect id to be a number, since we made the same exact profile after clearing data.
-//     expect(adminAuthRegister('nick@gmail.com', 'nick12345', 'Nicholas', 'Sebastian')).toStrictEqual(
-//       {
-//         statusCode: 200,
-//         jsonBody: { token: expect.any(String) }
-//       }
-//     );
-//   });
-// });
+    // Should expect id to be a number, since we made the same exact profile after clearing data.
+    expect(adminAuthRegister('nick@gmail.com', 'nick12345', 'Nicholas', 'Sebastian')).toStrictEqual(
+      { token: expect.any(String) }
+    );
+  });
+});
 
 test('temp', () => {
   expect(2 + 2).toBe(4);
