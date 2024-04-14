@@ -67,7 +67,3 @@ describe('Test GET /v1/admin/quiz/list', () => {
     expect(() => adminQuizTrashView(token + '1')).toThrow(HTTPError[401]);
   });
 });
-
-test('temp', () => {
-  expect(2 + 2).toBe(4);
-});
