@@ -45,6 +45,8 @@ const requestHelper = (
     case 400: // BAD_REQUEST
     case 401: // UNAUTHORIZED
       throw HTTPError(res.statusCode, errorMessage);
+    case 403: // FORBIDDEN
+      throw HTTPError(res.statusCode, errorMessage);
     case 404: // NOT_FOUND
       throw HTTPError(res.statusCode, `Cannot find '${url}' [${method}]\nReason: ${errorMessage}\n\n
       Hint: Check that your server.ts have the correct path AND method`);

@@ -786,6 +786,7 @@ function adminQuizQuestionDelete(token: string, quizId: number, questionId: numb
   } else if (!findQuiz) {
     throw HTTPError(403, 'Quiz Id is invalid.');
   } else if (findQuiz.authUserId !== findToken.userId) {
+    console.log("ANANI SIKEYIM OROSPU COCU");
     throw HTTPError(403, 'User does not own this quiz.');
   }
 
