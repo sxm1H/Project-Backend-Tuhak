@@ -14,33 +14,19 @@
 
 // describe('Testing PUT /v1/admin/user/password', () => {
 //   test('Comprehensive Test Successful: Logging on after changing the password', () => {
-//     expect(adminUserPasswordUpdate(token, 'abcd1234', 'efgh5678')).toStrictEqual({
-//       jsonBody: {},
-//       statusCode: 200,
-//     });
+//     expect(adminUserPasswordUpdate(token, 'abcd1234', 'efgh5678')).toStrictEqual({});
 
-//     expect(adminAuthLogin('abcd.efgh@gmail.com', 'efgh5678')).toStrictEqual({
-//       jsonBody: {
-//         token: expect.any(String),
-//       },
-//       statusCode: 200,
-//     });
+//     expect(adminAuthLogin('abcd.efgh@gmail.com', 'efgh5678')).toStrictEqual({token: expect.any(String)})
 //   });
 
 //   test('Test Successful Password Update', () => {
 //     const passwordChange = adminUserPasswordUpdate(token, 'abcd1234', 'efgh5678');
 
-//     expect(passwordChange).toStrictEqual({
-//       jsonBody: {},
-//       statusCode: 200,
-//     });
+//     expect(passwordChange).toStrictEqual({});
 //   });
 
 //   test('Comprehensive Test Successful: Changing Passwords a bunch of times and checking if it works by logging in', () => {
-//     expect(adminUserPasswordUpdate(token, 'abcd1234', 'efgh5678')).toStrictEqual({
-//       jsonBody: {},
-//       statusCode: 200,
-//     });
+//     expect(adminUserPasswordUpdate(token, 'abcd1234', 'efgh5678')).toStrictEqual({});
 
 //     expect(adminUserPasswordUpdate(token, 'efgh5678', 'password1234')).toStrictEqual({
 //       jsonBody: {},

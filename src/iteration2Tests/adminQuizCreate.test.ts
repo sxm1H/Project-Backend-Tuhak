@@ -8,7 +8,7 @@
 // beforeEach(() => {
 //   clear();
 
-//   token = adminAuthRegister('somethin@gmail.com', 'validpassword123', 'Franz', 'Kafka').jsonBody.token;
+//   token = adminAuthRegister('somethin@gmail.com', 'validpassword123', 'Franz', 'Kafka').token;
 // });
 
 // describe('Testing POST /v1/admin/quiz', () => {

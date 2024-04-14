@@ -13,8 +13,8 @@
 // beforeEach(() => {
 //   clear();
 
-//   token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').jsonBody.token;
-//   quizId = adminQuizCreate(token, 'Australian Cities', 'lorem ipsum').jsonBody.quizId;
+//   token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').token;
+//   quizId = adminQuizCreate(token, 'Australian Cities', 'lorem ipsum').quizId;
 // });
 
 // describe('Testing PUT v1/admin/quiz/:quizid/description', () => {
