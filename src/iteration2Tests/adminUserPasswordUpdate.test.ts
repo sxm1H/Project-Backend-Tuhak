@@ -76,7 +76,3 @@ describe('Testing PUT /v1/admin/user/password', () => {
     expect(() => adminUserPasswordUpdate(token, 'abcd1234', '***********')).toThrow(HTTPError[400]);
   });
 });
-
-test('temp', () => {
-  expect(2 + 2).toBe(4);
-});
