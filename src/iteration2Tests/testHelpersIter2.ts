@@ -41,9 +41,12 @@ const requestHelper = (
   // NOTE: the error is rethrown in the test below. This is useful becasuse the
   // test suite will halt (stop) if there's an error, rather than carry on and
   // potentially failing on a different expect statement without useful outputs
+
   switch (res.statusCode) {
     case 400: // BAD_REQUEST
     case 401: // UNAUTHORIZED
+      throw HTTPError(res.statusCode, errorMessage);
+    case 403: // FORBIDDEN
       throw HTTPError(res.statusCode, errorMessage);
     case 404: // NOT_FOUND
       throw HTTPError(res.statusCode, `Cannot find '${url}' [${method}]\nReason: ${errorMessage}\n\n
