@@ -149,14 +149,6 @@ app.delete('/v1/admin/quiz/:quizId', (req: Request, res: Response) => {
 
   const result = adminQuizRemove(token, quizId);
 
-  if ('error' in result) {
-    if (result.error === 'does not refer to valid logged in user session') {
-      return res.status(401).json(result);
-    } else {
-      return res.status(403).json(result);
-    }
-  }
-
   save();
   res.json(result);
 });
