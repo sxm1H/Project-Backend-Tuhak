@@ -9,7 +9,7 @@
 // beforeEach(() => {
 //   clear();
 
-//   token = adminAuthRegister('pain@gmail.com', 'Wowowowow123', 'Alex', 'Hirsch').jsonBody.token;
+//   token = adminAuthRegister('pain@gmail.com', 'Wowowowow123', 'Alex', 'Hirsch').token;
 // });
 
 // describe('Test GET /v1/admin/quiz/list', () => {

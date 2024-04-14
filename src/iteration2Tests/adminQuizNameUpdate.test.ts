@@ -14,8 +14,8 @@
 // beforeEach(() => {
 //   clear();
 
-//   token = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian').jsonBody.token;
-//   quizId = adminQuizCreate(token, 'QuizName', 'QuizDescription').jsonBody.quizId;
+//   token = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian').token;
+//   quizId = adminQuizCreate(token, 'QuizName', 'QuizDescription').quizId;
 // });
 
 // describe('adminQuizNameUpdate', () => {
