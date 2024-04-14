@@ -41,6 +41,4 @@ describe('adminAuthLogin', () => {
   });
 });
 
-test('temp', () => {
-  expect(2 + 2).toBe(4);
-});
+
