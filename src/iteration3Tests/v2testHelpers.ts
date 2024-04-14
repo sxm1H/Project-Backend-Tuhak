@@ -62,18 +62,6 @@ const requestHelper = (
 /// ////////////////////////////////////WRAPPER FUNCTIONS////////////////////////////////////////////
 // ============================================================================================== //
 
-const clear = () => {
-  return requestHelper('DELETE', '/v1/clear');
-};
-
-const adminAuthRegister = (email: string, password: string, nameFirst: string, nameLast: string) => {
-  return requestHelper('POST', '/v1/admin/auth/register', { email, password, nameFirst, nameLast });
-};
-
-const adminAuthLogin = (email: string, password: string) => {
-  return requestHelper('POST', '/v1/admin/auth/login', { email, password });
-};
-
 const adminUserDetails = (token: string) => {
   return requestHelper('GET', '/v2/admin/user/details', {}, { token });
 };
@@ -166,9 +154,6 @@ const adminQuizRestore = (token: string, quizId: number) => {
 // ============================================================================================== //
 
 export {
-  clear,
-  adminAuthRegister,
-  adminAuthLogin,
   adminUserDetails,
   adminUserDetailsUpdate,
   adminUserPasswordUpdate,

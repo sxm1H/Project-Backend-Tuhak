@@ -1,12 +1,12 @@
-import { Http2ServerRequest } from 'http2';
 import {
-  clear,
-  adminAuthRegister,
   adminQuizCreate,
   adminQuizNameUpdate,
-  adminQuizList,
+  adminQuizList
 } from './v2testHelpers';
-
+import {
+  clear,
+  adminAuthRegister
+} from '../iteration2Tests/testHelpers';
 import HTTPError from 'http-errors';
 
 let token: string;

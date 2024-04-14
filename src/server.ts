@@ -35,6 +35,29 @@ import {
   adminQuizQuestionUpdate,
   adminQuizRestore
 } from './quiz';
+// import {
+//   v2adminUserDetails,
+//   v2adminUserDetailsUpdate,
+//   v2adminUserPasswordUpdate,
+//   v2adminAuthLogout
+// } from './v2auth';
+// import {
+//   v2adminQuizNameUpdate,
+//   v2adminQuizRemove,
+//   v2adminQuizList,
+//   v2adminQuizInfo,
+//   v2adminQuizCreate,
+//   v2adminQuizDescriptionUpdate,
+//   v2adminQuizQuestionDelete,
+//   v2adminQuizTransfer,
+//   v2adminQuizQuestionCreate,
+//   v2adminQuizTrashEmpty,
+//   v2adminQuizQuestionMove,
+//   v2adminQuizQuestionDuplicate,
+//   v2adminQuizTrashView,
+//   v2adminQuizQuestionUpdate,
+//   v2adminQuizRestore
+// } from './v2quiz';
 import { getData, setData, setCounters, getCounters } from './dataStore';
 
 // Set up web app

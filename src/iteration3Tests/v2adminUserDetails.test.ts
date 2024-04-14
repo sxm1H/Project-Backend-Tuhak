@@ -1,9 +1,9 @@
+import { adminUserDetails } from './v2testHelpers';
 import {
   clear,
   adminAuthRegister,
-  adminUserDetails,
-  adminAuthLogin,
-} from './v2testHelpers';
+  adminAuthLogin
+} from '../iteration2Tests/testHelpers';
 import HTTPError from 'http-errors';
 
 let token: string;
