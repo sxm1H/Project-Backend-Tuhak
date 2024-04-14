@@ -1,81 +1,72 @@
-// import {
-//   clear,
-//   adminAuthRegister,
-//   adminQuizCreate,
-//   adminQuizTrashView,
-//   adminQuizRemove,
-// } from './testHelpersIter2';
+import {
+  clear,
+  adminAuthRegister,
+  adminQuizCreate,
+  adminQuizTrashView,
+  adminQuizRemove,
+} from './testHelpersIter2';
+import HTTPError from 'http-errors';
 
-// let token: string;
-// beforeEach(() => {
-//   clear();
+let token: string;
+beforeEach(() => {
+  clear();
 
-//   token = adminAuthRegister('fakerT1@gmail.com', 'pass123word', 'Smith', 'John').jsonBody.token;
-// });
+  token = adminAuthRegister('fakerT1@gmail.com', 'pass123word', 'Smith', 'John').token;
+});
 
-// describe('Test GET /v1/admin/quiz/list', () => {
-//   test.each([
-//     {
-//       name: 'good name',
-//       description: 'Loud screaming is too long'
-//     },
-//     {
-//       name: 'blank quiz',
-//       description: ''
-//     }
-//   ])('Successful Quiz Created', ({ name, description }) => {
-//     const { jsonBody: { quizId } } = adminQuizCreate(token, name, description);
-//     adminQuizRemove(token, quizId);
-//     const { statusCode, jsonBody } = adminQuizTrashView(token);
-//     expect(statusCode).toStrictEqual(200);
-//     expect(jsonBody).toStrictEqual({
-//       quizzes: [
-//         {
-//           quizId: expect.any(Number),
-//           name: expect.any(String)
-//         }
-//       ]
-//     });
-//   });
+describe('Test GET /v1/admin/quiz/list', () => {
+  test.each([
+    {
+      name: 'good name',
+      description: 'Loud screaming is too long'
+    },
+    {
+      name: 'blank quiz',
+      description: ''
+    }
+  ])('Successful Quiz Created', ({ name, description }) => {
+    const quizId = adminQuizCreate(token, name, description).quizId
+    adminQuizRemove(token, quizId);
+    expect(adminQuizTrashView(token)).toStrictEqual({
+      quizzes: [
+        {
+          quizId: expect.any(Number),
+          name: expect.any(String)
+        }
+      ]
+    })
+  });
 
-//   test.each([
-//     {
-//       name: 'good name',
-//       description: 'Loud screaming is too long'
-//     },
-//     {
-//       name: 'blank quiz',
-//       description: ''
-//     }
-//   ])('Empty Token', ({ name, description }) => {
-//     const { jsonBody: { quizId } } = adminQuizCreate(token, name, description);
-//     adminQuizRemove(token, quizId);
-//     const { statusCode, jsonBody } = adminQuizTrashView('');
-//     expect(statusCode).toStrictEqual(401);
-//     expect(jsonBody).toStrictEqual({
-//       error: expect.any(String)
-//     });
-//   });
+  test.each([
+    {
+      name: 'good name',
+      description: 'Loud screaming is too long'
+    },
+    {
+      name: 'blank quiz',
+      description: ''
+    }
+  ])('Empty Token', ({ name, description }) => {
+    const quizId = adminQuizCreate(token, name, description).quizId;
+    adminQuizRemove(token, quizId);
+    expect(() => adminQuizTrashView('')).toThrow(HTTPError[401]);
+  });
 
-//   test.each([
-//     {
-//       name: 'good name',
-//       description: 'Loud screaming is too long'
-//     },
-//     {
-//       name: 'blank quiz',
-//       description: ''
-//     }
-//   ])('Wrong token', ({ name, description }) => {
-//     const { jsonBody: { quizId } } = adminQuizCreate(token, name, description);
-//     adminQuizRemove(token, quizId);
-//     const { statusCode, jsonBody } = adminQuizTrashView(token + '1');
-//     expect(statusCode).toStrictEqual(401);
-//     expect(jsonBody).toStrictEqual({
-//       error: expect.any(String)
-//     });
-//   });
-// });
+  test.each([
+    {
+      name: 'good name',
+      description: 'Loud screaming is too long'
+    },
+    {
+      name: 'blank quiz',
+      description: ''
+    }
+  ])('Wrong token', ({ name, description }) => {
+    const quizId = adminQuizCreate(token, name, description).quizId;
+    adminQuizRemove(token, quizId);
+    expect(() => adminQuizTrashView(token + '1')).toThrow(HTTPError[401]);
+  });
+});
 
 test('temp', () => {
   expect(2 + 2).toBe(4);
