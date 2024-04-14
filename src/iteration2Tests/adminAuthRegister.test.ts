@@ -77,4 +77,3 @@ describe('Testing POST /v1/admin/auth/register', () => {
     expect(() => adminAuthRegister(email, password, nameFirst, nameLast)).toThrow(HTTPError[400]);
   });
 });
-
