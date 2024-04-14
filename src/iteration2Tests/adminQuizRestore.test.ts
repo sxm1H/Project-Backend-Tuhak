@@ -1,185 +1,145 @@
-// import {
-//   clear,
-//   adminAuthRegister,
-//   adminQuizCreate,
-//   adminQuizInfo,
-//   adminQuizRestore,
-//   adminQuizRemove,
-//   adminQuizList
-// } from './testHelpersIter2';
+import {
+  clear,
+  adminAuthRegister,
+  adminQuizCreate,
+  adminQuizInfo,
+  adminQuizRestore,
+  adminQuizRemove,
+  adminQuizList
+} from './testHelpersIter2';
+import HTTPError from 'http-errors';
 
-// let token: string;
-// let quizId: number;
-// let time: number;
-// beforeEach(() => {
-//   clear();
+let token: string;
+let quizId: number;
+let time: number;
+beforeEach(() => {
+  clear();
 
-//   token = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo').jsonBody.token;
-//   quizId = adminQuizCreate(token, 'quiz1', 'lorem ipsum').jsonBody.quizId;
+  token = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo').token;
+  quizId = adminQuizCreate(token, 'quiz1', 'lorem ipsum').quizId;
 
-//   time = Math.floor(Date.now() / 1000);
-// });
+  time = Math.floor(Date.now() / 1000);
+});
 
-// describe('Testing GET /v1/admin/quiz/:quizid', () => {
-//   test('Successfully restores quiz from trash', () => {
-//     expect(adminQuizList(token)).toStrictEqual({
-//       jsonBody: {
-//         quizzes: [
-//           {
-//             quizId: quizId,
-//             name: 'quiz1'
-//           }
-//         ]
-//       },
-//       statusCode: 200
-//     });
-//     adminQuizRemove(token, quizId);
-//     expect(adminQuizList(token)).toStrictEqual({
-//       jsonBody: {
-//         quizzes: []
-//       },
-//       statusCode: 200
-//     });
-//     adminQuizRestore(token, quizId);
-//     expect(adminQuizList(token)).toStrictEqual({
-//       jsonBody: {
-//         quizzes: [
-//           {
-//             quizId: quizId,
-//             name: 'quiz1'
-//           }
-//         ]
-//       },
-//       statusCode: 200
-//     });
-//     const { statusCode, jsonBody } = adminQuizInfo(token, quizId);
-//     expect(jsonBody.timeLastEdited).toBeGreaterThanOrEqual(time);
-//     expect(jsonBody.timeLastEdited).toBeLessThanOrEqual(time + 2);
-//     expect(statusCode).toStrictEqual(200);
-//   });
+describe('Testing GET /v1/admin/quiz/:quizid', () => {
+  test('Successfully restores quiz from trash', () => {
+    expect(adminQuizList(token)).toStrictEqual({
+      quizzes: [
+        {
+          quizId: quizId,
+          name: 'quiz1'
+        }
+      ]
+    });
 
-//   test('Quiz name of restored quiz is already used by another active quiz', () => {
-//     expect(adminQuizList(token)).toStrictEqual({
-//       jsonBody: {
-//         quizzes: [
-//           {
-//             quizId: quizId,
-//             name: 'quiz1'
-//           }
-//         ]
-//       },
-//       statusCode: 200
-//     });
-//     adminQuizRemove(token, quizId);
-//     expect(adminQuizList(token)).toStrictEqual({
-//       jsonBody: {
-//         quizzes: []
-//       },
-//       statusCode: 200
-//     });
-//     adminQuizCreate(token, 'quiz1', 'description');
-//     expect(adminQuizRestore(token, quizId)).toStrictEqual(
-//       {
-//         statusCode: 400,
-//         jsonBody: { error: expect.any(String) }
-//       }
-//     );
-//   });
+    adminQuizRemove(token, quizId);
 
-//   test('Quiz ID refers to quiz not in trash', () => {
-//     expect(adminQuizList(token)).toStrictEqual({
-//       jsonBody: {
-//         quizzes: [
-//           {
-//             quizId: quizId,
-//             name: 'quiz1'
-//           }
-//         ]
-//       },
-//       statusCode: 200
-//     });
-//     adminQuizRemove(token, quizId);
-//     expect(adminQuizList(token)).toStrictEqual({
-//       jsonBody: {
-//         quizzes: []
-//       },
-//       statusCode: 200
-//     });
-//     const quizId2 = adminQuizCreate(token, 'Qu1', 'dsdasas').jsonBody.quizId;
-//     expect(adminQuizRestore(token, quizId2)).toStrictEqual(
-//       {
-//         statusCode: 400,
-//         jsonBody: { error: expect.any(String) }
-//       }
-//     );
-//   });
+    expect(adminQuizList(token)).toStrictEqual({
+      quizzes: []
+    });
 
-//   test('User is not logged in', () => {
-//     expect(adminQuizList(token)).toStrictEqual({
-//       jsonBody: {
-//         quizzes: [
-//           {
-//             quizId: quizId,
-//             name: 'quiz1'
-//           }
-//         ]
-//       },
-//       statusCode: 200
-//     });
-//     adminQuizRemove(token, quizId);
-//     expect(adminQuizList(token)).toStrictEqual({
-//       jsonBody: {
-//         quizzes: []
-//       },
-//       statusCode: 200
-//     });
-//     expect(adminQuizRestore(token + 'hello', quizId)).toStrictEqual(
-//       {
-//         statusCode: 401,
-//         jsonBody: { error: expect.any(String) }
-//       }
-//     );
-//   });
+    adminQuizRestore(token, quizId);
 
-//   test('Valid token, but user not owner of quiz', () => {
-//     expect(adminQuizList(token)).toStrictEqual({
-//       jsonBody: {
-//         quizzes: [
-//           {
-//             quizId: quizId,
-//             name: 'quiz1'
-//           }
-//         ]
-//       },
-//       statusCode: 200
-//     });
-//     adminQuizRemove(token, quizId);
-//     expect(adminQuizList(token)).toStrictEqual({
-//       jsonBody: {
-//         quizzes: []
-//       },
-//       statusCode: 200
-//     });
-//     const { jsonBody: newUser } = adminAuthRegister('nick@unsw.edu.au', 'abcd1234', 'nick', 'yes');
-//     expect(adminQuizRestore(newUser.token, quizId)).toStrictEqual(
-//       {
-//         statusCode: 403,
-//         jsonBody: { error: expect.any(String) }
-//       }
-//     );
-//   });
+    expect(adminQuizList(token)).toStrictEqual({
+      quizzes: [
+        {
+          quizId: quizId,
+          name: 'quiz1'
+        }
+      ]
+    });
 
-//   test('Test Unsuccessful: Invalid QuizId', () => {
-//     adminQuizRemove(token, quizId);
-//     expect(adminQuizRestore(token, -1)).toStrictEqual(
-//       {
-//         statusCode: 403,
-//         jsonBody: { error: expect.any(String) }
-//       }
-//     );
-//   })
-// });
+    const info = adminQuizInfo(token, quizId);
 
-test('temp', () => {
-  expect(2 + 2).toBe(4);
+    expect(info.timeLastEdited).toBeGreaterThanOrEqual(time);
+    expect(info.timeLastEdited).toBeLessThanOrEqual(time + 2);
+  });
+
+  test('Quiz name of restored quiz is already used by another active quiz', () => {
+    expect(adminQuizList(token)).toStrictEqual({
+      quizzes: [
+        {
+          quizId: quizId,
+          name: 'quiz1'
+        }
+      ]
+    });
+
+    adminQuizRemove(token, quizId);
+
+    expect(adminQuizList(token)).toStrictEqual({
+      quizzes: []
+    });
+
+    adminQuizCreate(token, 'quiz1', 'description');
+
+    expect(() => adminQuizRestore(token, quizId)).toThrow(HTTPError[400]);
+  });
+
+  test('Quiz ID refers to quiz not in trash', () => {
+    expect(adminQuizList(token)).toStrictEqual({
+      quizzes: 
+      [
+        {
+          quizId: quizId,
+          name: 'quiz1'
+        }
+      ]
+    });
+
+    adminQuizRemove(token, quizId);
+
+    expect(adminQuizList(token)).toStrictEqual({
+      quizzes: []
+    });
+
+    const quizId2 = adminQuizCreate(token, 'Qu1', 'dsdasas').quizId;
+
+    expect(() => adminQuizRestore(token, quizId2)).toThrow(HTTPError[400]);
+  });
+
+  test('User is not logged in', () => {
+    expect(adminQuizList(token)).toStrictEqual({
+      quizzes: [
+        {
+          quizId: quizId,
+          name: 'quiz1'
+        }
+      ]
+    });
+
+    adminQuizRemove(token, quizId);
+
+    expect(adminQuizList(token)).toStrictEqual({
+      quizzes: []
+    });
+
+    expect(() => adminQuizRestore(token + 'hello', quizId)).toThrow(HTTPError[401]);
+  });
+
+  test('Valid token, but user not owner of quiz', () => {
+    expect(adminQuizList(token)).toStrictEqual({
+      quizzes: [
+        {
+          quizId: quizId,
+          name: 'quiz1'
+        }
+      ]
+    });
+
+    adminQuizRemove(token, quizId);
+
+    expect(adminQuizList(token)).toStrictEqual({
+      quizzes: []
+    });
+
+    const newUser = adminAuthRegister('nick@unsw.edu.au', 'abcd1234', 'nick', 'yes');
+
+    expect(() => adminQuizRestore(newUser.token, quizId)).toThrow(HTTPError[403]);
+  });
+
+  test('Test Unsuccessful: Invalid QuizId', () => {
+    adminQuizRemove(token, quizId);
+    expect(() => adminQuizRestore(token, -1)).toThrow(HTTPError[403]);
+  })
 });
