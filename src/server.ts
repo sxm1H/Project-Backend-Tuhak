@@ -149,14 +149,6 @@ app.delete('/v1/admin/quiz/:quizId', (req: Request, res: Response) => {
 
   const result = adminQuizRemove(token, quizId);
 
-  if ('error' in result) {
-    if (result.error === 'does not refer to valid logged in user session') {
-      return res.status(401).json(result);
-    } else {
-      return res.status(403).json(result);
-    }
-  }
-
   save();
   res.json(result);
 });
@@ -350,18 +342,6 @@ app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
   const { token, userEmail } = req.body;
   const response = adminQuizTransfer(token, userEmail, quizId);
 
-  if ('error' in response) {
-    if (response.error === 'Token invalid.') {
-      return res.status(401).json(response);
-    } else if (response.error === 'User does not own this quiz.') {
-      return res.status(403).json(response);
-    } else if (response.error === 'Quiz Id is invalid.') {
-      return res.status(403).json(response);
-    } else {
-      return res.status(400).json(response);
-    }
-  }
-
   save();
   res.json(response);
 });
@@ -370,20 +350,6 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   const stringQuizIds = req.query.quizIds as string;
   const token = req.query.token as string;
   const response = adminQuizTrashEmpty(token, stringQuizIds);
-
-  console.log(response);
-
-  if ('error' in response) {
-    if (response.error === 'Token invalid') {
-      return res.status(401).json(response);
-    } else if (response.error === 'a QuizId refers to a quiz that this current user does not own') {
-      return res.status(403).json(response);
-    } else if (response.error === 'One or more of the Quiz IDs is not currently in the trash') {
-      return res.status(400).json(response);
-    } else if (response.error === 'QuizId Is Invalid') {
-      return res.status(403).json(response);
-    }
-  }
 
   save();
   res.json(response);
@@ -440,18 +406,6 @@ app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   const { token } = req.body;
 
   const response = adminQuizRestore(token, quizId);
-
-  if ('error' in response) {
-    if (response.error === 'Token invalid.') {
-      return res.status(401).json(response);
-    } else if (response.error === 'Valid token, but user is not the owner of the quiz') {
-      return res.status(403).json(response);
-    } else if (response.error === 'Quiz Does Not Exist') {
-      return res.status(403).json(response);
-    } else {
-      return res.status(400).json(response);
-    }
-  }
 
   save();
   res.json(response);

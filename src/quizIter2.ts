@@ -329,7 +329,6 @@ function adminQuizInfo(token: string, quizId: number): ErrorObject | QuizInfoRet
     numQuestions: findQuiz.numQuestions,
     duration: findQuiz.duration,
     questions: findQuiz.questions
-
   };
 }
 

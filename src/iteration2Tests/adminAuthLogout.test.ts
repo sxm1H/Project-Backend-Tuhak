@@ -14,7 +14,7 @@
 // beforeEach(() => {
 //   clear();
 
-//   token = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo').jsonBody.token;
+//   token = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo').token;
 // });
 
 // describe('Testing POST /v1/admin/auth/logout', () => {
