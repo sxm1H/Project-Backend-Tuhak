@@ -3,7 +3,7 @@ import {
   adminAuthRegister,
   adminQuizList,
   adminQuizCreate,
-} from './testHelpers';
+} from './v2testHelpers';
 import HTTPError from 'http-errors';
 let token: string;
 beforeEach(() => {
@@ -34,3 +34,4 @@ describe('Test GET /v1/admin/quiz/list', () => {
     });
   });
 });
+

@@ -5,7 +5,7 @@ import {
   adminQuizCreate,
   adminQuizNameUpdate,
   adminQuizList,
-} from './testHelpers';
+} from './v2testHelpers';
 
 import HTTPError from 'http-errors';
 
@@ -104,3 +104,5 @@ describe('adminQuizNameUpdate', () => {
     expect(() => adminQuizNameUpdate(token, quizId, 'duplicateName')).toThrow(HTTPError[400]);
   });
 });
+
+

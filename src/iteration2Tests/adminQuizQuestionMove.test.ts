@@ -4,7 +4,7 @@ import {
   adminQuizCreate,
   adminQuizQuestionMove,
   adminQuizQuestionCreate,
-} from './testHelpersIter2';
+} from './testHelpers';
 
 import HTTPError from 'http-errors';
 
@@ -62,4 +62,3 @@ describe('Testing PUT /v1/admin/quiz/{quizid}/question/{questionid}/move', () =>
     expect(() => adminQuizQuestionMove(-1, questionId, token, 1)).toThrow(HTTPError[403]);
   });
 });
-

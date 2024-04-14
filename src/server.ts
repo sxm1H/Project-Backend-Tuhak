@@ -17,7 +17,7 @@ import {
   adminUserDetailsUpdate,
   adminUserPasswordUpdate,
   adminAuthLogout
-} from './authIter2';
+} from './auth';
 import {
   adminQuizNameUpdate,
   adminQuizRemove,
@@ -34,7 +34,7 @@ import {
   adminQuizTrashView,
   adminQuizQuestionUpdate,
   adminQuizRestore
-} from './quizIter2';
+} from './quiz';
 import { getData, setData, setCounters, getCounters } from './dataStore';
 
 // Set up web app

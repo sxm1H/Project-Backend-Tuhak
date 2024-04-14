@@ -5,7 +5,7 @@ import {
   adminQuizInfo,
   adminQuizQuestionCreate,
   adminQuizQuestionDuplicate,
-} from './testHelpersIter2';
+} from './testHelpers';
 
 import HTTPError from 'http-errors';
 
@@ -56,5 +56,3 @@ describe('Testing POST /v1/admin/quiz/:quizid/question/:questionid/duplicate', (
     
   });
 });
-
-

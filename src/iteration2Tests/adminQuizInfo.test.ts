@@ -3,7 +3,7 @@ import {
   adminAuthRegister,
   adminQuizCreate,
   adminQuizInfo,
-} from './testHelpersIter2';
+} from './testHelpers';
 
 let token: string;
 let quizId: number;
@@ -55,4 +55,3 @@ describe('Testing GET /v1/admin/quiz/:quizid', () => {
     expect(() => adminQuizInfo(token2, quizId)).toThrow(HTTPError[403]);
   });
 });
-

@@ -3,7 +3,7 @@ import {
   adminAuthRegister,
   adminUserDetails,
   adminUserDetailsUpdate,
-} from './testHelpers';
+} from './v2testHelpers';
 import HTTPError from 'http-errors';
 
 let token: string;

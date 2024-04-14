@@ -2,7 +2,7 @@ import {
   clear,
   adminAuthRegister,
   adminAuthLogin,
-} from './testHelpersIter2';
+} from './testHelpers';
 import HTTPError from 'http-errors';
 
 beforeEach(() => {
@@ -40,5 +40,3 @@ describe('adminAuthLogin', () => {
     })
   });
 });
-
-

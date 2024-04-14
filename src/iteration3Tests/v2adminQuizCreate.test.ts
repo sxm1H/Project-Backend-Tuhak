@@ -2,7 +2,7 @@ import {
   clear,
   adminAuthRegister,
   adminQuizCreate,
-} from './testHelpers';
+} from './v2testHelpers';
 import HTTPError from 'http-errors';
 let token: string;
 beforeEach(() => {

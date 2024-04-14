@@ -6,7 +6,7 @@ import {
   adminUserDetailsUpdate,
   adminUserPasswordUpdate,
   adminAuthLogout
-} from './testHelpers';
+} from './v2testHelpers';
 
 import HTTPError from 'http-errors';
 
@@ -53,3 +53,4 @@ describe('Testing POST /v1/admin/auth/logout', () => {
     expect(() => adminAuthLogout(token + 'hello')).toThrow(HTTPError[401]);
   });
 });
+
