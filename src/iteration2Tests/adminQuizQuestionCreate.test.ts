@@ -4,7 +4,7 @@ import {
   adminQuizCreate,
   adminQuizQuestionCreate,
   adminQuizInfo,
-} from './testHelpersIter2';
+} from './testHelpers';
 import HTTPError from 'http-errors';
 let token: string;
 let quizId: number;

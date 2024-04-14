@@ -1,5 +1,4 @@
-import { clear, adminAuthRegister } from './iteration2Tests/testHelpersIter2';
-import HTTPError from 'http-errors';
+import { clear, adminAuthRegister } from './iteration2Tests/testHelpers';
 
 beforeEach(() => {
   clear();
@@ -18,8 +17,4 @@ describe('Testing DELETE /v1/clear', () => {
       { token: expect.any(String) }
     );
   });
-});
-
-test('temp', () => {
-  expect(2 + 2).toBe(4);
 });

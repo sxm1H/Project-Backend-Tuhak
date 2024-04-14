@@ -1,12 +1,14 @@
 import {
-  clear,
-  adminAuthRegister,
-  adminAuthLogin,
   adminUserDetails,
   adminUserDetailsUpdate,
   adminUserPasswordUpdate,
   adminAuthLogout
-} from './testHelpers';
+} from './v2testHelpers';
+import {
+  clear,
+  adminAuthRegister,
+  adminAuthLogin
+} from '../iteration2Tests/testHelpers';
 
 import HTTPError from 'http-errors';
 
@@ -53,3 +55,4 @@ describe('Testing POST /v1/admin/auth/logout', () => {
     expect(() => adminAuthLogout(token + 'hello')).toThrow(HTTPError[401]);
   });
 });
+

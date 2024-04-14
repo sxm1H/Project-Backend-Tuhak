@@ -1,10 +1,13 @@
 import {
-  clear,
-  adminAuthRegister,
   adminQuizList,
-  adminQuizCreate,
-} from './testHelpers';
+  adminQuizCreate
+} from './v2testHelpers';
+import {
+  clear,
+  adminAuthRegister
+} from '../iteration2Tests/testHelpers';
 import HTTPError from 'http-errors';
+
 let token: string;
 beforeEach(() => {
   clear();
@@ -34,3 +37,4 @@ describe('Test GET /v1/admin/quiz/list', () => {
     });
   });
 });
+

@@ -1,12 +1,12 @@
-import { Http2ServerRequest } from 'http2';
 import {
-  clear,
-  adminAuthRegister,
   adminQuizCreate,
   adminQuizNameUpdate,
-  adminQuizList,
-} from './testHelpers';
-
+  adminQuizList
+} from './v2testHelpers';
+import {
+  clear,
+  adminAuthRegister
+} from '../iteration2Tests/testHelpers';
 import HTTPError from 'http-errors';
 
 let token: string;
@@ -104,3 +104,5 @@ describe('adminQuizNameUpdate', () => {
     expect(() => adminQuizNameUpdate(token, quizId, 'duplicateName')).toThrow(HTTPError[400]);
   });
 });
+
+

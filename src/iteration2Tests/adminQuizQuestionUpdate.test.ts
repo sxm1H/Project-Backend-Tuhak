@@ -5,7 +5,7 @@ import {
   adminQuizInfo,
   adminQuizQuestionCreate,
   adminQuizQuestionUpdate,
-} from './testHelpersIter2';
+} from './testHelpers';
 import HTTPError from 'http-errors';
 
 let token: string;

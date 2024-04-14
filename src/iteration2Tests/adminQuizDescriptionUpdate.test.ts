@@ -4,7 +4,7 @@ import {
   adminQuizCreate,
   adminQuizDescriptionUpdate,
   adminQuizInfo,
-} from './testHelpersIter2';
+} from './testHelpers';
 
 import HTTPError from 'http-errors';
 
@@ -61,4 +61,3 @@ describe('Testing PUT v1/admin/quiz/:quizid/description', () => {
     'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem ')).toThrow(HTTPError[403]);
   });
 });
-

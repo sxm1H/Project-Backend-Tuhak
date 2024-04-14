@@ -1,8 +1,8 @@
+import { adminQuizCreate } from './v2testHelpers';
 import {
   clear,
-  adminAuthRegister,
-  adminQuizCreate,
-} from './testHelpers';
+  adminAuthRegister
+} from '../iteration2Tests/testHelpers';
 import HTTPError from 'http-errors';
 let token: string;
 beforeEach(() => {

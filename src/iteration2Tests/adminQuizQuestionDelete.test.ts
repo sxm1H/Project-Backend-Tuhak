@@ -5,7 +5,7 @@ import {
   adminQuizQuestionDelete,
   adminQuizQuestionCreate,
   adminQuizInfo,
-} from './testHelpersIter2';
+} from './testHelpers';
 import HTTPError from 'http-errors';
 let token: string;
 let quizId: number;
@@ -58,8 +58,4 @@ describe('Testing DELETE /v1/admin/quiz/:quizid/question/:questionid', () => {
   test('Test Unsuccessful: Invalid QuizId', () => {
     expect(() =>adminQuizQuestionDelete(token, -1, questionId)).toThrow(HTTPError[403]);
   })
-});
-
-test('temp', () => {
-  expect(2 + 2).toBe(4);
 });

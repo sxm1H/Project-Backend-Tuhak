@@ -61,91 +61,94 @@ const requestHelper = (
 
 /// ////////////////////////////////////WRAPPER FUNCTIONS////////////////////////////////////////////
 // ============================================================================================== //
+
 const adminUserDetails = (token: string) => {
-  return requestHelper('GET', '/v2/admin/user/details', { token });
+  return requestHelper('GET', '/v2/admin/user/details', {}, { token });
 };
 
 const adminUserDetailsUpdate = (token: string, email: string, nameFirst: string, nameLast: string) => {
-  return requestHelper('PUT', '/v2/admin/user/details', { token, email, nameFirst, nameLast });
+  return requestHelper('PUT', '/v2/admin/user/details', { email, nameFirst, nameLast }, { token });
 };
 
 const adminUserPasswordUpdate = (token: string, oldPassword: string, newPassword: string) => {
-  return requestHelper('PUT', '/v2/admin/user/password', { token, oldPassword, newPassword });
+  return requestHelper('PUT', '/v2/admin/user/password', { oldPassword, newPassword }, { token });
 };
 
 const adminQuizList = (token: string) => {
-  return requestHelper('GET', '/v2/admin/quiz/list', { token });
+  return requestHelper('GET', '/v2/admin/quiz/list', {}, { token });
 };
 
 const adminQuizCreate = (token: string, name: string, description: string) => {
-  return requestHelper('POST', '/v2/admin/quiz', { token, name, description });
+  return requestHelper('POST', '/v2/admin/quiz', { name, description }, { token });
 };
 
-const adminQuizRemove = (token: string, quizId: number) => {
-  return requestHelper('DELETE', `/v2/admin/quiz/${quizId}`, { token, quizId });
-};
-const adminQuizQuestionUpdate = (question: string, duration: number, points: number, answers: Answer[], token: string, quizId: number, questionId: number) => {
-  const questionBody = {
-    question: question,
-    duration: duration,
-    points: points,
-    answers: answers,
-  };
-  return requestHelper('PUT', `/v2/admin/quiz/${quizId}/question/${questionId}`, { questionBody, token });
-};
-const adminQuizInfo = (token: string, quizId: number) => {
-  return requestHelper('GET', `/v2/admin/quiz/${quizId}`, { token, quizId });
-};
+// const v2adminQuizRemove = (token: string, quizId: number) => {
+//   return requestHelper('DELETE', `/v2/admin/quiz/${quizId}`, { quizId }, { token });
+// };
+
+// const v2adminQuizQuestionUpdate = (question: string, duration: number, points: number, answers: Answer[], token: string, quizId: number, questionId: number) => {
+//   const questionBody = {
+//     question: question,
+//     duration: duration,
+//     points: points,
+//     answers: answers,
+//   };
+//   return requestHelper('PUT', `/v2/admin/quiz/${quizId}/question/${questionId}`, { questionBody, token });
+// };
+
+// const v2adminQuizInfo = (token: string, quizId: number) => {
+//   return requestHelper('GET', `/v2/admin/quiz/${quizId}`, { quizId }, { token });
+// };
 
 const adminQuizTrashView = (token: string) => {
-  return requestHelper('GET', '/v2/admin/quiz/trash', { token });
+  return requestHelper('GET', '/v2/admin/quiz/trash', {}, { token });
 };
 
 const adminQuizNameUpdate = (token: string, quizId: number, name: string) => {
-  return requestHelper('PUT', `/v2/admin/quiz/${quizId}/name`, { token, quizId, name });
+  return requestHelper('PUT', `/v2/admin/quiz/${quizId}/name`, { quizId, name }, { token });
 };
 
 const adminQuizDescriptionUpdate = (token: string, quizId: number, description: string) => {
-  return requestHelper('PUT', `/v2/admin/quiz/${quizId}/description`, { token, quizId, description });
+  return requestHelper('PUT', `/v2/admin/quiz/${quizId}/description`, { quizId, description }, { token });
 };
 
 const adminQuizQuestionMove = (quizid: number, questionid: number, token: string, newPosition: number) => {
-  return requestHelper('PUT', `/v2/admin/quiz/${quizid}/question/${questionid}/move`, { token, newPosition });
+  return requestHelper('PUT', `/v2/admin/quiz/${quizid}/question/${questionid}/move`, { newPosition }, { token });
 };
 
-const adminQuizQuestionCreate = (quizId: number, token: string, question: string, duration: number, points: number, answers: Answer[]) => {
-  const questionBody = {
-    question: question,
-    duration: duration,
-    points: points,
-    answers: answers,
-  };
+// const v2dminQuizQuestionCreate = (quizId: number, token: string, question: string, duration: number, points: number, answers: Answer[]) => {
+//   const questionBody = {
+//     question: question,
+//     duration: duration,
+//     points: points,
+//     answers: answers,
+//   };
 
-  return requestHelper('POST', `/v2/admin/quiz/${quizId}/question`, { token, questionBody });
-};
+//   return requestHelper('POST', `/v2/admin/quiz/${quizId}/question`, { questionBody }, { token });
+// };
 
 const adminAuthLogout = (token: string) => {
-  return requestHelper('POST', '/v2/admin/auth/logout', { token });
+  return requestHelper('POST', '/v2/admin/auth/logout', {}, { token });
 };
 
-const adminQuizQuestionDelete = (token: string, quizId: number, questionId: number) => {
-  return requestHelper('DELETE', `/v2/admin/quiz/${quizId}/question/${questionId}`, { token });
-};
+// const v2adminQuizQuestionDelete = (token: string, quizId: number, questionId: number) => {
+//   return requestHelper('DELETE', `/v2/admin/quiz/${quizId}/question/${questionId}`, {}, { token });
+// };
 
-const adminQuizTransfer = (token: string, userEmail: string, quizId: number) => {
-  return requestHelper('POST', `/v2/admin/quiz/${quizId}/transfer`, { token, userEmail });
-};
+// const v2adminQuizTransfer = (token: string, userEmail: string, quizId: number) => {
+//   return requestHelper('POST', `/v2/admin/quiz/${quizId}/transfer`, { userEmail }, { token });
+// };
 
 const adminQuizTrashEmpty = (token: string, quizIds: string) => {
-  return requestHelper('DELETE', '/v2/admin/quiz/trash/empty', { token, quizIds });
+  return requestHelper('DELETE', '/v2/admin/quiz/trash/empty', { quizIds }, { token });
 };
 
 const adminQuizQuestionDuplicate = (token: string, quizId: number, questionId: number) => {
-  return requestHelper('POST', `/v2/admin/quiz/${quizId}/question/${questionId}/duplicate`, { token });
+  return requestHelper('POST', `/v2/admin/quiz/${quizId}/question/${questionId}/duplicate`, {}, { token });
 };
 
 const adminQuizRestore = (token: string, quizId: number) => {
-  return requestHelper('POST', `/v2/admin/quiz/${quizId}/restore`, { token, quizId });
+  return requestHelper('POST', `/v2/admin/quiz/${quizId}/restore`, { quizId }, { token });
 };
 
 // ============================================================================================== //
@@ -156,18 +159,18 @@ export {
   adminUserPasswordUpdate,
   adminQuizList,
   adminQuizCreate,
-  adminQuizRemove,
-  adminQuizInfo,
+  // v2adminQuizRemove,
+  // v2adminQuizInfo,
   adminQuizNameUpdate,
   adminQuizDescriptionUpdate,
   adminQuizQuestionMove,
   adminAuthLogout,
-  adminQuizQuestionDelete,
-  adminQuizTransfer,
-  adminQuizQuestionCreate,
+  // v2adminQuizQuestionDelete,
+  // v2adminQuizTransfer,
+  // v2adminQuizQuestionCreate,
   adminQuizQuestionDuplicate,
   adminQuizTrashView,
   adminQuizTrashEmpty,
-  adminQuizQuestionUpdate,
+  // v2adminQuizQuestionUpdate,
   adminQuizRestore
 };
