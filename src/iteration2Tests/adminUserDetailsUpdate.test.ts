@@ -106,7 +106,3 @@ describe('adminUserDetailsUpdate', () => {
     expect(() => adminUserDetailsUpdate(token + '1', 'bingbong@gmail.com', 'bing', 'bong')).toThrow(HTTPError[401]);
   });
 });
-
-test('temp', () => {
-  expect(2 + 2).toBe(4);
-});

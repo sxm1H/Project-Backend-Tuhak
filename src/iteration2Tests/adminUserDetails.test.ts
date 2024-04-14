@@ -79,7 +79,3 @@ describe('Testing GET /v1/admin/user/details', () => {
 
   });
 });
-
-test('temp', () => {
-  expect(2 + 2).toBe(4);
-});
