@@ -33,29 +33,19 @@
 
 //     expect(adminAuthLogout(token)).toStrictEqual({});
 
-//     expect(adminUserDetails(log.token)).toStrictEqual(
-//       {
-//         statusCode: 200,
-//         jsonBody: {
-//           user: {
-//             userId: expect.any(Number),
-//             name: 'DunYao Foo',
-//             email: 'dunyao@unsw.edu.au',
-//             numSuccessfulLogins: 2,
-//             numFailedPasswordsSinceLastLogin: 0,
-//           }
-//         }
+//     expect(adminUserDetails(log.token)).toStrictEqual({
+//       user: {
+//         userId: expect.any(Number),
+//         name: 'DunYao Foo',
+//         email: 'dunyao@unsw.edu.au',
+//         numSuccessfulLogins: 2,
+//         numFailedPasswordsSinceLastLogin: 0,
 //       }
-//     );
+//     });
 
 //     expect(adminUserDetailsUpdate(log.token, 'dunyao@unsw.edu.au', 'Sam', 'Jeong')).toStrictEqual({});
 
-//     expect(adminUserPasswordUpdate(log.token, 'abcd1234', '1234abcd')).toStrictEqual(
-//       {
-//         statusCode: 200,
-//         jsonBody: {}
-//       }
-//     );
+//     expect(adminUserPasswordUpdate(log.token, 'abcd1234', '1234abcd')).toStrictEqual({});
 //   });
 
 //   test('Invalid token', () => {
@@ -64,6 +54,6 @@
 //   });
 // });
 
-test('temp', () => {
-  expect(2 + 2).toBe(4);
-});
+// test('temp', () => {
+//   expect(2 + 2).toBe(4);
+// });
