@@ -25,7 +25,7 @@ describe('adminUserDetailsUpdate', () => {
         numSuccessfulLogins: 1,
         numFailedPasswordsSinceLastLogin: 0,
       }
-    })
+    });
   });
 
   test('Admin updates user details successfully with multiple users', () => {
@@ -69,15 +69,12 @@ describe('adminUserDetailsUpdate', () => {
         numFailedPasswordsSinceLastLogin: 0,
       }
     });
-
   });
 
   test('Invalid email: Used by another user', () => {
     const token2 = adminAuthRegister('nicksebastian@unsw.edu.au', 'abCdddD1232', 'Nick', 'Sebastian').token;
 
-
     expect(() => adminUserDetailsUpdate(token2, 'dunyao@unsw.edu.au', 'Nick', 'Sebastian')).toThrow(HTTPError[400]);
-    
   });
 
   test.each([
@@ -92,7 +89,6 @@ describe('adminUserDetailsUpdate', () => {
     ['nick@gmail.com', '109328674', 'sheesh'],
     ['nick@gmail.com', 'asdjalkdsjflaskjdgflasjdghffalksdjfalsdkjfh', 'sheesh']
   ])('Testing invalid first name', (email, nameFirst, nameLast) => {
-
     expect(() => adminUserDetailsUpdate(token, email, nameFirst, nameLast)).toThrow(HTTPError[400]);
   });
 

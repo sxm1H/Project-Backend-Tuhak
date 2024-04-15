@@ -10,6 +10,42 @@ interface DataStore {
   quizzes: Quiz[];
   sessions: Sessions[];
   trash: Quiz[];
+  quizActiveState: quizState[];
+  quizInactiveState: quizState[];
+}
+
+interface answeredQuestion {
+  questionId: number | undefined;
+  timeStart: number;
+  timeEnd: number;
+  timeTaken: number;
+  isCorrect: boolean;
+  Answers: number[];
+}
+
+interface quizState {
+  metadata: Quiz;
+  sessionId: number;
+  state: string;
+  atQuestion: number;
+  players: Player[];
+  autoStartNum: number;
+  messages: Message[];
+  timeoutId?: ReturnType<typeof setTimeout>;
+}
+
+interface Player {
+  name: string;
+  playerId: number;
+  questions: answeredQuestion[];
+  score: number;
+}
+
+interface Message {
+  messageBody: string;
+  playerId: number;
+  playerName: string;
+  timeSent: number;
 }
 
 interface User {
@@ -134,6 +170,24 @@ interface DuplicateQuestionReturn {
   newQuestionId: number;
 }
 
+enum States {
+  LOBBY = 'LOBBY',
+  QUESTION_COUNTDOWN = 'QUESTION_COUNTDOWN',
+  QUESTION_OPEN = 'QUESTION_OPEN',
+  QUESTION_CLOSE = 'QUESTION_CLOSE',
+  ANSWER_SHOW = 'ANSWER_SHOW',
+  FINAL_RESULTS = 'FINAL_RESULTS',
+  END = 'END'
+}
+
+enum Actions {
+  NEXT_QUESTION = 'NEXT_QUESTION',
+  SKIP_COUNTDOWN = 'SKIP_COUNTDOWN',
+  GO_TO_ANSWER = 'GO_TO_ANSWER',
+  GO_TO_FINAL_RESULTS = 'GO_TO_FINAL_RESULTS',
+  END = 'END',
+}
+
 export {
   Counters,
   DataStore,
@@ -156,4 +210,8 @@ export {
   QuizTrashReturnObject,
   QuestionId,
   DuplicateQuestionReturn,
+  States,
+  Actions,
+  quizState,
+  Player,
 };

@@ -200,8 +200,6 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
     ['Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]],
   ])('Test Unsuccessful: Question length is not between 5 and 50 characters', (question, duration, points, answers) => {
     expect(() => adminQuizQuestionUpdate(question, duration, points, answers, token, quizId, questionId)).toThrow(HTTPError[400]);
-    
-    
   });
 
   test.each([
@@ -285,20 +283,20 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
   });
 
   test('Test Unsuccessful: Invalid Quiz Id', () => {
-    let question = 'Question1';
-    let points = 4;
-    let duration = 3;
-    let answers = [{answer: 'Sydney', correct: true}, {answer: 'NSW', correct: false}];
+    const question = 'Question1';
+    const points = 4;
+    const duration = 3;
+    const answers = [{ answer: 'Sydney', correct: true }, { answer: 'NSW', correct: false }];
     expect(() => adminQuizQuestionUpdate(question, duration, points, answers, token, -1, questionId)).toThrow(HTTPError[403]);
   });
 
   test('Test Unsuccessful: Invalid QuestionId', () => {
-    let question = 'Question1';
-    let points = 4;
-    let duration = 3;
-    let answers = [{answer: 'Sydney', correct: true}, {answer: 'NSW', correct: false}];
+    const question = 'Question1';
+    const points = 4;
+    const duration = 3;
+    const answers = [{ answer: 'Sydney', correct: true }, { answer: 'NSW', correct: false }];
     expect(() => adminQuizQuestionUpdate(question, duration, points, answers, token, quizId, -1)).toThrow(HTTPError[400]);
-  })
+  });
 });
 
 test('temp', () => {

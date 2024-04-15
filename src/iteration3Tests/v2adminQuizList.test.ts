@@ -37,4 +37,3 @@ describe('Test GET /v1/admin/quiz/list', () => {
     });
   });
 });
-

@@ -140,5 +140,5 @@ describe('Testing GET /v1/admin/quiz/:quizid', () => {
   test('Test Unsuccessful: Invalid QuizId', () => {
     adminQuizRemove(token, quizId);
     expect(() => adminQuizRestore(token, -1)).toThrow(HTTPError[403]);
-  })
+  });
 });

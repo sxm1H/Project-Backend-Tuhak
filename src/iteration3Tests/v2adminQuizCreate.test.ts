@@ -57,8 +57,8 @@ describe('Testing POST /v1/admin/quiz', () => {
 
   test('Quiz Description is too long', () => {
     expect(() => adminQuizCreate(token, 'Too Long',
-    'Lorem ipsum dolor sit amet. Eos deleniti inventore est illo eligendi ut excepturi molestiae aut vero quas. Et dolorum doloremque ad reprehenderit adipisci qui voluptatem harum')).
-    toThrow(HTTPError[400]);
+      'Lorem ipsum dolor sit amet. Eos deleniti inventore est illo eligendi ut excepturi molestiae aut vero quas. Et dolorum doloremque ad reprehenderit adipisci qui voluptatem harum'))
+      .toThrow(HTTPError[400]);
   });
 
   test.each([

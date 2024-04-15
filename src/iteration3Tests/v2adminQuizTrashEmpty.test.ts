@@ -69,7 +69,7 @@
 //         }
 //       ]
 //     });
-    
+
 //     adminQuizRemove(token, quizId);
 
 //     expect(adminQuizList(token)).toStrictEqual({

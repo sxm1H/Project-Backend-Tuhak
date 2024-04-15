@@ -17,7 +17,7 @@ describe('Testing PUT /v1/admin/user/password', () => {
   test('Comprehensive Test Successful: Logging on after changing the password', () => {
     expect(adminUserPasswordUpdate(token, 'abcd1234', 'efgh5678')).toStrictEqual({});
 
-    expect(adminAuthLogin('abcd.efgh@gmail.com', 'efgh5678')).toStrictEqual({token: expect.any(String)})
+    expect(adminAuthLogin('abcd.efgh@gmail.com', 'efgh5678')).toStrictEqual({ token: expect.any(String) });
   });
 
   test('Test Successful Password Update', () => {
@@ -47,7 +47,7 @@ describe('Testing PUT /v1/admin/user/password', () => {
 
     expect(adminAuthLogin('abcd.efgh@gmail.com', 'abcd1234')).toStrictEqual({
       token: expect.any(String)
-    })
+    });
   });
 
   test('Test Unsuccessful: Token invalid', () => {

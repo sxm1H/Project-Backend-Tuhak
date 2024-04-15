@@ -37,6 +37,6 @@ describe('adminAuthLogin', () => {
   ])('Comprehensive successful tests - testing multiple users IDs are returned correctly', ({ email, password, firstName, lastName }) => {
     expect(adminAuthRegister(email, password, firstName, lastName)).toStrictEqual({
       token: expect.any(String)
-    })
+    });
   });
 });

@@ -33,7 +33,7 @@ describe('Testing GET /v1/admin/user/details', () => {
   });
 
   test('Retrieves correct user details', () => {
-    const token2 = adminAuthRegister('DunYao@hotmail.com', 'abCdddD123', 'DunYao', 'Foo').token
+    const token2 = adminAuthRegister('DunYao@hotmail.com', 'abCdddD123', 'DunYao', 'Foo').token;
 
     expect(adminUserDetails(token2)).toStrictEqual({
       user: {
@@ -43,7 +43,7 @@ describe('Testing GET /v1/admin/user/details', () => {
         numSuccessfulLogins: 1,
         numFailedPasswordsSinceLastLogin: 0,
       }
-    })
+    });
   });
 
   test('Correct numSuccessfulLogins', () => {
@@ -59,7 +59,7 @@ describe('Testing GET /v1/admin/user/details', () => {
         numSuccessfulLogins: 5,
         numFailedPasswordsSinceLastLogin: 0,
       }
-    })
+    });
   });
 
   test('Correct numFailedPasswordsSinceLastLogin', () => {
@@ -75,7 +75,6 @@ describe('Testing GET /v1/admin/user/details', () => {
         numSuccessfulLogins: 1,
         numFailedPasswordsSinceLastLogin: 3,
       }
-    })
-
+    });
   });
 });

@@ -48,27 +48,27 @@ describe('adminQuizRemove', () => {
     const quizId2 = adminQuizCreate(token, 'i will be gone soon', 'goodbye').quizId;
 
     expect(adminQuizList(token)).toStrictEqual({
-        quizzes: [
-          {
-            quizId: quizId,
-            name: 'Cities of Australia'
-          },
-          {
-            quizId: quizId2,
-            name: 'i will be gone soon'
-          }
-        ]
+      quizzes: [
+        {
+          quizId: quizId,
+          name: 'Cities of Australia'
+        },
+        {
+          quizId: quizId2,
+          name: 'i will be gone soon'
+        }
+      ]
     });
 
     expect(adminQuizRemove(token, quizId2)).toStrictEqual({});
 
     expect(adminQuizList(token)).toStrictEqual({
-        quizzes: [
-          {
-            quizId: quizId,
-            name: 'Cities of Australia'
-          }
-        ]
+      quizzes: [
+        {
+          quizId: quizId,
+          name: 'Cities of Australia'
+        }
+      ]
     });
   });
 
