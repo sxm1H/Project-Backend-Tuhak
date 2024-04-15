@@ -1,6 +1,6 @@
 import {
   adminQuizList,
-  adminQuizCreate
+  v2adminQuizCreate
 } from './v2testHelpers';
 import {
   clear,
@@ -25,7 +25,7 @@ describe('Test GET /v1/admin/quiz/list', () => {
       quizzes: []
     });
 
-    const id = adminQuizCreate(token, 'creative name', 'description').quizId;
+    const id = v2adminQuizCreate(token, 'creative name', 'description').quizId;
     const list2 = adminQuizList(token);
     expect(list2).toStrictEqual({
       quizzes: [

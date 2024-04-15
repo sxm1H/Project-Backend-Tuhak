@@ -1,5 +1,5 @@
 import {
-  adminQuizCreate,
+  v2adminQuizCreate,
   adminQuizNameUpdate,
   adminQuizList
 } from './v2testHelpers';
@@ -15,7 +15,7 @@ beforeEach(() => {
   clear();
 
   token = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian').token;
-  quizId = adminQuizCreate(token, 'QuizName', 'QuizDescription').quizId;
+  quizId = v2adminQuizCreate(token, 'QuizName', 'QuizDescription').quizId;
 });
 
 describe('adminQuizNameUpdate', () => {
@@ -34,7 +34,7 @@ describe('adminQuizNameUpdate', () => {
       ]
     });
 
-    const quizId2 = adminQuizCreate(token, 'new quiz hello', 'hihihihi').quizId;
+    const quizId2 = v2adminQuizCreate(token, 'new quiz hello', 'hihihihi').quizId;
 
     expect(adminQuizNameUpdate(token, quizId, 'newName')).toStrictEqual({});
     quizList = adminQuizList(token);
@@ -99,7 +99,7 @@ describe('adminQuizNameUpdate', () => {
   });
 
   test('Name is already used by the current logged in user for another quiz.', () => {
-    adminQuizCreate(token, 'duplicateName', 'quizDuplicateDescription');
+    v2adminQuizCreate(token, 'duplicateName', 'quizDuplicateDescription');
     // duplicateName is already used
     expect(() => adminQuizNameUpdate(token, quizId, 'duplicateName')).toThrow(HTTPError[400]);
   });
