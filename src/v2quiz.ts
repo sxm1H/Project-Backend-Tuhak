@@ -8,6 +8,7 @@ import {
   Actions,
   quizState,
   Player,
+  QuizId
 } from './interfaces';
 import HTTPError from 'http-errors';
 
@@ -224,6 +225,70 @@ function adminQuizPlayerSubmitAnswer (answerIds: number[], playerid: number, que
   // findQuestion.answers = answerIds;
 
   return {};
+}
+
+/**
+ * v2adminQuizCreate will create a new quiz and push all of its information (quizId, name, description,
+ * user Id, time create, last time edited and thumbnailUrl) into dataStore it will return a unique quizId.
+ *
+ * @param {Int} authUserId - user id for the person creating the quiz
+ * @param {string} name - The name of the quiz that is being created
+ * @param {string} description - the description of the quiz being created
+ *
+ * @return {object {error: string}} - returns an error string if an the correct error
+ * is encountered
+ * @return {object {quizId: number}} - returns a quiz Id object that contains the unique quiz Id relating
+ * to the created quiz.
+ */
+function v2adminQuizCreate(token: string, name: string, description: string): ErrorObject | QuizId {
+  const newdata = getData();
+  const activeTokens = newdata.sessions;
+  const searchToken = activeTokens.findIndex(session => session.token === token);
+  const isAlphanumeric = /^[a-zA-Z0-9 ]+$/.test(name);
+  const date = Math.floor(Date.now() / 1000);
+
+  if (searchToken === -1) {
+    throw HTTPError(401, 'Token is empty or invalid');
+  }
+
+  if (!isAlphanumeric) {
+    throw HTTPError(400, 'Quiz Name contains invalid characters');
+  }
+
+  if (name.length < 3 || name.length > 30) {
+    throw HTTPError(400, 'Quiz Name must be more than 2 characters and less than 31 characters long');
+  }
+
+  const courseData = newdata.quizzes;
+  const authUserId = activeTokens[searchToken].userId;
+
+  for (const i of courseData) {
+    if (i.authUserId === authUserId) {
+      if (i.name === name) {
+        throw HTTPError(400, 'Quiz name already in use');
+      }
+    }
+  }
+
+  if (description.length > 100) {
+    throw HTTPError(400, 'Description is more than 100 characters');
+  }
+
+  counters.quizIdCounter++;
+  newdata.quizzes.push({
+    quizId: counters.quizIdCounter,
+    name: name,
+    description: description,
+    authUserId: authUserId,
+    timeCreated: date,
+    timeLastEdited: date,
+    numQuestions: 0,
+    questions: [],
+    duration: 0,
+    thumbnailUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSu1V5-mUs0C8qTExeBmjUv1J_gUBGvFludmgUw2Kfwxw&s'
+  });
+
+  return { quizId: counters.quizIdCounter };
 }
 
 function v2AdminQuizRemove(token: string, quizId: number) {
@@ -451,4 +516,5 @@ export {
   adminQuizSessionJoin,
   v2AdminQuizRemove,
   v2AdminQuizTransfer,
+  v2adminQuizCreate
 };

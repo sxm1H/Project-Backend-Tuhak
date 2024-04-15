@@ -78,7 +78,7 @@ const adminQuizList = (token: string) => {
   return requestHelper('GET', '/v2/admin/quiz/list', {}, { token });
 };
 
-const adminQuizCreate = (token: string, name: string, description: string) => {
+const v2adminQuizCreate = (token: string, name: string, description: string) => {
   return requestHelper('POST', '/v2/admin/quiz', { name, description }, { token });
 };
 
@@ -174,7 +174,7 @@ export {
   adminUserDetailsUpdate,
   adminUserPasswordUpdate,
   adminQuizList,
-  adminQuizCreate,
+  v2adminQuizCreate,
   // v2adminQuizRemove,
   // v2adminQuizInfo,
   adminQuizNameUpdate,

@@ -1,4 +1,4 @@
-import { adminQuizCreate } from './v2testHelpers';
+import { v2adminQuizCreate } from './v2testHelpers';
 import {
   clear,
   adminAuthRegister
@@ -13,7 +13,7 @@ beforeEach(() => {
 
 describe('Testing POST /v1/admin/quiz', () => {
   test('Token was not valid', () => {
-    expect(() => adminQuizCreate(token + '1', 'amazing Quiz', 'the quiz Id is not a number')).toThrow(HTTPError[401]);
+    expect(() => v2adminQuizCreate(token + '1', 'amazing Quiz', 'the quiz Id is not a number')).toThrow(HTTPError[401]);
   });
 
   test.each([
@@ -30,7 +30,7 @@ describe('Testing POST /v1/admin/quiz', () => {
       description: 'percentage Quiz'
     }
   ])('Quiz name has invalid characters', ({ name, description }) => {
-    expect(() => adminQuizCreate(token, name, description)).toThrow(HTTPError[400]);
+    expect(() => v2adminQuizCreate(token, name, description)).toThrow(HTTPError[400]);
   });
 
   test.each([
@@ -47,16 +47,16 @@ describe('Testing POST /v1/admin/quiz', () => {
       description: 'Blank quiz'
     }
   ])('Check Quiz name is between valid character limit', ({ name, description }) => {
-    expect(() => adminQuizCreate(token, name, description)).toThrow(HTTPError[400]);
+    expect(() => v2adminQuizCreate(token, name, description)).toThrow(HTTPError[400]);
   });
 
   test('Check if Quiz Name already exists', () => {
-    adminQuizCreate(token, 'Cool Quiz', 'The best quiz in the world');
-    expect(() => adminQuizCreate(token, 'Cool Quiz', 'The best quiz in the world')).toThrow(HTTPError[400]);
+    v2adminQuizCreate(token, 'Cool Quiz', 'The best quiz in the world');
+    expect(() => v2adminQuizCreate(token, 'Cool Quiz', 'The best quiz in the world')).toThrow(HTTPError[400]);
   });
 
   test('Quiz Description is too long', () => {
-    expect(() => adminQuizCreate(token, 'Too Long',
+    expect(() => v2adminQuizCreate(token, 'Too Long',
       'Lorem ipsum dolor sit amet. Eos deleniti inventore est illo eligendi ut excepturi molestiae aut vero quas. Et dolorum doloremque ad reprehenderit adipisci qui voluptatem harum'))
       .toThrow(HTTPError[400]);
   });
@@ -71,7 +71,7 @@ describe('Testing POST /v1/admin/quiz', () => {
       description: ''
     }
   ])('Successful Quiz Created', ({ name, description }) => {
-    expect(adminQuizCreate(token, name, description)).toStrictEqual({
+    expect(v2adminQuizCreate(token, name, description)).toStrictEqual({
       quizId: expect.any(Number)
     });
   });

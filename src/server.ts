@@ -51,12 +51,12 @@ import {
 //   v2adminUserPasswordUpdate,
 //   v2adminAuthLogout
 // } from './v2auth';
-// import {
+import {
 //   v2adminQuizNameUpdate,
 //   v2adminQuizRemove,
 //   v2adminQuizList,
 //   v2adminQuizInfo,
-//   v2adminQuizCreate,
+  v2adminQuizCreate,
 //   v2adminQuizDescriptionUpdate,
 //   v2adminQuizQuestionDelete,
 //   v2adminQuizTransfer,
@@ -67,7 +67,7 @@ import {
 //   v2adminQuizTrashView,
 //   v2adminQuizQuestionUpdate,
 //   v2adminQuizRestore
-// } from './v2quiz';
+} from './v2quiz';
 import { getData, setData, setCounters, getCounters } from './dataStore';
 
 // Set up web app
@@ -349,7 +349,7 @@ app.get('/v2/admin/quiz/list', (req: Request, res: Response) => {
 app.post('/v2/admin/quiz', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const { name, description } = req.body;
-  const result = adminQuizCreate(token, name, description);
+  const result = v2adminQuizCreate(token, name, description);
 
   save();
   res.json(result);
