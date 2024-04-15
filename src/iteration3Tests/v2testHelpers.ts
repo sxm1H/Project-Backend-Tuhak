@@ -82,9 +82,9 @@ const adminQuizCreate = (token: string, name: string, description: string) => {
   return requestHelper('POST', '/v2/admin/quiz', { name, description }, { token });
 };
 
-// const v2adminQuizRemove = (token: string, quizId: number) => {
-//   return requestHelper('DELETE', `/v2/admin/quiz/${quizId}`, { quizId }, { token });
-// };
+const v2adminQuizRemove = (token: string, quizId: number) => {
+  return requestHelper('DELETE', `/v2/admin/quiz/${quizId}`, { quizId }, { token });
+};
 
 // const v2adminQuizQuestionUpdate = (question: string, duration: number, points: number, answers: Answer[], token: string, quizId: number, questionId: number) => {
 //   const questionBody = {
@@ -135,9 +135,9 @@ const adminAuthLogout = (token: string) => {
 //   return requestHelper('DELETE', `/v2/admin/quiz/${quizId}/question/${questionId}`, {}, { token });
 // };
 
-// const v2adminQuizTransfer = (token: string, userEmail: string, quizId: number) => {
-//   return requestHelper('POST', `/v2/admin/quiz/${quizId}/transfer`, { userEmail }, { token });
-// };
+const v2adminQuizTransfer = (token: string, userEmail: string, quizId: number) => {
+  return requestHelper('POST', `/v2/admin/quiz/${quizId}/transfer`, { userEmail }, { token });
+};
 
 const adminQuizTrashEmpty = (token: string, quizIds: string) => {
   return requestHelper('DELETE', '/v2/admin/quiz/trash/empty', { quizIds }, { token });
@@ -149,6 +149,22 @@ const adminQuizQuestionDuplicate = (token: string, quizId: number, questionId: n
 
 const adminQuizRestore = (token: string, quizId: number) => {
   return requestHelper('POST', `/v2/admin/quiz/${quizId}/restore`, { quizId }, { token });
+};
+
+const adminQuizSessionStart = (token: string, quizId: number, autoStartNum: number) => {
+  return requestHelper('POST', `/v1/admin/quiz/${quizId}/session/start`, { autoStartNum }, { token });
+};
+
+const adminQuizSessionUpdate = (token: string, quizId: number, sessionId: number, action: string) => {
+  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/session/${sessionId}`, { action }, { token });
+};
+
+const adminQuizPlayerJoin = (sessionId: number, name: string) => {
+  return requestHelper('POST', `/v1/player/join`, { sessionId, name });
+};
+
+const adminQuizPlayerSubmitAnswer = (playerId: number, questionPosition: number, answerIds: number[]) => {
+  return requestHelper('PUT', `/v1/player/${playerId}/question/${questionPosition}/answer`, { answerIds });
 };
 
 // ============================================================================================== //
@@ -166,11 +182,15 @@ export {
   adminQuizQuestionMove,
   adminAuthLogout,
   // v2adminQuizQuestionDelete,
-  // v2adminQuizTransfer,
+  v2adminQuizTransfer,
   // v2adminQuizQuestionCreate,
   adminQuizQuestionDuplicate,
   adminQuizTrashView,
   adminQuizTrashEmpty,
   // v2adminQuizQuestionUpdate,
-  adminQuizRestore
+  adminQuizRestore,
+  adminQuizSessionStart,
+  adminQuizSessionUpdate,
+  adminQuizPlayerJoin,
+  adminQuizPlayerSubmitAnswer
 };

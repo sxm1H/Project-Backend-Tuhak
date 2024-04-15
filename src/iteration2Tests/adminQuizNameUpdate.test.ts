@@ -80,7 +80,7 @@ describe('adminQuizNameUpdate', () => {
 
   test('Quiz ID does not refer to a quiz that this user owns.', () => {
     const token2 = adminAuthRegister('dunyao1234@gmail.com', 'DunYao1234', 'DunYao', 'Foooooooooo').token;
-    expect(() => adminQuizNameUpdate(token2, quizId, 'newName')).toThrow(HTTPError[403])
+    expect(() => adminQuizNameUpdate(token2, quizId, 'newName')).toThrow(HTTPError[403]);
   });
 
   test('Name contains invalid characters. Valid characters are alphanumeric and spaces.', () => {

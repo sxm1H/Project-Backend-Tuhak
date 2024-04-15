@@ -200,8 +200,7 @@
 //     ['Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]],
 //   ])('Test Unsuccessful: Question length is not between 5 and 50 characters', (question, duration, points, answers) => {
 //     expect(() => adminQuizQuestionUpdate(question, duration, points, answers, token, quizId, questionId)).toThrow(HTTPError[400]);
-    
-    
+
 //   });
 
 //   test.each([

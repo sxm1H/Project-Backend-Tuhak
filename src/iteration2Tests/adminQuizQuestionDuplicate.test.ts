@@ -20,12 +20,12 @@ beforeEach(() => {
 
 describe('Testing POST /v1/admin/quiz/:quizid/question/:questionid/duplicate', () => {
   test('Question successfully duplicated', () => {
-    let questionId = adminQuizQuestionCreate(quizId, token, 'cool question', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]).questionId;
-    
-    expect( adminQuizQuestionDuplicate(token, quizId, questionId)).toStrictEqual({
+    const questionId = adminQuizQuestionCreate(quizId, token, 'cool question', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]).questionId;
+
+    expect(adminQuizQuestionDuplicate(token, quizId, questionId)).toStrictEqual({
       newQuestionId: expect.any(Number),
     });
-    
+
     const updatedDate = Math.floor(Date.now() / 1000);
     const timeLastEdited = adminQuizInfo(token, quizId).timeLastEdited;
     expect(updatedDate).toBeGreaterThanOrEqual(timeLastEdited);
@@ -33,8 +33,7 @@ describe('Testing POST /v1/admin/quiz/:quizid/question/:questionid/duplicate', (
   });
 
   test('Question Id does not refer to valid question', () => {
-    expect(() =>  adminQuizQuestionDuplicate(token, quizId, 1)).toThrow(HTTPError[400]);
-   
+    expect(() => adminQuizQuestionDuplicate(token, quizId, 1)).toThrow(HTTPError[400]);
   });
 
   test('Quiz Id does not refer to existing quiz', () => {
@@ -42,17 +41,15 @@ describe('Testing POST /v1/admin/quiz/:quizid/question/:questionid/duplicate', (
   });
 
   test('Token is invalid', () => {
-    let questionId = adminQuizQuestionCreate(quizId, token, 'cool question', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]).questionId;
-    
+    const questionId = adminQuizQuestionCreate(quizId, token, 'cool question', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]).questionId;
+
     expect(() => adminQuizQuestionDuplicate(token.concat('POG'), quizId, questionId)).toThrow(HTTPError[401]);
-    
   });
 
   test('User is not owner of the quiz', () => {
     const token2 = adminAuthRegister('abcd@gmail.com', 'abcd1234', 'ahhhhh', 'hello').token;
-    let questionId = adminQuizQuestionCreate(quizId, token, 'cool question', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]).questionId;
-    
-    expect( () =>  adminQuizQuestionDuplicate(token2, quizId, questionId)).toThrow(HTTPError[403]);
-    
+    const questionId = adminQuizQuestionCreate(quizId, token, 'cool question', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]).questionId;
+
+    expect(() => adminQuizQuestionDuplicate(token2, quizId, questionId)).toThrow(HTTPError[403]);
   });
 });

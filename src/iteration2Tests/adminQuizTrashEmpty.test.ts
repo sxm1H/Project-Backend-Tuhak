@@ -69,7 +69,7 @@ describe('Testing DELETE /v1/admin/quiz/trash/empty', () => {
         }
       ]
     });
-    
+
     adminQuizRemove(token, quizId);
 
     expect(adminQuizList(token)).toStrictEqual({
@@ -90,7 +90,7 @@ describe('Testing DELETE /v1/admin/quiz/trash/empty', () => {
           quizId: quizId,
           name: 'quiz1'
         }
-        ]
+      ]
     });
 
     adminQuizRemove(token, quizId);

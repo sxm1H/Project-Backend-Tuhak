@@ -49,7 +49,6 @@ describe('Testing POST /v1/admin/auth/logout', () => {
   });
 
   test('Invalid token', () => {
-
     expect(() => adminAuthLogout(token + 'hello')).toThrow(HTTPError[401]);
   });
 });

@@ -53,9 +53,9 @@
 //     ['What is the best city in Australia', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]],
 //   ])('Test Successful: Creating a Question with One or More Answers', (question, duration, points, answers) => {
 //     expect(adminQuizQuestionCreate(quizId, token, question, duration, points, answers)).toStrictEqual({
-     
+
 //         questionId: expect.any(Number),
-      
+
 //   });
 // });
 //   test.each([
@@ -145,7 +145,6 @@
 //     expect(() => adminQuizQuestionCreate(quizId, tokenTemp, question, duration, points, answers)).toThrow(HTTPError[401]);
 //   });
 
- 
 //   test('Test Unsuccessful: Invalid Quiz Id', () => {
 //     let question = 'Question1';
 //     let points = 4;

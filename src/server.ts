@@ -35,6 +35,16 @@ import {
   adminQuizQuestionUpdate,
   adminQuizRestore
 } from './quiz';
+
+import {
+  adminQuizPlayerSubmitAnswer,
+  adminQuizSessionCreate, 
+  adminQuizSessionJoin, 
+  adminQuizSessionUpdate,
+  v2AdminQuizRemove,
+  v2AdminQuizTransfer,
+} from './v2quiz'
+
 // import {
 //   v2adminUserDetails,
 //   v2adminUserDetailsUpdate,
@@ -345,16 +355,16 @@ app.post('/v2/admin/quiz', (req: Request, res: Response) => {
   res.json(result);
 });
 
-// // One new 400 error check (END state checking)
+// One new 400 error check (END state checking)
 
-// app.delete('/v2/admin/quiz/:quizId', (req: Request, res: Response) => {
-//   const token = req.headers.token as string;
-//   const quizId = parseInt(req.params.quizId);
-//   const result = v2AdminQuizRemove(token, quizId);
+app.delete('/v2/admin/quiz/:quizId', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const quizId = parseInt(req.params.quizId);
+  const result = v2AdminQuizRemove(token, quizId);
 
-//   save();
-//   res.json(result);
-// });
+  save();
+  res.json(result);
+});
 
 // /////// Requires a new implementation which puts questionUrl in both quiz and question
 // which probably means that we will have to update more than just 6 functions
@@ -414,17 +424,15 @@ app.delete('/v2/admin/quiz/trash/empty', (req: Request, res: Response) => {
   res.json(response);
 });
 
-/// / Only one error -  checking for END state
-//
-// app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
-//   const quizId = parseInt(req.params.quizid);
-//   const token = req.headers.token as string;
-//   const { userEmail } = req.body;
-//   const response = adminQuizTransfer(token, userEmail, quizId);
+app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const token = req.headers.token as string;
+  const { userEmail } = req.body;
+  const response = v2AdminQuizTransfer(token, userEmail, quizId);
 
-//   save();
-//   res.json(response);
-// });
+  save();
+  res.json(response);
+});
 
 /// / Requires new implementation to input thumbnail parameters into the question
 //
@@ -484,6 +492,54 @@ app.post('/v2/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
   save();
   res.json(response);
 });
+
+// ==================== UNDERNEATH IS NEW ITER 3 FUNCTIONS ====================
+
+app.post('/v1/admin/quiz/:quizid/session/start', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const { autoStartNum } = req.body;
+  const token = req.headers.token as string;
+
+  const response = adminQuizSessionCreate(quizId, token, autoStartNum);
+
+  save();
+  res.json(response);
+});
+
+app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const sessionId = parseInt(req.params.sessionid);
+  const { action } = req.body;
+  const token = req.headers.token as string;
+
+  const response = adminQuizSessionUpdate(quizId, sessionId, token, action);
+
+  save();
+  res.json(response);
+});
+
+app.post('/v1/player/join', (req: Request, res: Response) => {
+  const { sessionId, name } = req.body;
+
+  const response = adminQuizSessionJoin(sessionId, name);
+
+  save();
+  res.json(response);
+});
+
+app.put('/v1/player/:playerid/question/:questionposition/answer', (req: Request, res: Response) => {
+  const { answerIds } = req.body;
+  const playerid = parseInt(req.params.playerid);
+  const questionposition = parseInt(req.params.questionposition);
+
+  const response = adminQuizPlayerSubmitAnswer(answerIds, playerid, questionposition);
+
+  save();
+  res.json(response);
+});
+
+
+
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

@@ -22,7 +22,6 @@ beforeEach(() => {
 
 describe('Testing GET /v1/admin/quiz/:quizid', () => {
   test('Successfully retrieves info', () => {
-
     const info = adminQuizInfo(token, quizId);
 
     expect(info.timeCreated).toBeGreaterThanOrEqual(time);
@@ -31,14 +30,14 @@ describe('Testing GET /v1/admin/quiz/:quizid', () => {
     expect(info.timeLastEdited).toBeLessThanOrEqual(time + 2);
 
     expect(info).toStrictEqual({
-        quizId: expect.any(Number),
-        name: expect.any(String),
-        timeCreated: expect.any(Number),
-        timeLastEdited: expect.any(Number),
-        description: expect.any(String),
-        duration: expect.any(Number),
-        questions: [],
-        numQuestions: 0
+      quizId: expect.any(Number),
+      name: expect.any(String),
+      timeCreated: expect.any(Number),
+      timeLastEdited: expect.any(Number),
+      description: expect.any(String),
+      duration: expect.any(Number),
+      questions: [],
+      numQuestions: 0
     });
   });
 

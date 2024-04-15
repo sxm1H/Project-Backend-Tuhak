@@ -11,6 +11,8 @@ function clear(): Record<string, never> {
     quizzes: [],
     sessions: [],
     trash: [],
+    quizActiveState: [],
+    quizInactiveState: [],
   });
 
   return {};

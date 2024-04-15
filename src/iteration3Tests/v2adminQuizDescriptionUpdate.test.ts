@@ -49,7 +49,7 @@
 //   });
 
 //   test('Test Unsuccessful: Desc Too Long', () => {
-//     expect(() => adminQuizDescriptionUpdate(token, quizId, 
+//     expect(() => adminQuizDescriptionUpdate(token, quizId,
 //     'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem ')).toThrow(HTTPError[400]);
 //   });
 
@@ -57,7 +57,7 @@
 //     const token1 = adminAuthRegister('abcd@gmail.com', 'abcd1234', 'abcd', 'efgh');
 //     const token2 = adminAuthRegister('qwert.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
 //     const quizId1 = adminQuizCreate(token1.token, 'Australian Cities', 'lorem ipsum');
-//     expect(() => adminQuizDescriptionUpdate(token2.token, quizId1.quizId, 
+//     expect(() => adminQuizDescriptionUpdate(token2.token, quizId1.quizId,
 //     'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem ')).toThrow(HTTPError[403]);
 //   });
 // });

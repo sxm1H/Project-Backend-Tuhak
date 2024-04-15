@@ -53,11 +53,11 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
     ['What is the best city in Australia', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]],
   ])('Test Successful: Creating a Question with One or More Answers', (question, duration, points, answers) => {
     expect(adminQuizQuestionCreate(quizId, token, question, duration, points, answers)).toStrictEqual({
-     
-        questionId: expect.any(Number),
-      
+
+      questionId: expect.any(Number),
+
+    });
   });
-});
   test.each([
     ['Q?', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]],
     ['Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]],
@@ -145,12 +145,11 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
     expect(() => adminQuizQuestionCreate(quizId, tokenTemp, question, duration, points, answers)).toThrow(HTTPError[401]);
   });
 
- 
   test('Test Unsuccessful: Invalid Quiz Id', () => {
-    let question = 'Question1';
-    let points = 4;
-    let duration = 3;
-    let answers = [{answer: 'Sydney', correct: true}, {answer: 'NSW', correct: false}];
+    const question = 'Question1';
+    const points = 4;
+    const duration = 3;
+    const answers = [{ answer: 'Sydney', correct: true }, { answer: 'NSW', correct: false }];
     expect(() => adminQuizQuestionCreate(-1, token, question, duration, points, answers)).toThrow(HTTPError[403]);
-  })
+  });
 });

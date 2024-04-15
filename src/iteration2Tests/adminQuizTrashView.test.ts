@@ -25,7 +25,7 @@ describe('Test GET /v1/admin/quiz/list', () => {
       description: ''
     }
   ])('Successful Quiz Created', ({ name, description }) => {
-    const quizId = adminQuizCreate(token, name, description).quizId
+    const quizId = adminQuizCreate(token, name, description).quizId;
     adminQuizRemove(token, quizId);
     expect(adminQuizTrashView(token)).toStrictEqual({
       quizzes: [
@@ -34,7 +34,7 @@ describe('Test GET /v1/admin/quiz/list', () => {
           name: expect.any(String)
         }
       ]
-    })
+    });
   });
 
   test.each([

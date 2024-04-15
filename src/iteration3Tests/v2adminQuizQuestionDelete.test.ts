@@ -21,14 +21,14 @@
 // describe('Testing DELETE /v1/admin/quiz/:quizid/question/:questionid', () => {
 //   test('Comprehensive Test Successful: Successfully Deleting a Question from a Quiz, then Checking QuizInfo', () => {
 //     expect( adminQuizQuestionDelete(token, quizId, questionId)).toStrictEqual({
-      
+
 //     });
 //     expect(adminQuizInfo(token, quizId).questions).toStrictEqual([]);
 //   });
 
 //   test('Test Successful: Successfully Deleted a Question from a Quiz', () => {
 //     expect(adminQuizQuestionDelete(token, quizId, questionId)).toStrictEqual({
-    
+
 //     });
 //   });
 
