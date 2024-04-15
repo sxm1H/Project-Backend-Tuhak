@@ -9,6 +9,8 @@ let data: DataStore = {
   quizzes: [],
   sessions: [],
   trash: [],
+  quizActiveState: [],
+  quizInactiveState: []
 };
 
 let counters: Counters = {

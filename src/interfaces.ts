@@ -20,7 +20,7 @@ interface answeredQuestion {
   timeEnd: number;
   timeTaken: number;
   isCorrect: boolean;
-  Answers: number[];
+  answers: number[];
 }
 
 interface quizState {

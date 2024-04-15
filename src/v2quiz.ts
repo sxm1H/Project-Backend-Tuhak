@@ -55,7 +55,7 @@ function adminQuizSessionCreate(quizId: number, token: string, autoStartNum: num
 
   const newSessionId = Math.floor((Math.random() * 1000000 + 1));
 
-  const newState = {
+  data.quizActiveState.push({
     metadata: { ...findQuiz },
     sessionId: newSessionId, // NEEDS TO BE UPDATED LATER TO BE CHECKED UNIQUELY
     state: States.LOBBY,
@@ -63,9 +63,7 @@ function adminQuizSessionCreate(quizId: number, token: string, autoStartNum: num
     players: [],
     autoStartNum: autoStartNum,
     messages: [],
-  };
-
-  data.quizActiveState.push(newState);
+  });
 
   return { sessionId: newSessionId };
 }
@@ -151,80 +149,81 @@ function adminQuizSessionJoin(sessionId: number, name: string) {
 
   const playerId = Math.floor((Math.random() * 1000000 + 1));
 
-  const newPlayer = {
+  findSession.players.push({
     name: name,
     playerId: playerId,
     questions: [],
     score: 0
-  };
-
-  findSession.players.push(newPlayer);
+  });
 
   return { playerId: playerId };
 }
 
 function adminQuizPlayerSubmitAnswer (answerIds: number[], playerid: number, questionposition: number) {
-  const data = getData();
+  // const data = getData();
 
-  // Double for loop, to iterate through two arrays.
+  // // Double for loop, to iterate through two arrays.
 
-  // session thingo might not work
+  // // session thingo might not work
 
-  let session: quizState | undefined;
-  let findPlayer: Player;
-  for (const sessions of data.quizActiveState) {
-    for (const players of sessions.players) {
-      if (players.playerId === playerid) {
-        findPlayer = players;
-        session = sessions;
-      }
-    }
-  }
+  // let session: quizState | undefined;
+  // let findPlayer: Player;
+  // for (const sessions of data.quizActiveState) {
+  //   for (const players of sessions.players) {
+  //     if (players.playerId === playerid) {
+  //       findPlayer = players;
+  //       session = sessions;
+  //     }
+  //   }
+  // }
 
-  if (session === undefined) {
-    throw HTTPError(400, 'player ID does not exist');
-  }
+  // if (session === undefined) {
+  //   throw HTTPError(400, 'player ID does not exist');
+  // }
 
-  if (session.state !== States.QUESTION_OPEN) {
-    throw HTTPError(400, 'Session is not in QUESTION_OPEN state');
-  }
+  // if (session.state !== States.QUESTION_OPEN) {
+  //   throw HTTPError(400, 'Session is not in QUESTION_OPEN state');
+  // }
 
-  if (questionposition > session.metadata.numQuestions) {
-    throw HTTPError(400, 'question position is not valid for the session this player is in');
-  }
+  // if (questionposition > session.metadata.numQuestions) {
+  //   throw HTTPError(400, 'question position is not valid for the session this player is in');
+  // }
 
-  if (questionposition !== session.atQuestion) {
-    throw HTTPError(400, 'session is not yet up to this question');
-  }
+  // if (questionposition !== session.atQuestion) {
+  //   throw HTTPError(400, 'session is not yet up to this question');
+  // }
 
-  if (answerIds.length < 1) {
-    throw HTTPError(400, 'Less than 1 answer ID was submitted');
-  }
+  // if (answerIds.length < 1) {
+  //   throw HTTPError(400, 'Less than 1 answer ID was submitted');
+  // }
 
-  const possibleAnswers = session.metadata.questions[session.atQuestion - 1].answers;
-
-  for (const answer of answerIds) {
-    const findAnswer = possibleAnswers.find(answers => answers.answerId === answer);
-    if (!findAnswer) {
-      throw HTTPError(400, 'Answer IDs are not valid for this particular question');
-    }
-  }
-  const correctAnswers = new Set(possibleAnswers.filter(ans => ans.correct === true));
-
-  let setOfAnswerIds = new Set(answerIds);
-
-  // setOfAnswerIds.intersection(correctAnswers);
-
-  // let timeEnd = Math.floor(Date.now() / 1000);
+  // const possibleAnswers = session.metadata.questions[session.atQuestion - 1].answers;
+  
+  // let counter = 0;
+  
+  // for (const answer of answerIds) {
+  //   let findAnswer = possibleAnswers.find(answers => answers.answerId === answer);
+  //   if (!findAnswer) {
+  //     throw HTTPError(400, 'Answer IDs are not valid for this particular question');
+  //   }
+  //   if (findAnswer.correct === true) {
+  //     counter++;
+  //   }
+  // };
 
   // const findQuestion = findPlayer.questions[questionposition - 1];
 
+  // if (counter === answerIds.length) {
+  //   findQuestion.isCorrect === true;
+  // }
+
+  // let timeEnd = Math.floor(Date.now() / 1000);
+
   // findQuestion.timeEnd = timeEnd;
   // findQuestion.timeTaken = timeEnd - findQuestion.timeStart;
-  // findQuestion.Answers = answerIds;
+  // findQuestion.answers = answerIds;
 
-
-
+  return {};
 }
 
 function v2AdminQuizRemove(token: string, quizId: number) {
@@ -362,7 +361,7 @@ function quizSkipCountdownHelper (session: quizState) {
       timeEnd: Math.floor(Date.now() + duration),
       timeTaken: duration,
       isCorrect: false,
-      Answers: [],
+      answers: [],
     })
   }
 }
