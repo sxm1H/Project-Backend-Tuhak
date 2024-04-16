@@ -1,148 +1,147 @@
-// import {
-//   clear,
-//   adminAuthRegister,
-//   adminQuizCreate,
-//   adminQuizInfo,
-//   adminQuizRestore,
-//   adminQuizRemove,
-//   adminQuizList
-// } from './testHelpersIter3';
-// import HTTPError from 'http-errors';
+import {
+  clear,
+  adminAuthRegister,
+} from '../iteration2Tests/testHelpers';
+import {
+  v2adminQuizCreate,
+  v2adminQuizInfo,
+  adminQuizRestore,
+  v2adminQuizRemove,
+  adminQuizList
+} from './v2testHelpers';
 
-// let token: string;
-// let quizId: number;
-// let time: number;
-// beforeEach(() => {
-//   clear();
+import HTTPError from 'http-errors';
 
-//   token = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo').token;
-//   quizId = adminQuizCreate(token, 'quiz1', 'lorem ipsum').quizId;
+let token: string;
+let quizId: number;
+let time: number;
+beforeEach(() => {
+  clear();
 
-//   time = Math.floor(Date.now() / 1000);
-// });
+  token = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo').token;
+  quizId = v2adminQuizCreate(token, 'quiz1', 'lorem ipsum').quizId;
 
-// describe('Testing GET /v1/admin/quiz/:quizid', () => {
-//   test('Successfully restores quiz from trash', () => {
-//     expect(adminQuizList(token)).toStrictEqual({
-//       quizzes: [
-//         {
-//           quizId: quizId,
-//           name: 'quiz1'
-//         }
-//       ]
-//     });
+  time = Math.floor(Date.now() / 1000);
+});
 
-//     adminQuizRemove(token, quizId);
+describe('Testing GET /v1/admin/quiz/:quizid', () => {
+  test('Successfully restores quiz from trash', () => {
+    expect(adminQuizList(token)).toStrictEqual({
+      quizzes: [
+        {
+          quizId: quizId,
+          name: 'quiz1'
+        }
+      ]
+    });
 
-//     expect(adminQuizList(token)).toStrictEqual({
-//       quizzes: []
-//     });
+    v2adminQuizRemove(token, quizId);
 
-//     adminQuizRestore(token, quizId);
+    expect(adminQuizList(token)).toStrictEqual({
+      quizzes: []
+    });
 
-//     expect(adminQuizList(token)).toStrictEqual({
-//       quizzes: [
-//         {
-//           quizId: quizId,
-//           name: 'quiz1'
-//         }
-//       ]
-//     });
+    adminQuizRestore(token, quizId);
 
-//     const info = adminQuizInfo(token, quizId);
+    expect(adminQuizList(token)).toStrictEqual({
+      quizzes: [
+        {
+          quizId: quizId,
+          name: 'quiz1'
+        }
+      ]
+    });
 
-//     expect(info.timeLastEdited).toBeGreaterThanOrEqual(time);
-//     expect(info.timeLastEdited).toBeLessThanOrEqual(time + 2);
-//   });
+    const info = v2adminQuizInfo(token, quizId);
 
-//   test('Quiz name of restored quiz is already used by another active quiz', () => {
-//     expect(adminQuizList(token)).toStrictEqual({
-//       quizzes: [
-//         {
-//           quizId: quizId,
-//           name: 'quiz1'
-//         }
-//       ]
-//     });
+    expect(info.timeLastEdited).toBeGreaterThanOrEqual(time);
+    expect(info.timeLastEdited).toBeLessThanOrEqual(time + 2);
+  });
 
-//     adminQuizRemove(token, quizId);
+  test('Quiz name of restored quiz is already used by another active quiz', () => {
+    expect(adminQuizList(token)).toStrictEqual({
+      quizzes: [
+        {
+          quizId: quizId,
+          name: 'quiz1'
+        }
+      ]
+    });
 
-//     expect(adminQuizList(token)).toStrictEqual({
-//       quizzes: []
-//     });
+    v2adminQuizRemove(token, quizId);
 
-//     adminQuizCreate(token, 'quiz1', 'description');
+    expect(adminQuizList(token)).toStrictEqual({
+      quizzes: []
+    });
 
-//     expect(() => adminQuizRestore(token, quizId)).toThrow(HTTPError[400]);
-//   });
+    v2adminQuizCreate(token, 'quiz1', 'description');
 
-//   test('Quiz ID refers to quiz not in trash', () => {
-//     expect(adminQuizList(token)).toStrictEqual({
-//       quizzes: [
-//         {
-//           quizId: quizId,
-//           name: 'quiz1'
-//         }
-//       ]
-//     });
+    expect(() => adminQuizRestore(token, quizId)).toThrow(HTTPError[400]);
+  });
 
-//     adminQuizRemove(token, quizId);
+  test('Quiz ID refers to quiz not in trash', () => {
+    expect(adminQuizList(token)).toStrictEqual({
+      quizzes: [
+        {
+          quizId: quizId,
+          name: 'quiz1'
+        }
+      ]
+    });
 
-//     expect(adminQuizList(token)).toStrictEqual({
-//       quizzes: []
-//     });
+    v2adminQuizRemove(token, quizId);
 
-//     const quizId2 = adminQuizCreate(token, 'Qu1', 'dsdasas').quizId;
+    expect(adminQuizList(token)).toStrictEqual({
+      quizzes: []
+    });
 
-//     expect(() => adminQuizRestore(token, quizId2)).toThrow(HTTPError[400]);
-//   });
+    const quizId2 = v2adminQuizCreate(token, 'Qu1', 'dsdasas').quizId;
 
-//   test('User is not logged in', () => {
-//     expect(adminQuizList(token)).toStrictEqual({
-//       quizzes: [
-//         {
-//           quizId: quizId,
-//           name: 'quiz1'
-//         }
-//       ]
-//     });
+    expect(() => adminQuizRestore(token, quizId2)).toThrow(HTTPError[400]);
+  });
 
-//     adminQuizRemove(token, quizId);
+  test('User is not logged in', () => {
+    expect(adminQuizList(token)).toStrictEqual({
+      quizzes: [
+        {
+          quizId: quizId,
+          name: 'quiz1'
+        }
+      ]
+    });
 
-//     expect(adminQuizList(token)).toStrictEqual({
-//       quizzes: []
-//     });
+    v2adminQuizRemove(token, quizId);
 
-//     expect(() => adminQuizRestore(token + 'hello', quizId)).toThrow(HTTPError[401]);
-//   });
+    expect(adminQuizList(token)).toStrictEqual({
+      quizzes: []
+    });
 
-//   test('Valid token, but user not owner of quiz', () => {
-//     expect(adminQuizList(token)).toStrictEqual({
-//       quizzes: [
-//         {
-//           quizId: quizId,
-//           name: 'quiz1'
-//         }
-//       ]
-//     });
+    expect(() => adminQuizRestore(token + 'hello', quizId)).toThrow(HTTPError[401]);
+  });
 
-//     adminQuizRemove(token, quizId);
+  test('Valid token, but user not owner of quiz', () => {
+    expect(adminQuizList(token)).toStrictEqual({
+      quizzes: [
+        {
+          quizId: quizId,
+          name: 'quiz1'
+        }
+      ]
+    });
 
-//     expect(adminQuizList(token)).toStrictEqual({
-//       quizzes: []
-//     });
+    v2adminQuizRemove(token, quizId);
 
-//     const newUser = adminAuthRegister('nick@unsw.edu.au', 'abcd1234', 'nick', 'yes');
+    expect(adminQuizList(token)).toStrictEqual({
+      quizzes: []
+    });
 
-//     expect(() => adminQuizRestore(newUser.token, quizId)).toThrow(HTTPError[403]);
-//   });
+    const newUser = adminAuthRegister('nick@unsw.edu.au', 'abcd1234', 'nick', 'yes');
 
-//   test('Test Unsuccessful: Invalid QuizId', () => {
-//     adminQuizRemove(token, quizId);
-//     expect(() => adminQuizRestore(token, -1)).toThrow(HTTPError[403]);
-//   })
-// });
+    expect(() => adminQuizRestore(newUser.token, quizId)).toThrow(HTTPError[403]);
+  });
 
-test('temp', () => {
-  expect(2 + 2).toBe(4);
+  test('Test Unsuccessful: Invalid QuizId', () => {
+    v2adminQuizRemove(token, quizId);
+    expect(() => adminQuizRestore(token, -1)).toThrow(HTTPError[403]);
+  })
 });

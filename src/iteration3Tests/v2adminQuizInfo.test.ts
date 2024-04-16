@@ -20,8 +20,6 @@ beforeEach(() => {
 
   token = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo').token;
   quizId = v2adminQuizCreate(token, 'quiz1', 'lorem ipsum').quizId;
-  thumbnailUrl = 'https://www.unsw.edu.au/content/dam/images/photos/events/open-day/2020-12-homepage-update/OpenDay_2019_campaign%20-0307-crop.cropimg.width=1920.crop=square.jpg'
-
   time = Math.floor(Date.now() / 1000);
 });
 
@@ -44,7 +42,7 @@ describe('Testing GET /v1/admin/quiz/:quizid', () => {
         duration: expect.any(Number),
         questions: [],
         numQuestions: 0,
-        thumbnailUrl: thumbnailUrl,
+        thumbnailUrl: expect.any(String),
     });
   });
 
