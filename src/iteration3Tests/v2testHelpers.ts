@@ -94,7 +94,7 @@ const v2adminQuizQuestionUpdate = (question: string, duration: number, points: n
     answers: answers,
     thumbnailUrl: thumbnailUrl
   };
-  return requestHelper('PUT', `/v2/admin/quiz/${quizId}/question/${questionId}`, { questionBody, token });
+  return requestHelper('PUT', `/v2/admin/quiz/${quizId}/question/${questionId}`, { questionBody }, { token });
 };
 
 const v2adminQuizInfo = (token: string, quizId: number) => {
@@ -102,7 +102,8 @@ const v2adminQuizInfo = (token: string, quizId: number) => {
 };
 
 const adminQuizTrashView = (token: string) => {
-  return requestHelper('GET', '/v2/admin/quiz/trash', {}, { token });
+  console.log(token, 'IN API');
+  return requestHelper('GET', `/v2/admin/quiz/trash`, {}, { token });
 };
 
 const adminQuizNameUpdate = (token: string, quizId: number, name: string) => {
@@ -117,7 +118,7 @@ const adminQuizQuestionMove = (quizid: number, questionid: number, token: string
   return requestHelper('PUT', `/v2/admin/quiz/${quizid}/question/${questionid}/move`, { newPosition }, { token });
 };
 
-const v2AdminQuizQuestionCreate = (quizId: number, token: string, question: string, duration: number, points: number, answers: Answer[], thumbnailUrl: string) => {
+const v2adminQuizQuestionCreate = (quizId: number, token: string, question: string, duration: number, points: number, answers: Answer[], thumbnailUrl: string) => {
   const questionBody = {
     question: question,
     duration: duration,
@@ -192,7 +193,7 @@ export {
   adminAuthLogout,
   v2adminQuizQuestionDelete,
   v2adminQuizTransfer,
-  v2AdminQuizQuestionCreate,
+  v2adminQuizQuestionCreate,
   adminQuizQuestionDuplicate,
   adminQuizTrashView,
   adminQuizTrashEmpty,

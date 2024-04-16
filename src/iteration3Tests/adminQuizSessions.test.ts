@@ -3,7 +3,7 @@ import {
     adminQuizSessions,
     adminQuizSessionCreate,
     adminQuizSessionUpdate,
-    v2AdminQuizQuestionCreate,
+    v2adminQuizQuestionCreate,
     v2adminQuizRemove
   } from './v2testHelpers';
   import {
@@ -65,7 +65,7 @@ import {
         // startQuizSession(token, quizId) -> returns sessionId
         // endQuizSession(token, sessionId)
         
-        const response = v2AdminQuizQuestionCreate(quizId, token, 'question1', 5, 4, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }], thumbnailUrl);
+        const response = v2adminQuizQuestionCreate(quizId, token, 'question1', 5, 4, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }], thumbnailUrl);
         const sessionId1 = adminQuizSessionCreate(token, quizId,3).sessionId; // Start first session
         const sessionId2 = adminQuizSessionCreate(token, quizId,6).sessionId; // Start second session
         adminQuizSessionUpdate(token,quizId, sessionId2, States.END); // End second session
