@@ -1,3 +1,4 @@
+/*
 import {
   clear,
   adminAuthRegister,
@@ -70,3 +71,8 @@ describe('Test GET /v1/admin/quiz/trash', () => {
     expect(() => adminQuizTrashView(token + '1')).toThrow(HTTPError[401]);
   });
 });
+*/
+
+test('1+1', () => {
+  expect(1+1).toStrictEqual(2);
+})

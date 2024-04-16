@@ -3,7 +3,7 @@ import {
   adminQuizSessions,
   adminQuizSessionCreate,
   adminQuizSessionUpdate,
-  v2AdminQuizQuestionCreate,
+  v2adminQuizQuestionCreate,
   v2adminQuizRemove
 } from './v2testHelpers';
 import {
@@ -57,7 +57,7 @@ describe('adminQuizSessions', () => {
 
   test('Handles active and inactive sessions correctly', () => {
     // Start sessions and update one to end
-    const response = v2AdminQuizQuestionCreate(quizId, token, 'question1', 5, 4, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }], thumbnailUrl);
+    const response = v2adminQuizQuestionCreate(quizId, token, 'question1', 5, 4, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }], thumbnailUrl);
     const sessionId1 = adminQuizSessionCreate(token, quizId, 3).sessionId;
     const sessionId2 = adminQuizSessionCreate(token, quizId, 6).sessionId;
     adminQuizSessionUpdate(token, quizId, sessionId2, States.END);
@@ -77,7 +77,7 @@ describe('adminQuizSessions', () => {
   });
 
   test('Adding questions to the quiz and starting a session', () => {
-    v2AdminQuizQuestionCreate( quizId,token, 'What is the capital of Australia?', 5, 1, [{ answer: 'Canberra', correct: true }, { answer: 'Sydney', correct: false }], thumbnailUrl);
+    v2adminQuizQuestionCreate( quizId,token, 'What is the capital of Australia?', 5, 1, [{ answer: 'Canberra', correct: true }, { answer: 'Sydney', correct: false }], thumbnailUrl);
     const sessionId = adminQuizSessionCreate(token, quizId, 3).sessionId;
     expect(sessionId).toBeDefined();
   });

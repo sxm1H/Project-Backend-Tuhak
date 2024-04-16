@@ -24,7 +24,6 @@ const requestHelper = (
   }
 
   const url = SERVER_URL + path;
-  console.log(url);
   const res = request(method, url, { qs, json, headers, timeout: TIMEOUT_MS });
 
   let responseBody: any;
