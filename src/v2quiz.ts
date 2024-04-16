@@ -8,7 +8,9 @@ import {
   Actions,
   quizState,
   Player,
-  QuizId
+  QuizId,
+  Question,
+  newQuizInfoReturn,
 } from './interfaces';
 import HTTPError from 'http-errors';
 
@@ -50,7 +52,8 @@ function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: string)
   return {};
 }
 
-function adminQuizSessionCreate(quizId: number, token: string, autoStartNum: number) {
+function adminQuizSessionCreate(token: string, quizId: number, autoStartNum: number) {
+
   const data = getData();
   const findToken = data.sessions.find(ids => ids.token === token);
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
@@ -107,7 +110,7 @@ function adminQuizSessionCreate(quizId: number, token: string, autoStartNum: num
   return { sessionId: newSessionId };
 }
 
-function adminQuizSessionUpdate(quizId: number, sessionId: number, token: string, action: string) {
+function adminQuizSessionUpdate(token: string, quizId: number, sessionId: number, action: string) {
   const data = getData();
   const findToken = data.sessions.find(ids => ids.token === token);
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
@@ -323,56 +326,42 @@ function v2adminQuizCreate(token: string, name: string, description: string): Er
     numQuestions: 0,
     questions: [],
     duration: 0,
-    thumbnailUrl: 'https://s3-eu-west-1.amazonaws.com/blog-ecotree/blog/0001/01/ad46dbb447cd0e9a6aeecd64cc2bd332b0cbcb79.jpeg'
+    thumbnailUrl: 'https://www.unsw.edu.au/content/dam/images/photos/events/open-day/2020-12-homepage-update/OpenDay_2019_campaign%20-0307-crop.cropimg.width=1920.crop=square.jpg'
   });
 
   return { quizId: counters.quizIdCounter };
 }
 
-function v2AdminQuizRemove(token: string, quizId: number) {
+function v2adminQuizRemove(token: string, quizId: number) {
   const newdata = getData();
+  
+  const findToken = newdata.sessions.find(session => session.token === token);
+  const findQuizIndex = newdata.quizzes.findIndex(quiz => quiz.quizId === quizId);
 
+  if (!findToken) {
+    throw HTTPError(401, 'Does not refer to valid logged in user session');
+  } else if (findQuizIndex === -1) {
+    throw HTTPError(403, 'Quiz ID does not refer to a valid quiz');
+  } else if (newdata.quizzes[findQuizIndex].authUserId !== findToken.userId) {
+    throw HTTPError(403, 'User does not own this quiz.');
+  }
+  
   for (const activeSessions of newdata.quizActiveState) {
     if (activeSessions.metadata.quizId === quizId) {
-      if (activeSessions.state === States.END) {
+      if (activeSessions.state !== States.END) {
         throw HTTPError(400, 'Any session for this quiz is not in END state');
       }
     }
   }
 
-  let flag = false;
-  let currentUserId;
-
-  for (const data of newdata.sessions) {
-    if (token === data.token) {
-      currentUserId = data.userId;
-      flag = true;
-      break;
-    }
-  }
-
-  if (!flag) {
-    throw HTTPError(401, 'does not refer to valid logged in user session');
-  }
-
-  flag = false;
-  for (let i = 0; i < newdata.quizzes.length; i++) {
-    const data = newdata.quizzes[i];
-    if (quizId === data.quizId) {
-      if (data.authUserId === currentUserId) {
-        flag = true;
-        data.timeLastEdited = Math.floor(Date.now() / 1000);
-        newdata.trash.push(data);
-        newdata.quizzes.splice(i, 1);
-        break;
-      } else {
-        throw HTTPError(403, 'Quiz ID does not refer to a quiz that this user owns.');
-      }
-    }
-  }
+  newdata.quizzes[findQuizIndex].timeLastEdited = Math.floor(Date.now() / 1000);
+  newdata.trash.push(newdata.quizzes[findQuizIndex]);
+  newdata.quizzes.splice(findQuizIndex, 1);
+  
+  return {};
 }
 
-function v2AdminQuizTransfer(token: string, userEmail: string, quizId: number) {
+function v2adminQuizTransfer(token: string, userEmail: string, quizId: number) {
   const data = getData();
 
   // Returns session object corresponding the given token.
@@ -423,7 +412,333 @@ function v2AdminQuizTransfer(token: string, userEmail: string, quizId: number) {
   return {};
 }
 
-/// HELPER FUNCTIONS
+/**
+ * adminQuizQuestionCreate takes in a quizId, the user's token and as well as a questionBody containing
+ * the relevant information for the question. The function begins by finding iterating through the sessions
+ * and quizzes array to get the relevant authUserId and quiz. The following error checks are then completed:
+ * 1. Is the token valid?
+ * 2. Is the Quiz Id Valid ?
+ * 3. Does the User Own the Quiz ?
+ * 4. Question Length Check
+ * 5. No. Of Question Answers
+ * 6. Question Duration
+ * 7. Question Points
+ * 8. Answer Lengths and Duplicates.
+ * Following the error checks, the question will then be pushed onto the relevant quiz's question
+ * array, and the quiz duration, last edited and number of questions field in the quiz object
+ * is then updated.
+ *
+ * @param { number } quizId - Contains the relevant Quiz Id.
+ * @param { string } token - Contains the user's current session token.
+ * @param { Question } questionBody - An object containing question, duration, points and answers.
+ *
+ * @returns { Error Object } -  Object containing the key 'error' and the value being the relevant error message
+ * @returns { Empty Object } - Empty Object to indicate succesful addition of the question.
+ */
+
+function v2AdminQuizQuestionCreate(quizId: number, token: string, questionBody: Question) {
+  const data = getData();
+  const date = Math.floor(Date.now() / 1000);
+
+  // Obtaining the relevant quiz and relevant authUserId.
+  const findToken = data.sessions.find(ids => ids.token === token);
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+
+  // Error Checks for Token and QuizID
+  if (!findToken) {
+    throw HTTPError(401, 'Token is empty or invalid');
+  }
+  if (!findQuiz) {
+    throw HTTPError(403, 'Quiz Id is invalid.');
+  }
+  if (findQuiz.authUserId !== findToken.userId) {
+    throw HTTPError(403, 'User does not own this quiz.');
+  }
+
+  if (questionBody.thumbnailUrl === '') {
+    throw HTTPError(400, 'ThumbnailUrl is an empty string');
+  }
+
+  if (!isValidThumbnailUrlEnding(questionBody.thumbnailUrl)) {
+    throw HTTPError(400, 'ThumbnailUrl does not end with a image extension');
+  }
+
+  if (!isValidThumbnailUrlStarting(questionBody.thumbnailUrl)) {
+    throw HTTPError(400, 'ThumbnailUrl does not end with http or https');
+  }
+
+  // Error Checks for the Question.
+  const correctAnswers = questionBody.answers.find(bool => bool.correct === true);
+  if (!correctAnswers) {
+    throw HTTPError(400, 'No Correct Answers');
+  } else if (questionBody.question.length > 50 || questionBody.question.length < 5) {
+    throw HTTPError(400, 'Question Length is not between 5 and 50.');
+  } else if (questionBody.answers.length > 6 || questionBody.answers.length < 2) {
+    throw HTTPError(400, 'Number of Question Answers is not between 2 and 6.');
+  } else if (questionBody.duration <= 0) {
+    throw HTTPError(400, 'Question Duration is Not Positive.');
+  } else if (questionBody.duration + findQuiz.duration > 180) {
+    throw HTTPError(400, 'Quiz Duration is Longer than 3 minutes.');
+  } else if (questionBody.points > 10 || questionBody.points < 1) {
+    throw HTTPError(400, 'Quiz Points is Not Between 1 and 10.');
+  }
+  for (const answer of questionBody.answers) {
+    if (answer.answer.length > 30 || answer.answer.length < 1) {
+      throw HTTPError(400, 'Question Answer Length is not Between 1 and 30.');
+    }
+  }
+  for (let i = 0; i < questionBody.answers.length; i++) {
+    for (let j = i + 1; j < questionBody.answers.length; j++) {
+      if (questionBody.answers[i].answer === questionBody.answers[j].answer) {
+        throw HTTPError(400, 'There Are Duplicate ');
+      }
+    }
+  }
+
+  // Setting Up the Question and Answers to be Pushed Onto The Datastore
+  const answerBody = [];
+  for (const answer of questionBody.answers) {
+    answerBody.push({
+      answerId: counters.answerIdCounter,
+      answer: answer.answer,
+      colour: getRandomColour(),
+      correct: answer.correct,
+    });
+    counters.answerIdCounter++;
+  }
+
+  // Pushing the question to the questionBody of the relevant quiz.
+  const questionId = counters.questionIdCounter;
+  findQuiz.questions.push({
+    questionId: questionId,
+    question: questionBody.question,
+    duration: questionBody.duration,
+    points: questionBody.points,
+    answers: answerBody,
+    thumbnailUrl: questionBody.thumbnailUrl,
+  });
+
+  // Incrementing the questionIdCounter to ensure uniqueness in every questionid.
+  counters.questionIdCounter++;
+
+  // Updating the fields in the quizId.
+  findQuiz.duration += questionBody.duration;
+  findQuiz.timeLastEdited = date;
+  findQuiz.numQuestions++;
+
+  return { questionId: questionId };
+}
+
+/**
+  * Function allows user to view information about a specified quiz, unless the inputted ID's, user
+  * and quiz respectively, are invalid, then returns an error message.
+  *
+  * @param {string} token - token belonging to session of user trying to access quiz information.
+  * @param {number} quizId - ID of quiz user is trying to access.
+  *
+  * @returns {
+*   object {
+  *     error: string
+  *   }
+  * } - Error object with information regarding error.
+  * @returns {
+  *   return {
+  *     quizId: number,
+  *     name: string,
+  *     timeCreated: number,
+  *     timeLastEdited: number,
+  *     description: string,
+  *   }
+  * } - Returns the quiz information user wants to access.
+*/
+function v2AdminQuizInfo(token: string, quizId: number): ErrorObject | newQuizInfoReturn {
+  const data = getData();
+  const findToken = data.sessions.find(session => session.token === token);
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+
+  if (!findToken) {
+    throw HTTPError(401, 'Token is empty or invalid');
+  } else if (!findQuiz) {
+    throw HTTPError(403, 'Quiz Id invalid.');
+  }
+
+  if (findToken.userId !== findQuiz.authUserId) {
+    throw HTTPError(403, 'User does not own this quiz.');
+  }
+
+  return {
+    quizId: findQuiz.quizId,
+    name: findQuiz.name,
+    timeCreated: findQuiz.timeCreated,
+    timeLastEdited: findQuiz.timeLastEdited,
+    description: findQuiz.description,
+    numQuestions: findQuiz.numQuestions,
+    duration: findQuiz.duration,
+    questions: findQuiz.questions,
+    thumbnailUrl: findQuiz.thumbnailUrl,
+  };
+}
+
+/**
+ * The function will return an empty object while updating the values given in the questionBody
+ * given valid token, quizId and questionId
+ * It should return an error if any of these parameters are invalid.
+ * @param {array} Question - the question array created in adminQuizQuestionCreate.
+ *
+ * @returns {Object {error: string}} - If an error is occurs, it will return an error object with a string
+ * @returns {} - on succesful calling of this function it will return an empty object
+ */
+function v2AdminQuizQuestionUpdate(questionBody: Question, token: string, quizId: number, questionId: number): ErrorObject | Record<string, never> {
+  const data = getData();
+  const date = Math.floor(Date.now() / 1000);
+
+  const findToken = data.sessions.find(session => session.token === token);
+
+  if (!findToken) {
+    throw HTTPError(401, 'Token is empty or invalid');
+  }
+
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+
+  if (!findQuiz) {
+    throw HTTPError(403, 'Quiz ID does not refer to a valid quiz');
+  }
+
+  const findQuestion = findQuiz.questions.find(question => question.questionId === questionId);
+
+  if (findQuiz.authUserId !== findToken.userId) {
+    throw HTTPError(403, 'User does not own this quiz.');
+  }
+  if (!findQuestion) {
+    throw HTTPError(400, 'Questions not found.');
+  }
+
+  if (questionBody.thumbnailUrl === '') {
+    throw HTTPError(400, 'ThumbnailUrl is an empty string');
+  }
+
+  if (!isValidThumbnailUrlEnding(questionBody.thumbnailUrl)) {
+    throw HTTPError(400, 'ThumbnailUrl does not end with a image extension');
+  }
+
+  if (!isValidThumbnailUrlStarting(questionBody.thumbnailUrl)) {
+    throw HTTPError(400, 'ThumbnailUrl does not end with http or https');
+  }
+
+  // Error Checks for the Question.
+  const trueAnswers = questionBody.answers.find(bool => bool.correct === true);
+  if (!trueAnswers) {
+    throw HTTPError(400, 'No True Answers');
+  } else if (questionBody.question.length > 50 || questionBody.question.length < 5) {
+    throw HTTPError(400, 'Question Length is not between 5 and 50.');
+  } else if (questionBody.answers.length > 6 || questionBody.answers.length < 2) {
+    throw HTTPError(400, 'Number of Question Answers is not between 2 and 6.');
+  } else if (questionBody.duration <= 0) {
+    throw HTTPError(400, 'Question Duration is Not Positive.');
+  } else if (questionBody.duration + findQuiz.duration > 180) {
+    throw HTTPError(400, 'Quiz Duration is Longer than 3 minutes.');
+  } else if (questionBody.points > 10 || questionBody.points < 1) {
+    throw HTTPError(400, 'Quiz Points is Not Between 1 and 10.');
+  }
+
+  for (const answer of questionBody.answers) {
+    if (answer.answer.length > 30 || answer.answer.length < 1) {
+      throw HTTPError(400, 'Question Answer Length is not Between 1 and 30.');
+    }
+  }
+
+  for (let i = 0; i < questionBody.answers.length; i++) {
+    for (let j = i + 1; j < questionBody.answers.length; j++) {
+      if (questionBody.answers[i].answer === questionBody.answers[j].answer) {
+        throw HTTPError(400, 'There Are Duplicate ');
+      }
+    }
+  }
+
+  findQuestion.answers = questionBody.answers.map(answer => ({
+    answerId: counters.answerIdCounter++,
+    answer: answer.answer,
+    colour: getRandomColour(),
+    correct: answer.correct,
+  }));
+
+  // Updating the question properties
+  findQuestion.duration = questionBody.duration;
+  findQuestion.points = questionBody.points;
+  findQuestion.question = questionBody.question;
+  findQuestion.thumbnailUrl = questionBody.thumbnailUrl;
+  // Recalculate the total duration of the quiz
+
+  let totalDuration = 0;
+  for (const question of findQuiz.questions) {
+    totalDuration += question.duration;
+  }
+  findQuiz.duration = totalDuration; // Update the total quiz duration
+
+  findQuiz.timeLastEdited = date;
+
+  return {};
+}
+
+/**
+ * adminQuizQuestionDelete takens in the user's current token, relevant quizId and the questionId
+ * of the question they want to change. Function begins by iteration through the sessions array and
+ * the quizzes array to find the relevant authUserId and quiz. Then it does the following error checks:
+ * 1. Is the token valid ?
+ * 2. Is the Quiz Id valid ?
+ * 3. Does the User Own This Quiz ?
+ * Following that, the relevant question's index is obtained and is then checked to see whether the question exists.
+ * If it does, the question is then deleted.
+ *
+ * @param { string } token - Contains the user's current session token.
+ * @param { number } quizId - Contains the relevant quiz Id.
+ * @param { number } questionId - Contains the relevant question Id.
+ *
+ * @returns { Error Object } -  Object containing the key 'error' and the value being the relevant error message
+ * @returns { Empty Object } - Empty Object to indicate succesful addition of the question.
+ */
+function v2adminQuizQuestionDelete(token: string, quizId: number, questionId: number): ErrorObject | Record<string, never> {
+  const data = getData();
+
+  // Finds the authUserId, quiz and that quiz's index.
+  const findToken = data.sessions.find(ids => ids.token === token);
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  const findQuizIndex = data.quizzes.findIndex(quiz => quiz.quizId === quizId);
+
+  // Error Checks for Token and QuizID
+  if (!findToken) {
+    throw HTTPError(401, 'Token is empty or invalid');
+  } else if (!findQuiz) {
+    throw HTTPError(403, 'Quiz Id is invalid.');
+  } else if (findQuiz.authUserId !== findToken.userId) {
+    throw HTTPError(403, 'User does not own this quiz.');
+  }
+
+  for (const activeSessions of data.quizActiveState) {
+    if (activeSessions.metadata.quizId === quizId) {
+      if (activeSessions.state !== States.END) {
+        throw HTTPError(400, 'Any session for this quiz is not in END state');
+      }
+    }
+  }
+
+  // Finds the relevant question's index.
+  const findQuestionIndex = data.quizzes[findQuizIndex].questions.findIndex(question => question.questionId === questionId);
+
+  // If it doesn't exist, returns an error.
+  if (findQuestionIndex === -1) {
+    throw HTTPError(400, 'Question Invalid.');
+  }
+
+  // Deleting the Question
+  data.quizzes[findQuizIndex].questions.splice(findQuestionIndex, 1);
+
+  return {};
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////// HELPER FUNCTIONS //////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 function generateRandomName() {
   const letters = 'abcdefghijklmnopqrstuvwxyz';
@@ -547,13 +862,53 @@ function quizFinalHelper (session: quizState, action: string) {
   }
 }
 
+function getRandomColour(): string {
+  const random = Math.floor((Math.random() * 7 + 1));
+  if (random === 1) {
+    return 'red';
+  } else if (random === 2) {
+    return 'blue';
+  } else if (random === 3) {
+    return 'green';
+  } else if (random === 4) {
+    return 'yellow';
+  } else if (random === 5) {
+    return 'purple';
+  } else if (random === 6) {
+    return 'brown';
+  } else {
+    return 'orange';
+  }
+}
+
+function isValidThumbnailUrlEnding(thumbnailUrl: string) {
+  // Regular expression to match if the thumbnailUrl ends with jpg, jpeg, or png
+  var validExtensions = /\.(jpg|jpeg|png)$/i;
+
+  // Test if the thumbnailUrl matches the valid extensions
+  return validExtensions.test(thumbnailUrl);
+}
+
+function isValidThumbnailUrlStarting(thumbnailUrl: string) {
+  // Regular expression to match if the thumbnailUrl begins with http:// or https://
+  var validPrefix = /^(http|https):\/\//i;
+
+  // Test if the thumbnailUrl starts with the valid prefix
+  return validPrefix.test(thumbnailUrl);
+}
+
 export {
   adminQuizSessionCreate,
   adminQuizSessionUpdate,
   adminQuizPlayerSubmitAnswer,
   adminQuizSessionJoin,
-  v2AdminQuizRemove,
-  v2AdminQuizTransfer,
+  adminQuizThumbnailUpdate,
+  v2adminQuizRemove,
+  v2adminQuizTransfer,
   v2adminQuizCreate,
-  adminQuizThumbnailUpdate
+  v2AdminQuizQuestionCreate,
+  v2AdminQuizInfo,
+  v2AdminQuizQuestionUpdate,
+  v2adminQuizQuestionDelete,
+
 };

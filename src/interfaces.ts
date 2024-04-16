@@ -156,6 +156,18 @@ interface QuizInfoReturn {
   duration: number;
 }
 
+interface newQuizInfoReturn {
+  quizId: number;
+  name: string;
+  timeCreated: number;
+  timeLastEdited: number;
+  description: string;
+  numQuestions: number;
+  questions: Question[],
+  duration: number;
+  thumbnailUrl: string;
+}
+
 interface QuizId {
   quizId: number;
 }
@@ -214,4 +226,5 @@ export {
   Actions,
   quizState,
   Player,
+  newQuizInfoReturn,
 };

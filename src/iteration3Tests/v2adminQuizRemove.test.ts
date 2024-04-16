@@ -1,82 +1,93 @@
-// import {
-//   clear,
-//   adminAuthRegister,
-//   adminQuizCreate,
-//   adminQuizRemove,
-//   adminQuizList,
-// } from './testHelpersIter3';
-// import HTTPError from 'http-errors';
+import {
+  clear,
+  adminAuthRegister,
+  adminQuizList,
+} from '../iteration2Tests/testHelpers';
+import {
+  v2adminQuizCreate,
+  v2adminQuizRemove,
+  adminQuizSessionCreate,
+  adminQuizSessionUpdate
+} from './v2testHelpers';
+import HTTPError from 'http-errors';
 
-// let token: string;
-// let quizId: number;
-// beforeEach(() => {
-//   clear();
+let token: string;
+let quizId: number;
+beforeEach(() => {
+  clear();
 
-//   token = adminAuthRegister('nick@gmail.com', 'nick1234', 'Nicholas', 'Sebastian').token;
-//   quizId = adminQuizCreate(token, 'Cities of Australia', 'good quiz').quizId;
-// });
+  token = adminAuthRegister('nick@gmail.com', 'nick1234', 'Nicholas', 'Sebastian').token;
+  quizId = v2adminQuizCreate(token, 'Cities of Australia', 'good quiz').quizId;
+});
 
-// describe('adminQuizRemove', () => {
-//   test('Successful test', () => {
-//     expect(adminQuizRemove(token, quizId)).toStrictEqual({});
-//   });
+describe('v2adminQuizRemove', () => {
+  test('Successful test', () => {
+    expect(v2adminQuizRemove(token, quizId)).toStrictEqual({});
 
-//   test('authUserId is not a valid user', () => {
-//     expect(() => adminQuizRemove(token + 'hello', quizId)).toThrow(HTTPError[401]);
-//   });
+    // const sessionId = adminQuizSessionCreate(token, quizId, 4).sessionId;
+    // adminQuizSessionUpdate(token, quizId, sessionId, 'END');
 
-//   test('QuizId is not a valid quiz.', () => {
-//     expect(() => adminQuizRemove(token, 1234)).toThrow(HTTPError[403]);
-//   });
+    // expect(v2adminQuizRemove(token, quizId)).toStrictEqual({});
+  });
 
-//   test('Quiz ID does not refer to a quiz that this user owns.', () => {
-//     const token1 = adminAuthRegister('DunYao@gmail.com', 'DunYao1234', 'DunYao', 'Foo').token;
+  test('authUserId is not a valid user', () => {
+    expect(() => v2adminQuizRemove(token + 'hello', quizId)).toThrow(HTTPError[401]);
+  });
 
-//     expect(() => adminQuizRemove(token1, quizId)).toThrow(HTTPError[403]);
-//   });
+  test('QuizId is not a valid quiz.', () => {
+    expect(() => v2adminQuizRemove(token, 1234)).toThrow(HTTPError[403]);
+  });
 
-//   test('Successful quiz remove - comprehensive test', () => {
-//     expect(adminQuizList(token)).toStrictEqual({
-//       quizzes: [
-//         {
-//           quizId: quizId,
-//           name: 'Cities of Australia'
-//         }
-//       ]
-//     });
+  test('Quiz ID does not refer to a quiz that this user owns.', () => {
+    const token1 = adminAuthRegister('DunYao@gmail.com', 'DunYao1234', 'DunYao', 'Foo').token;
 
-//     const quizId2 = adminQuizCreate(token, 'i will be gone soon', 'goodbye').quizId;
+    expect(() => v2adminQuizRemove(token1, quizId)).toThrow(HTTPError[403]);
+  });
 
-//     expect(adminQuizList(token)).toStrictEqual({
-//         quizzes: [
-//           {
-//             quizId: quizId,
-//             name: 'Cities of Australia'
-//           },
-//           {
-//             quizId: quizId2,
-//             name: 'i will be gone soon'
-//           }
-//         ]
-//     });
+  test('Successful quiz remove - comprehensive test', () => {
+    expect(adminQuizList(token)).toStrictEqual({
+      quizzes: [
+        {
+          quizId: quizId,
+          name: 'Cities of Australia'
+        }
+      ]
+    });
 
-//     expect(adminQuizRemove(token, quizId2)).toStrictEqual({});
+    const quizId2 = v2adminQuizCreate(token, 'i will be gone soon', 'goodbye').quizId;
 
-//     expect(adminQuizList(token)).toStrictEqual({
-//         quizzes: [
-//           {
-//             quizId: quizId,
-//             name: 'Cities of Australia'
-//           }
-//         ]
-//     });
-//   });
+    expect(adminQuizList(token)).toStrictEqual({
+        quizzes: [
+          {
+            quizId: quizId,
+            name: 'Cities of Australia'
+          },
+          {
+            quizId: quizId2,
+            name: 'i will be gone soon'
+          }
+        ]
+    });
 
-//   test('Test Unsuccessful: Invalid Quiz Id', () => {
-//     expect(() => adminQuizRemove(token, -1)).toThrow(HTTPError[403]);
-//   });
-// });
+    expect(v2adminQuizRemove(token, quizId2)).toStrictEqual({});
 
-test('temp', () => {
-  expect(2 + 2).toBe(4);
+    expect(adminQuizList(token)).toStrictEqual({
+        quizzes: [
+          {
+            quizId: quizId,
+            name: 'Cities of Australia'
+          }
+        ]
+    });
+  });
+
+  test('Test Unsuccessful: Invalid Quiz Id', () => {
+    expect(() => v2adminQuizRemove(token, -1)).toThrow(HTTPError[403]);
+  });
+
+  // test('Quiz is not in END state', () => {
+  //   adminQuizSessionCreate(token, quizId, 4).sessionId;
+    
+  //   expect(() => v2adminQuizRemove(token, quizId)).toThrow(HTTPError[400]);
+  // });
 });
