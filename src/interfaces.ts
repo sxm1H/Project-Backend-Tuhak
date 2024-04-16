@@ -31,7 +31,6 @@ interface quizState {
   players: Player[];
   autoStartNum: number;
   messages: Message[];
-  timeoutId?: ReturnType<typeof setTimeout>;
 }
 
 interface Player {

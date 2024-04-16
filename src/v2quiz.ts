@@ -13,6 +13,11 @@ import {
   newQuizInfoReturn,
 } from './interfaces';
 import HTTPError from 'http-errors';
+interface timeoutobj {
+  sessionId: number;
+  timeoutId: ReturnType<typeof setTimeout>;
+}
+let timeoutIds: timeoutobj[] = [];
 
 //Helper function to check if the url is valid
 function validateImageUrl(imgUrl: string) :boolean{
@@ -140,12 +145,17 @@ function adminQuizSessionUpdate(token: string, quizId: number, sessionId: number
   if (findSession.state === States.LOBBY) {
     if (action === Actions.NEXT_QUESTION) {
       findSession.state = States.QUESTION_COUNTDOWN;
-      findSession.timeoutId = setTimeout(quizWaitThreeHelper, 3 * 1000, findSession);
+      let timeoutId = setTimeout(quizWaitThreeHelper, 3 * 1000, findSession);
+      timeoutIds.push({
+        sessionId: sessionId,
+        timeoutId: timeoutId
+      });
     } else if (action === Actions.END) {
       findSession.state = States.END;
     } else {
       throw HTTPError(400, 'Action enum cannot be applied in the current state');
     }
+
     return {};
   }
 
@@ -841,7 +851,8 @@ function generateRandomName() {
 }
 
 function quizWaitThreeHelper (session: quizState) {
-  session.timeoutId = undefined;
+  let findSession = timeoutIds.findIndex(ids => ids.sessionId === session.sessionId);
+  timeoutIds.splice(findSession, 1);
   quizSkipCountdownHelper(session);
 }
 
@@ -853,7 +864,7 @@ function quizSkipCountdownHelper (session: quizState) {
 
   const duration = session.metadata.questions[session.atQuestion - 1].duration;
 
-  setTimeout(quizOpenQuestionDurationHelper, duration, session);
+  setTimeout(quizOpenQuestionDurationHelper, duration * 1000, session);
 
   for (const player of session.players) {
     player.questions.push({
@@ -869,14 +880,16 @@ function quizSkipCountdownHelper (session: quizState) {
 
 function quizOpenQuestionDurationHelper (session: quizState) {
   session.state = States.QUESTION_CLOSE;
-  session.timeoutId = undefined;
+  let findSession = timeoutIds.findIndex(ids => ids.sessionId === session.sessionId);
+  timeoutIds.splice(findSession, 1);
 }
 
 
 function clearTimeoutId (session: quizState) {
-  if (session.timeoutId !== undefined) {
-    clearTimeout(session.timeoutId);
-    session.timeoutId = undefined;
+  let findSession = timeoutIds.findIndex(ids => ids.sessionId === session.sessionId);
+  if (findSession !== -1) {
+    clearTimeout(timeoutIds[findSession].timeoutId);
+    timeoutIds.splice(findSession, 1);
   }
 }
 
@@ -914,7 +927,11 @@ function quizCloseHelper (session: quizState, action: string) {
     session.state = States.END;
   } else if (action === Actions.NEXT_QUESTION) {
     session.state = States.QUESTION_COUNTDOWN;
-    session.timeoutId = setTimeout(quizWaitThreeHelper, 3 * 1000, session);
+    let timeoutId = setTimeout(quizWaitThreeHelper, 3 * 1000, session);
+    timeoutIds.push({
+      sessionId: session.sessionId,
+      timeoutId: timeoutId
+    });
   } else if (action === Actions.GO_TO_FINAL_RESULTS) {
     session.state = States.FINAL_RESULTS;
   } else {
@@ -926,7 +943,11 @@ function quizCloseHelper (session: quizState, action: string) {
 function quizShowHelper (session: quizState, action: string) {
   if (action === Actions.NEXT_QUESTION) {
     session.state = States.QUESTION_COUNTDOWN;
-    session.timeoutId = setTimeout(quizWaitThreeHelper, 3 * 1000, session);
+    let timeoutId = setTimeout(quizWaitThreeHelper, 3 * 1000, session);
+    timeoutIds.push({
+      sessionId: session.sessionId,
+      timeoutId: timeoutId
+    });
   } else if (action === Actions.GO_TO_FINAL_RESULTS) {
     session.state = States.FINAL_RESULTS;
   } else if (action === Actions.END) {
