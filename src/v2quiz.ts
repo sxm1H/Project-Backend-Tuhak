@@ -771,6 +771,52 @@ function adminQuizSessions (token: string, quizId: number) {
   }
 }
 
+function adminQuizGetSessionStatus (quizId: number, sessionId: number, token: string) {
+  const data = getData();
+
+  // Finds the authUserId, quiz and that quiz's index.
+  const findToken = data.sessions.find(ids => ids.token === token);
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  const findSession = data.quizActiveState.find(session => session.sessionId === sessionId);
+
+  // Error Checks for Token and QuizID
+  if (!findToken) {
+    throw HTTPError(401, 'Token is empty or invalid');
+  } else if (!findQuiz) {
+    throw HTTPError(403, 'Quiz Id is invalid.');
+  } else if (findQuiz.authUserId !== findToken.userId) {
+    throw HTTPError(403, 'User does not own this quiz.');
+  }
+  if (!findSession) {
+    throw HTTPError(400, 'SessionId is invalid');
+  }
+
+  let newPlayers = []
+
+  for (const players of findSession.players) {
+    newPlayers.push(players.name);
+  }
+
+  const metadata = {
+    quizId: findSession.metadata.quizId,
+    name: findSession.metadata.name,
+    timeCreated: findSession.metadata.timeCreated,
+    timeLastEdited: findSession.metadata.timeLastEdited,
+    description: findSession.metadata.description,
+    numQuestions: findSession.metadata.numQuestions,
+    questions: findSession.metadata.questions,
+    duration: findSession.metadata.duration,
+    thumbnailUrl: findSession.metadata.thumbnailUrl,
+  }
+
+  return {
+    state: findSession.state,
+    atQuestion: findSession.atQuestion,
+    players: newPlayers,
+    metadata: metadata,
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////// HELPER FUNCTIONS //////////////////////////////////////////
@@ -948,4 +994,5 @@ export {
   v2AdminQuizQuestionUpdate,
   v2adminQuizQuestionDelete,
   adminQuizSessions,
+  adminQuizGetSessionStatus,
 };

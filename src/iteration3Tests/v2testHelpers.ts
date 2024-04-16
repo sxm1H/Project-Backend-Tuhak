@@ -177,6 +177,12 @@ const adminQuizThumbnailUpdate = (quizid: number, token: string, imgUrl: string)
 const adminQuizSessions = (quizid: number, token: string) => {
   return requestHelper('GET', `/v1/admin/quiz/${quizid}/sessions`, { quizid }, {token});
 }
+
+const adminQuizGetSessionStatus = (quizid: number, sessionid: number, token: string) => {
+  return requestHelper('GET', `/v1/admin/quiz/${quizid}/sessions/${sessionid}`, { quizid, sessionid }, {token});
+}
+
+
 // ============================================================================================== //
 
 export {
@@ -205,4 +211,5 @@ export {
   adminQuizPlayerSubmitAnswer,
   adminQuizThumbnailUpdate,
   adminQuizSessions,
+  adminQuizGetSessionStatus,
 };

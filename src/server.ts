@@ -50,6 +50,7 @@ import {
   v2AdminQuizQuestionUpdate,
   v2adminQuizQuestionDelete,
   adminQuizSessions,
+  adminQuizGetSessionStatus,
 } from './v2quiz'
 
 // import {
@@ -555,6 +556,17 @@ app.get('/v1/admin/quiz/:quizid/sessions', (req: Request, res: Response) => {
   save();
   res.json(response);
 });
+
+app.get('/v1/admin/quiz/:quizid/sessions/:sessionid', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const quizId = parseInt(req.params.quizid);
+  const sessionId = parseInt(req.params.sessionid);
+  const response = adminQuizGetSessionStatus(quizId, sessionId, token);
+
+  save();
+  res.json(response);
+});
+
 
 
 // ====================================================================
