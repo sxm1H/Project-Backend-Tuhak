@@ -226,7 +226,9 @@ function adminQuizPlayerSubmitAnswer (answerIds: number[], playerid: number, que
 
   return {};
 }
-
+function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: string) {
+  return {};
+}
 /**
  * v2adminQuizCreate will create a new quiz and push all of its information (quizId, name, description,
  * user Id, time create, last time edited and thumbnailUrl) into dataStore it will return a unique quizId.
@@ -285,7 +287,7 @@ function v2adminQuizCreate(token: string, name: string, description: string): Er
     numQuestions: 0,
     questions: [],
     duration: 0,
-    thumbnailUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSu1V5-mUs0C8qTExeBmjUv1J_gUBGvFludmgUw2Kfwxw&s'
+    thumbnailUrl: 'https://s3-eu-west-1.amazonaws.com/blog-ecotree/blog/0001/01/ad46dbb447cd0e9a6aeecd64cc2bd332b0cbcb79.jpeg'
   });
 
   return { quizId: counters.quizIdCounter };
@@ -516,5 +518,6 @@ export {
   adminQuizSessionJoin,
   v2AdminQuizRemove,
   v2AdminQuizTransfer,
-  v2adminQuizCreate
+  v2adminQuizCreate,
+  adminQuizThumbnailUpdate
 };
