@@ -1,4 +1,4 @@
-import { v2adminQuizCreate, adminQuizGetSessionStatus, v2AdminQuizQuestionCreate, adminQuizSessionCreate, adminQuizThumbnailUpdate} from './v2testHelpers';
+import { v2adminQuizCreate, adminQuizGetSessionStatus, v2adminQuizQuestionCreate, adminQuizSessionCreate, adminQuizThumbnailUpdate} from './v2testHelpers';
 import {
   clear,
   adminAuthRegister
@@ -15,7 +15,7 @@ beforeEach(() => {
 
   token = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian').token;
   quizId = v2adminQuizCreate(token, 'QuizName', 'QuizDescription').quizId;
-  questionId = v2AdminQuizQuestionCreate(quizId, token, 'question1', 5, 4, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }], validUrl).questionId
+  questionId = v2adminQuizQuestionCreate(quizId, token, 'question1', 5, 4, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }], validUrl).questionId
   adminQuizThumbnailUpdate(quizId, token, validUrl);
   sessionId = adminQuizSessionCreate(token, quizId, 5).sessionId;
 })
