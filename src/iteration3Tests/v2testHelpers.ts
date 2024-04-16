@@ -174,6 +174,10 @@ const adminQuizPlayerSubmitAnswer = (playerId: number, questionPosition: number,
 const adminQuizThumbnailUpdate = (quizid: number, token: string, imgUrl: string) => {
   return requestHelper('PUT', `/v1/admin/quiz/${quizid}/thumbnail`, {quizid, imgUrl}, {token});
 }
+
+const adminQuizSessions = (quizid: number, token: string) => {
+  return requestHelper('GET', `/v1/admin/quiz/${quizid}/sessions`, { quizid }, {token});
+}
 // ============================================================================================== //
 
 export {
@@ -200,5 +204,6 @@ export {
   adminQuizSessionUpdate,
   adminQuizPlayerJoin,
   adminQuizPlayerSubmitAnswer,
-  adminQuizThumbnailUpdate
+  adminQuizThumbnailUpdate,
+  adminQuizSessions,
 };

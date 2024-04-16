@@ -736,8 +736,45 @@ function v2adminQuizQuestionDelete(token: string, quizId: number, questionId: nu
   return {};
 }
 
+function adminQuizSessions (token: string, quizId: number) {
+  const data = getData();
+
+  // Finds the authUserId, quiz and that quiz's index.
+  const findToken = data.sessions.find(ids => ids.token === token);
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+
+  // Error Checks for Token and QuizID
+  if (!findToken) {
+    throw HTTPError(401, 'Token is empty or invalid');
+  } else if (!findQuiz) {
+    throw HTTPError(403, 'Quiz Id is invalid.');
+  } else if (findQuiz.authUserId !== findToken.userId) {
+    throw HTTPError(403, 'User does not own this quiz.');
+  }
+
+  let activeSessions = [];
+  let inactiveSessions = [];
+
+  for (const sessionsOfQuiz of data.quizActiveState) {
+    if (sessionsOfQuiz.metadata.quizId === quizId) {
+      if (sessionsOfQuiz.state === States.END) {
+        inactiveSessions.push(sessionsOfQuiz.sessionId);
+      } else {
+        activeSessions.push(sessionsOfQuiz.sessionId);
+      }
+    }
+  }
+
+  return {
+    activeSessions: activeSessions,
+    inactiveSessions: inactiveSessions,
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////// HELPER FUNCTIONS //////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 function generateRandomName() {
@@ -910,5 +947,5 @@ export {
   v2AdminQuizInfo,
   v2AdminQuizQuestionUpdate,
   v2adminQuizQuestionDelete,
-
+  adminQuizSessions,
 };
