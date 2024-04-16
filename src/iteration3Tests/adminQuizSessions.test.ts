@@ -79,7 +79,8 @@ import {
     
     test('Quiz ID does not refer to a valid quiz.', () => {
       v2adminQuizRemove(token, quizId);
-      expect(() => adminQuizSessionCreate(token, quizId, 3)).toThrow(HTTPError[400]);
+      expect(() => adminQuizSessionCreate(token, quizId, 3)).toThrow(HTTPError[403]);
+      expect(() => adminQuizSessions(quizId,token)).toThrow(HTTPError[403])
     });
 
     // Need to make another one that uses question create, since quiz does not have any questions
