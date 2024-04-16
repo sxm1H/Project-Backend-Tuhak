@@ -41,6 +41,7 @@ import {
   adminQuizSessionCreate, 
   adminQuizSessionJoin, 
   adminQuizSessionUpdate,
+  adminQuizThumbnailUpdate,
   v2AdminQuizRemove,
   v2AdminQuizTransfer,
 } from './v2quiz'
@@ -538,7 +539,16 @@ app.put('/v1/player/:playerid/question/:questionposition/answer', (req: Request,
   res.json(response);
 });
 
+app.put('/v1/admin/quiz/:quizid/thumbnail', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const token = req.headers.token as string;
+  const {imgUrl} = req.body;
 
+  const response = adminQuizThumbnailUpdate(quizId, token, imgUrl);
+
+  save();
+  res.json(response);
+})
 
 
 // ====================================================================

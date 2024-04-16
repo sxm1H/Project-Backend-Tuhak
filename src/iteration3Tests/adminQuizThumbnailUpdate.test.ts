@@ -15,6 +15,7 @@ beforeEach(() => {
   token = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian').token;
   quizId = v2adminQuizCreate(token, 'QuizName', 'QuizDescription').quizId;
 });
+
 describe('Test PUT /v1/admin/quiz/{quizid}/thumbnail', () =>{
   test('Valid img update', () => {
     expect(adminQuizThumbnailUpdate(quizId, token, validimgUrl)).toStrictEqual({});
@@ -26,16 +27,15 @@ describe('Test PUT /v1/admin/quiz/{quizid}/thumbnail', () =>{
 
   test.each([
     {
-      quizId: quizId,
-      token: token,
       imgUrl: "https://www.greenlawnfertilizing.com/hs-fs/hubfs/Imported_Blog_Media/oak-tree-540x540_jpg-Dec-06-2023-05-34-04-6440-PM.webp?width=540&height=540&name=oak-tree-540x540_jpg-Dec-06-2023-05-34-04-6440-PM.webp"
     },
     {
-      quizId: quizId,
-      token: token,
       imgUrl: "coolimage.png"
+    },
+    {
+      imgUrl: "https://cool.com"
     }
-  ])('Image url is not valid', ({quizId, token, imgUrl}) => {
+  ])('Image url is not valid', ({imgUrl}) => {
     expect(() => adminQuizThumbnailUpdate(quizId, token, imgUrl)).toThrow(HTTPError[400]);
   });
 
@@ -44,7 +44,7 @@ describe('Test PUT /v1/admin/quiz/{quizid}/thumbnail', () =>{
   });
 
   test('User does not own quiz', () => {
-    let newToken =  adminAuthRegister('pog@gmail.com', 'pog1234', 'pog', 'pog').token;
+    let newToken =  adminAuthRegister('pog@gmail.com', 'pogggg1234', 'pog', 'pog').token;
     expect(() => adminQuizThumbnailUpdate(quizId, newToken, validimgUrl)).toThrow(HTTPError[403]);
   });
 })

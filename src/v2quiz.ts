@@ -12,6 +12,44 @@ import {
 } from './interfaces';
 import HTTPError from 'http-errors';
 
+//Helper function to check if the url is valid
+function validateImageUrl(imgUrl: string) :boolean{
+  const allowedExtensions = ['.jpg', '.jpeg', '.png'];
+  const urlPrefixes = ['http://', 'https://'];
+
+  const isValidPrefix = urlPrefixes.some(prefix => imgUrl.toLowerCase().startsWith(prefix));
+  const urlExtension = imgUrl.substring(imgUrl.lastIndexOf('.')).toLowerCase();
+  const isValidExtension = allowedExtensions.includes(urlExtension);
+  return isValidPrefix && isValidExtension;
+}
+
+function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: string) {
+  const data = getData();
+
+  const findToken = data.sessions.find(ids => ids.token === token);
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+
+  if (!findToken) {
+    throw HTTPError(401, 'Token is empty or invalid :(');
+  }
+  if (!findQuiz) {
+    throw HTTPError(403, 'Quiz Id is invalid.');
+  }
+  if (findQuiz.authUserId !== findToken.userId) {
+    throw HTTPError(403, 'User does not own this quiz.');
+  }
+
+  if (!validateImageUrl(imgUrl)) {
+    throw HTTPError(400, 'Invalid image url');
+  }
+
+  const date = Math.floor(Date.now() / 1000);
+  findQuiz.thumbnailUrl = imgUrl;
+  findQuiz.timeLastEdited = Math.floor(Date.now() / 1000);
+
+  return {};
+}
+
 function adminQuizSessionCreate(quizId: number, token: string, autoStartNum: number) {
   const data = getData();
   const findToken = data.sessions.find(ids => ids.token === token);
@@ -226,9 +264,7 @@ function adminQuizPlayerSubmitAnswer (answerIds: number[], playerid: number, que
 
   return {};
 }
-function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: string) {
-  return {};
-}
+
 /**
  * v2adminQuizCreate will create a new quiz and push all of its information (quizId, name, description,
  * user Id, time create, last time edited and thumbnailUrl) into dataStore it will return a unique quizId.
