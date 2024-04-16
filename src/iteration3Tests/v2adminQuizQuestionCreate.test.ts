@@ -1,11 +1,11 @@
 import {
   clear,
   adminAuthRegister,
-  adminQuizCreate,
-  adminQuizInfo,
 } from '../iteration2Tests/testHelpers';
 import {
-  v2AdminQuizQuestionCreate
+  v2AdminQuizQuestionCreate,
+  v2adminQuizInfo,
+  v2adminQuizCreate,
 } from './v2testHelpers';
 
 
@@ -17,7 +17,7 @@ beforeEach(() => {
   clear();
 
   token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').token;
-  quizId = adminQuizCreate(token, 'Australian Cities', 'lorem ipsum').quizId;
+  quizId = v2adminQuizCreate(token, 'Australian Cities', 'lorem ipsum').quizId;
   thumbnailUrl = 'https://www.unsw.edu.au/content/dam/images/photos/events/open-day/2020-12-homepage-update/OpenDay_2019_campaign%20-0307-crop.cropimg.width=1920.crop=square.jpg';
 });
 
@@ -27,7 +27,7 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
     expect(response).toStrictEqual({
       questionId: expect.any(Number),
     });
-    const response2 = adminQuizInfo(token, quizId);
+    const response2 = v2adminQuizInfo(token, quizId);
     expect(response2.questions).toStrictEqual([
       {
         questionId: response.questionId,

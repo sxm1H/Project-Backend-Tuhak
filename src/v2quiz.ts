@@ -10,6 +10,7 @@ import {
   Player,
   QuizId,
   Question,
+  newQuizInfoReturn,
 } from './interfaces';
 import HTTPError from 'http-errors';
 
@@ -488,6 +489,214 @@ function v2AdminQuizQuestionCreate(quizId: number, token: string, questionBody: 
 
   return { questionId: questionId };
 }
+
+/**
+  * Function allows user to view information about a specified quiz, unless the inputted ID's, user
+  * and quiz respectively, are invalid, then returns an error message.
+  *
+  * @param {string} token - token belonging to session of user trying to access quiz information.
+  * @param {number} quizId - ID of quiz user is trying to access.
+  *
+  * @returns {
+*   object {
+  *     error: string
+  *   }
+  * } - Error object with information regarding error.
+  * @returns {
+  *   return {
+  *     quizId: number,
+  *     name: string,
+  *     timeCreated: number,
+  *     timeLastEdited: number,
+  *     description: string,
+  *   }
+  * } - Returns the quiz information user wants to access.
+*/
+function v2AdminQuizInfo(token: string, quizId: number): ErrorObject | newQuizInfoReturn {
+  const data = getData();
+  const findToken = data.sessions.find(session => session.token === token);
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+
+  if (!findToken) {
+    throw HTTPError(401, 'Token is empty or invalid');
+  } else if (!findQuiz) {
+    throw HTTPError(403, 'Quiz Id invalid.');
+  }
+
+  if (findToken.userId !== findQuiz.authUserId) {
+    throw HTTPError(403, 'User does not own this quiz.');
+  }
+
+  return {
+    quizId: findQuiz.quizId,
+    name: findQuiz.name,
+    timeCreated: findQuiz.timeCreated,
+    timeLastEdited: findQuiz.timeLastEdited,
+    description: findQuiz.description,
+    numQuestions: findQuiz.numQuestions,
+    duration: findQuiz.duration,
+    questions: findQuiz.questions,
+    thumbnailUrl: findQuiz.thumbnailUrl,
+  };
+}
+
+/**
+ * The function will return an empty object while updating the values given in the questionBody
+ * given valid token, quizId and questionId
+ * It should return an error if any of these parameters are invalid.
+ * @param {array} Question - the question array created in adminQuizQuestionCreate.
+ *
+ * @returns {Object {error: string}} - If an error is occurs, it will return an error object with a string
+ * @returns {} - on succesful calling of this function it will return an empty object
+ */
+function v2AdminQuizQuestionUpdate(questionBody: Question, token: string, quizId: number, questionId: number): ErrorObject | Record<string, never> {
+  const data = getData();
+  const date = Math.floor(Date.now() / 1000);
+
+  const findToken = data.sessions.find(session => session.token === token);
+
+  if (!findToken) {
+    throw HTTPError(401, 'Token is empty or invalid');
+  }
+
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+
+  if (!findQuiz) {
+    throw HTTPError(403, 'Quiz ID does not refer to a valid quiz');
+  }
+
+  const findQuestion = findQuiz.questions.find(question => question.questionId === questionId);
+
+  if (findQuiz.authUserId !== findToken.userId) {
+    throw HTTPError(403, 'User does not own this quiz.');
+  }
+  if (!findQuestion) {
+    throw HTTPError(400, 'Questions not found.');
+  }
+
+  if (questionBody.thumbnailUrl === '') {
+    throw HTTPError(400, 'ThumbnailUrl is an empty string');
+  }
+
+  if (!isValidThumbnailUrlEnding(questionBody.thumbnailUrl)) {
+    throw HTTPError(400, 'ThumbnailUrl does not end with a image extension');
+  }
+
+  if (!isValidThumbnailUrlStarting(questionBody.thumbnailUrl)) {
+    throw HTTPError(400, 'ThumbnailUrl does not end with http or https');
+  }
+
+  // Error Checks for the Question.
+  const trueAnswers = questionBody.answers.find(bool => bool.correct === true);
+  if (!trueAnswers) {
+    throw HTTPError(400, 'No True Answers');
+  } else if (questionBody.question.length > 50 || questionBody.question.length < 5) {
+    throw HTTPError(400, 'Question Length is not between 5 and 50.');
+  } else if (questionBody.answers.length > 6 || questionBody.answers.length < 2) {
+    throw HTTPError(400, 'Number of Question Answers is not between 2 and 6.');
+  } else if (questionBody.duration <= 0) {
+    throw HTTPError(400, 'Question Duration is Not Positive.');
+  } else if (questionBody.duration + findQuiz.duration > 180) {
+    throw HTTPError(400, 'Quiz Duration is Longer than 3 minutes.');
+  } else if (questionBody.points > 10 || questionBody.points < 1) {
+    throw HTTPError(400, 'Quiz Points is Not Between 1 and 10.');
+  }
+
+  for (const answer of questionBody.answers) {
+    if (answer.answer.length > 30 || answer.answer.length < 1) {
+      throw HTTPError(400, 'Question Answer Length is not Between 1 and 30.');
+    }
+  }
+
+  for (let i = 0; i < questionBody.answers.length; i++) {
+    for (let j = i + 1; j < questionBody.answers.length; j++) {
+      if (questionBody.answers[i].answer === questionBody.answers[j].answer) {
+        throw HTTPError(400, 'There Are Duplicate ');
+      }
+    }
+  }
+
+  findQuestion.answers = questionBody.answers.map(answer => ({
+    answerId: counters.answerIdCounter++,
+    answer: answer.answer,
+    colour: getRandomColour(),
+    correct: answer.correct,
+  }));
+
+  // Updating the question properties
+  findQuestion.duration = questionBody.duration;
+  findQuestion.points = questionBody.points;
+  findQuestion.question = questionBody.question;
+  findQuestion.thumbnailUrl = questionBody.thumbnailUrl;
+  // Recalculate the total duration of the quiz
+
+  let totalDuration = 0;
+  for (const question of findQuiz.questions) {
+    totalDuration += question.duration;
+  }
+  findQuiz.duration = totalDuration; // Update the total quiz duration
+
+  findQuiz.timeLastEdited = date;
+
+  return {};
+}
+
+/**
+ * adminQuizQuestionDelete takens in the user's current token, relevant quizId and the questionId
+ * of the question they want to change. Function begins by iteration through the sessions array and
+ * the quizzes array to find the relevant authUserId and quiz. Then it does the following error checks:
+ * 1. Is the token valid ?
+ * 2. Is the Quiz Id valid ?
+ * 3. Does the User Own This Quiz ?
+ * Following that, the relevant question's index is obtained and is then checked to see whether the question exists.
+ * If it does, the question is then deleted.
+ *
+ * @param { string } token - Contains the user's current session token.
+ * @param { number } quizId - Contains the relevant quiz Id.
+ * @param { number } questionId - Contains the relevant question Id.
+ *
+ * @returns { Error Object } -  Object containing the key 'error' and the value being the relevant error message
+ * @returns { Empty Object } - Empty Object to indicate succesful addition of the question.
+ */
+function v2adminQuizQuestionDelete(token: string, quizId: number, questionId: number): ErrorObject | Record<string, never> {
+  const data = getData();
+
+  // Finds the authUserId, quiz and that quiz's index.
+  const findToken = data.sessions.find(ids => ids.token === token);
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  const findQuizIndex = data.quizzes.findIndex(quiz => quiz.quizId === quizId);
+
+  // Error Checks for Token and QuizID
+  if (!findToken) {
+    throw HTTPError(401, 'Token is empty or invalid');
+  } else if (!findQuiz) {
+    throw HTTPError(403, 'Quiz Id is invalid.');
+  } else if (findQuiz.authUserId !== findToken.userId) {
+    throw HTTPError(403, 'User does not own this quiz.');
+  }
+
+  for (const activeSessions of data.quizActiveState) {
+    if (activeSessions.metadata.quizId === quizId) {
+      if (activeSessions.state !== States.END) {
+        throw HTTPError(400, 'Any session for this quiz is not in END state');
+      }
+    }
+  }
+
+  // Finds the relevant question's index.
+  const findQuestionIndex = data.quizzes[findQuizIndex].questions.findIndex(question => question.questionId === questionId);
+
+  // If it doesn't exist, returns an error.
+  if (findQuestionIndex === -1) {
+    throw HTTPError(400, 'Question Invalid.');
+  }
+
+  // Deleting the Question
+  data.quizzes[findQuizIndex].questions.splice(findQuestionIndex, 1);
+
+  return {};
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////// HELPER FUNCTIONS //////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -657,5 +866,8 @@ export {
   v2adminQuizRemove,
   v2adminQuizTransfer,
   v2adminQuizCreate,
-  v2AdminQuizQuestionCreate
+  v2AdminQuizQuestionCreate,
+  v2AdminQuizInfo,
+  v2AdminQuizQuestionUpdate,
+  v2adminQuizQuestionDelete,
 };
