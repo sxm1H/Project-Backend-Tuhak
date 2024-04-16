@@ -1,22 +1,26 @@
 // import {
 //   clear,
 //   adminAuthRegister,
-//   adminQuizCreate,
-//   adminQuizInfo,
-//   adminQuizQuestionCreate,
-//   adminQuizQuestionUpdate,
-// } from './testHelpersIter3';
+// } from '../iteration2Tests/testHelpers';
+// import {
+//   v2adminQuizInfo,
+//   v2adminQuizCreate,
+//   v2AdminQuizQuestionCreate,
+//   v2adminQuizQuestionUpdate
+// } from './v2testHelpers';
 // import HTTPError from 'http-errors';
 
 // let token: string;
 // let quizId: number;
 // let questionId: number;
+// let thumbnailUrl: string;
 // beforeEach(() => {
 //   clear();
 
 //   token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').token;
-//   quizId = adminQuizCreate(token, 'Australian Cities', 'lorem ipsum').quizId;
-//   questionId = adminQuizQuestionCreate(quizId, token, 'What is the best city in Australia', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]).questionId;
+//   quizId = v2adminQuizCreate(token, 'Australian Cities', 'lorem ipsum').quizId;
+//   thumbnailUrl = 'https://www.unsw.edu.au/content/dam/images/photos/events/open-day/2020-12-homepage-update/OpenDay_2019_campaign%20-0307-crop.cropimg.width=1920.crop=square.jpg';
+//   questionId = v2AdminQuizQuestionCreate(quizId, token, 'What is the best city in Australia', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }], thumbnailUrl).questionId;
 // });
 
 // describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
@@ -32,7 +36,7 @@
 //       answer: 'Video Games',
 //       correct: false,
 //     }];
-//     expect(adminQuizQuestionUpdate(question, duration, points, answers, token, quizId, questionId)).toStrictEqual({});
+//     expect(v2adminQuizQuestionUpdate(question, duration, points, answers, token, quizId, questionId, thumbnailUrl)).toStrictEqual({});
 //   });
 
 //   test('Comprehensive Test Successful: Successfully Updating One Question and Checking QuizInfo', () => {
@@ -48,9 +52,9 @@
 //       correct: false,
 //     }];
 
-//     expect(adminQuizQuestionUpdate(question, duration, points, answers, token, quizId, questionId)).toStrictEqual({ });
+//     expect(v2adminQuizQuestionUpdate(question, duration, points, answers, token, quizId, questionId, thumbnailUrl)).toStrictEqual({ });
 
-//     expect(adminQuizInfo(token, quizId)).toStrictEqual({
+//     expect(v2adminQuizInfo(token, quizId)).toStrictEqual({
 //       quizId: quizId,
 //       name: 'Australian Cities',
 //       timeCreated: expect.any(Number),
@@ -78,8 +82,10 @@
 //               colour: expect.any(String)
 //             }
 //           ],
+//           thumbnailUrl: thumbnailUrl
 //         }
-//       ]
+//       ],
+//       thumbnailUrl: thumbnailUrl
 //     });
 //   });
 
@@ -300,10 +306,8 @@
 //   })
 // });
 
-// test('temp', () => {
-//   expect(2 + 2).toBe(4);
-// });
-
 test('temp', () => {
   expect(2 + 2).toBe(4);
 });
+
+

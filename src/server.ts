@@ -44,6 +44,10 @@ import {
   v2adminQuizCreate,
   v2adminQuizRemove,
   v2adminQuizTransfer,
+  v2AdminQuizQuestionCreate,
+  v2AdminQuizInfo,
+  v2AdminQuizQuestionUpdate,
+  v2adminQuizQuestionDelete,
 } from './v2quiz'
 
 // import {
@@ -364,17 +368,16 @@ app.delete('/v2/admin/quiz/:quizId', (req: Request, res: Response) => {
   res.json(result);
 });
 
-// /////// Requires a new implementation which puts questionUrl in both quiz and question
-// which probably means that we will have to update more than just 6 functions
 
-// app.get('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
-//   const quizId = parseInt(req.params.quizid);
-//   const token = req.headers.token as string;
-//   const response = v2AdminQuizInfo(token, quizId);
 
-//   save();
-//   res.json(response);
-// });
+app.get('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const token = req.headers.token as string;
+  const response = v2AdminQuizInfo(token, quizId);
+
+  save();
+  res.json(response);
+});
 
 app.put('/v2/admin/quiz/:quizId/name', (req: Request, res: Response) => {
   const token = req.headers.token as string;
@@ -432,43 +435,38 @@ app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
   res.json(response);
 });
 
-/// / Requires new implementation to input thumbnail parameters into the question
-//
-/// / Also more errors zZzZz
-// app.post('/v2/admin/quiz/:quizid/question', (req: Request, res: Response) => {
-//   const quizId = parseInt(req.params.quizid);
-//   const token = req.headers.token as string;
-//   const { questionBody, thumbnailUrl } = req.body;
-//   const response = v2AdminQuizQuestionCreate(quizId, token, questionBody, thumbnailUrl);
+app.post('/v2/admin/quiz/:quizid/question', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const token = req.headers.token as string;
+  const { questionBody } = req.body;
+  const response = v2AdminQuizQuestionCreate(quizId, token, questionBody);
 
-//   save();
-//   res.json(response);
-// });
+  save();
+  res.json(response);
+});
 
-/// / This simply just requires a new thumbnail parameter (new function in quiz.ts, prepended w/ v2)
-//
-// app.put('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
-//   const token = req.headers.token as string;
-//   const { questionBody, thumbnailUrl } = req.body;
-//   const quizId = parseInt(req.params.quizid);
-//   const questionId = parseInt(req.params.questionid);
-//   const response = v2AdminQuizQuestionUpdate(questionBody, token, quizId, questionId, thumbnailUrl);
 
-//   save();
-//   res.json(response);
-// });
 
-/// / Simply just one new error check (END state of a quiz)
-//
-// app.delete('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
-//   const token = req.headers.token as string;
-//   const quizId = parseInt(req.params.quizid);
-//   const questionId = parseInt(req.params.questionid);
-//   const response = adminQuizQuestionDelete(token, quizId, questionId);
+app.put('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const { questionBody } = req.body;
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const response = v2AdminQuizQuestionUpdate(questionBody, token, quizId, questionId);
 
-//   save();
-//   res.json(response);
-// });
+  save();
+  res.json(response);
+});
+
+app.delete('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const response = v2adminQuizQuestionDelete(token, quizId, questionId);
+
+  save();
+  res.json(response);
+});
 
 app.put('/v2/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response) => {
   const token = req.headers.token as string;
