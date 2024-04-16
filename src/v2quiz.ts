@@ -12,7 +12,7 @@ import {
 } from './interfaces';
 import HTTPError from 'http-errors';
 
-function adminQuizSessionCreate(quizId: number, token: string, autoStartNum: number) {
+function adminQuizSessionCreate(token: string, quizId: number, autoStartNum: number) {
   const data = getData();
   const findToken = data.sessions.find(ids => ids.token === token);
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
@@ -69,7 +69,7 @@ function adminQuizSessionCreate(quizId: number, token: string, autoStartNum: num
   return { sessionId: newSessionId };
 }
 
-function adminQuizSessionUpdate(quizId: number, sessionId: number, token: string, action: string) {
+function adminQuizSessionUpdate(token: string, quizId: number, sessionId: number, action: string) {
   const data = getData();
   const findToken = data.sessions.find(ids => ids.token === token);
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
@@ -291,50 +291,36 @@ function v2adminQuizCreate(token: string, name: string, description: string): Er
   return { quizId: counters.quizIdCounter };
 }
 
-function v2AdminQuizRemove(token: string, quizId: number) {
+function v2adminQuizRemove(token: string, quizId: number) {
   const newdata = getData();
+  
+  const findToken = newdata.sessions.find(session => session.token === token);
+  const findQuizIndex = newdata.quizzes.findIndex(quiz => quiz.quizId === quizId);
 
+  if (!findToken) {
+    throw HTTPError(401, 'Does not refer to valid logged in user session');
+  } else if (findQuizIndex === -1) {
+    throw HTTPError(403, 'Quiz ID does not refer to a valid quiz');
+  } else if (newdata.quizzes[findQuizIndex].authUserId !== findToken.userId) {
+    throw HTTPError(403, 'User does not own this quiz.');
+  }
+  
   for (const activeSessions of newdata.quizActiveState) {
     if (activeSessions.metadata.quizId === quizId) {
-      if (activeSessions.state === States.END) {
+      if (activeSessions.state !== States.END) {
         throw HTTPError(400, 'Any session for this quiz is not in END state');
       }
     }
   }
 
-  let flag = false;
-  let currentUserId;
-
-  for (const data of newdata.sessions) {
-    if (token === data.token) {
-      currentUserId = data.userId;
-      flag = true;
-      break;
-    }
-  }
-
-  if (!flag) {
-    throw HTTPError(401, 'does not refer to valid logged in user session');
-  }
-
-  flag = false;
-  for (let i = 0; i < newdata.quizzes.length; i++) {
-    const data = newdata.quizzes[i];
-    if (quizId === data.quizId) {
-      if (data.authUserId === currentUserId) {
-        flag = true;
-        data.timeLastEdited = Math.floor(Date.now() / 1000);
-        newdata.trash.push(data);
-        newdata.quizzes.splice(i, 1);
-        break;
-      } else {
-        throw HTTPError(403, 'Quiz ID does not refer to a quiz that this user owns.');
-      }
-    }
-  }
+  newdata.quizzes[findQuizIndex].timeLastEdited = Math.floor(Date.now() / 1000);
+  newdata.trash.push(newdata.quizzes[findQuizIndex]);
+  newdata.quizzes.splice(findQuizIndex, 1);
+  
+  return {};
 }
 
-function v2AdminQuizTransfer(token: string, userEmail: string, quizId: number) {
+function v2adminQuizTransfer(token: string, userEmail: string, quizId: number) {
   const data = getData();
 
   // Returns session object corresponding the given token.
@@ -514,7 +500,7 @@ export {
   adminQuizSessionUpdate,
   adminQuizPlayerSubmitAnswer,
   adminQuizSessionJoin,
-  v2AdminQuizRemove,
-  v2AdminQuizTransfer,
+  v2adminQuizRemove,
+  v2adminQuizTransfer,
   v2adminQuizCreate
 };

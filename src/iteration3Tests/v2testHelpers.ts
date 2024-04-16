@@ -151,7 +151,7 @@ const adminQuizRestore = (token: string, quizId: number) => {
   return requestHelper('POST', `/v2/admin/quiz/${quizId}/restore`, { quizId }, { token });
 };
 
-const adminQuizSessionStart = (token: string, quizId: number, autoStartNum: number) => {
+const adminQuizSessionCreate = (token: string, quizId: number, autoStartNum: number) => {
   return requestHelper('POST', `/v1/admin/quiz/${quizId}/session/start`, { autoStartNum }, { token });
 };
 
@@ -175,7 +175,7 @@ export {
   adminUserPasswordUpdate,
   adminQuizList,
   v2adminQuizCreate,
-  // v2adminQuizRemove,
+  v2adminQuizRemove,
   // v2adminQuizInfo,
   adminQuizNameUpdate,
   adminQuizDescriptionUpdate,
@@ -189,7 +189,7 @@ export {
   adminQuizTrashEmpty,
   // v2adminQuizQuestionUpdate,
   adminQuizRestore,
-  adminQuizSessionStart,
+  adminQuizSessionCreate,
   adminQuizSessionUpdate,
   adminQuizPlayerJoin,
   adminQuizPlayerSubmitAnswer

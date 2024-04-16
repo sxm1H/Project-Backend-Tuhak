@@ -41,8 +41,9 @@ import {
   adminQuizSessionCreate, 
   adminQuizSessionJoin, 
   adminQuizSessionUpdate,
-  v2AdminQuizRemove,
-  v2AdminQuizTransfer,
+  v2adminQuizCreate,
+  v2adminQuizRemove,
+  v2adminQuizTransfer,
 } from './v2quiz'
 
 // import {
@@ -51,12 +52,10 @@ import {
 //   v2adminUserPasswordUpdate,
 //   v2adminAuthLogout
 // } from './v2auth';
-import {
 //   v2adminQuizNameUpdate,
 //   v2adminQuizRemove,
 //   v2adminQuizList,
 //   v2adminQuizInfo,
-  v2adminQuizCreate,
 //   v2adminQuizDescriptionUpdate,
 //   v2adminQuizQuestionDelete,
 //   v2adminQuizTransfer,
@@ -67,7 +66,6 @@ import {
 //   v2adminQuizTrashView,
 //   v2adminQuizQuestionUpdate,
 //   v2adminQuizRestore
-} from './v2quiz';
 import { getData, setData, setCounters, getCounters } from './dataStore';
 
 // Set up web app
@@ -360,7 +358,7 @@ app.post('/v2/admin/quiz', (req: Request, res: Response) => {
 app.delete('/v2/admin/quiz/:quizId', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const quizId = parseInt(req.params.quizId);
-  const result = v2AdminQuizRemove(token, quizId);
+  const result = v2adminQuizRemove(token, quizId);
 
   save();
   res.json(result);
@@ -428,7 +426,7 @@ app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const token = req.headers.token as string;
   const { userEmail } = req.body;
-  const response = v2AdminQuizTransfer(token, userEmail, quizId);
+  const response = v2adminQuizTransfer(token, userEmail, quizId);
 
   save();
   res.json(response);
@@ -500,7 +498,7 @@ app.post('/v1/admin/quiz/:quizid/session/start', (req: Request, res: Response) =
   const { autoStartNum } = req.body;
   const token = req.headers.token as string;
 
-  const response = adminQuizSessionCreate(quizId, token, autoStartNum);
+  const response = adminQuizSessionCreate(token, quizId, autoStartNum);
 
   save();
   res.json(response);
@@ -512,7 +510,7 @@ app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
   const { action } = req.body;
   const token = req.headers.token as string;
 
-  const response = adminQuizSessionUpdate(quizId, sessionId, token, action);
+  const response = adminQuizSessionUpdate(token, quizId, sessionId, action);
 
   save();
   res.json(response);
