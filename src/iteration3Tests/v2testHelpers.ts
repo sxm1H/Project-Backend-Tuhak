@@ -116,16 +116,17 @@ const adminQuizQuestionMove = (quizid: number, questionid: number, token: string
   return requestHelper('PUT', `/v2/admin/quiz/${quizid}/question/${questionid}/move`, { newPosition }, { token });
 };
 
-// const v2dminQuizQuestionCreate = (quizId: number, token: string, question: string, duration: number, points: number, answers: Answer[]) => {
-//   const questionBody = {
-//     question: question,
-//     duration: duration,
-//     points: points,
-//     answers: answers,
-//   };
+const v2AdminQuizQuestionCreate = (quizId: number, token: string, question: string, duration: number, points: number, answers: Answer[], thumbnailUrl: string) => {
+  const questionBody = {
+    question: question,
+    duration: duration,
+    points: points,
+    answers: answers,
+    thumbnailUrl: thumbnailUrl,
+  };
 
-//   return requestHelper('POST', `/v2/admin/quiz/${quizId}/question`, { questionBody }, { token });
-// };
+  return requestHelper('POST', `/v2/admin/quiz/${quizId}/question`, { questionBody }, { token });
+};
 
 const adminAuthLogout = (token: string) => {
   return requestHelper('POST', '/v2/admin/auth/logout', {}, { token });
@@ -183,7 +184,7 @@ export {
   adminAuthLogout,
   // v2adminQuizQuestionDelete,
   v2adminQuizTransfer,
-  // v2adminQuizQuestionCreate,
+  v2AdminQuizQuestionCreate,
   adminQuizQuestionDuplicate,
   adminQuizTrashView,
   adminQuizTrashEmpty,

@@ -8,7 +8,8 @@ import {
   Actions,
   quizState,
   Player,
-  QuizId
+  QuizId,
+  Question,
 } from './interfaces';
 import HTTPError from 'http-errors';
 
@@ -285,7 +286,7 @@ function v2adminQuizCreate(token: string, name: string, description: string): Er
     numQuestions: 0,
     questions: [],
     duration: 0,
-    thumbnailUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSu1V5-mUs0C8qTExeBmjUv1J_gUBGvFludmgUw2Kfwxw&s'
+    thumbnailUrl: 'https://www.unsw.edu.au/content/dam/images/photos/events/open-day/2020-12-homepage-update/OpenDay_2019_campaign%20-0307-crop.cropimg.width=1920.crop=square.jpg'
   });
 
   return { quizId: counters.quizIdCounter };
@@ -371,7 +372,125 @@ function v2adminQuizTransfer(token: string, userEmail: string, quizId: number) {
   return {};
 }
 
-/// HELPER FUNCTIONS
+/**
+ * adminQuizQuestionCreate takes in a quizId, the user's token and as well as a questionBody containing
+ * the relevant information for the question. The function begins by finding iterating through the sessions
+ * and quizzes array to get the relevant authUserId and quiz. The following error checks are then completed:
+ * 1. Is the token valid?
+ * 2. Is the Quiz Id Valid ?
+ * 3. Does the User Own the Quiz ?
+ * 4. Question Length Check
+ * 5. No. Of Question Answers
+ * 6. Question Duration
+ * 7. Question Points
+ * 8. Answer Lengths and Duplicates.
+ * Following the error checks, the question will then be pushed onto the relevant quiz's question
+ * array, and the quiz duration, last edited and number of questions field in the quiz object
+ * is then updated.
+ *
+ * @param { number } quizId - Contains the relevant Quiz Id.
+ * @param { string } token - Contains the user's current session token.
+ * @param { Question } questionBody - An object containing question, duration, points and answers.
+ *
+ * @returns { Error Object } -  Object containing the key 'error' and the value being the relevant error message
+ * @returns { Empty Object } - Empty Object to indicate succesful addition of the question.
+ */
+
+function v2AdminQuizQuestionCreate(quizId: number, token: string, questionBody: Question) {
+  const data = getData();
+  const date = Math.floor(Date.now() / 1000);
+
+  // Obtaining the relevant quiz and relevant authUserId.
+  const findToken = data.sessions.find(ids => ids.token === token);
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+
+  // Error Checks for Token and QuizID
+  if (!findToken) {
+    throw HTTPError(401, 'Token is empty or invalid');
+  }
+  if (!findQuiz) {
+    throw HTTPError(403, 'Quiz Id is invalid.');
+  }
+  if (findQuiz.authUserId !== findToken.userId) {
+    throw HTTPError(403, 'User does not own this quiz.');
+  }
+
+  if (questionBody.thumbnailUrl === '') {
+    throw HTTPError(400, 'ThumbnailUrl is an empty string');
+  }
+
+  if (!isValidThumbnailUrlEnding(questionBody.thumbnailUrl)) {
+    throw HTTPError(400, 'ThumbnailUrl does not end with a image extension');
+  }
+
+  if (!isValidThumbnailUrlStarting(questionBody.thumbnailUrl)) {
+    throw HTTPError(400, 'ThumbnailUrl does not end with http or https');
+  }
+
+  // Error Checks for the Question.
+  const correctAnswers = questionBody.answers.find(bool => bool.correct === true);
+  if (!correctAnswers) {
+    throw HTTPError(400, 'No Correct Answers');
+  } else if (questionBody.question.length > 50 || questionBody.question.length < 5) {
+    throw HTTPError(400, 'Question Length is not between 5 and 50.');
+  } else if (questionBody.answers.length > 6 || questionBody.answers.length < 2) {
+    throw HTTPError(400, 'Number of Question Answers is not between 2 and 6.');
+  } else if (questionBody.duration <= 0) {
+    throw HTTPError(400, 'Question Duration is Not Positive.');
+  } else if (questionBody.duration + findQuiz.duration > 180) {
+    throw HTTPError(400, 'Quiz Duration is Longer than 3 minutes.');
+  } else if (questionBody.points > 10 || questionBody.points < 1) {
+    throw HTTPError(400, 'Quiz Points is Not Between 1 and 10.');
+  }
+  for (const answer of questionBody.answers) {
+    if (answer.answer.length > 30 || answer.answer.length < 1) {
+      throw HTTPError(400, 'Question Answer Length is not Between 1 and 30.');
+    }
+  }
+  for (let i = 0; i < questionBody.answers.length; i++) {
+    for (let j = i + 1; j < questionBody.answers.length; j++) {
+      if (questionBody.answers[i].answer === questionBody.answers[j].answer) {
+        throw HTTPError(400, 'There Are Duplicate ');
+      }
+    }
+  }
+
+  // Setting Up the Question and Answers to be Pushed Onto The Datastore
+  const answerBody = [];
+  for (const answer of questionBody.answers) {
+    answerBody.push({
+      answerId: counters.answerIdCounter,
+      answer: answer.answer,
+      colour: getRandomColour(),
+      correct: answer.correct,
+    });
+    counters.answerIdCounter++;
+  }
+
+  // Pushing the question to the questionBody of the relevant quiz.
+  const questionId = counters.questionIdCounter;
+  findQuiz.questions.push({
+    questionId: questionId,
+    question: questionBody.question,
+    duration: questionBody.duration,
+    points: questionBody.points,
+    answers: answerBody,
+    thumbnailUrl: questionBody.thumbnailUrl,
+  });
+
+  // Incrementing the questionIdCounter to ensure uniqueness in every questionid.
+  counters.questionIdCounter++;
+
+  // Updating the fields in the quizId.
+  findQuiz.duration += questionBody.duration;
+  findQuiz.timeLastEdited = date;
+  findQuiz.numQuestions++;
+
+  return { questionId: questionId };
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////// HELPER FUNCTIONS //////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 function generateRandomName() {
   const letters = 'abcdefghijklmnopqrstuvwxyz';
@@ -495,6 +614,41 @@ function quizFinalHelper (session: quizState, action: string) {
   }
 }
 
+function getRandomColour(): string {
+  const random = Math.floor((Math.random() * 7 + 1));
+  if (random === 1) {
+    return 'red';
+  } else if (random === 2) {
+    return 'blue';
+  } else if (random === 3) {
+    return 'green';
+  } else if (random === 4) {
+    return 'yellow';
+  } else if (random === 5) {
+    return 'purple';
+  } else if (random === 6) {
+    return 'brown';
+  } else {
+    return 'orange';
+  }
+}
+
+function isValidThumbnailUrlEnding(thumbnailUrl: string) {
+  // Regular expression to match if the thumbnailUrl ends with jpg, jpeg, or png
+  var validExtensions = /\.(jpg|jpeg|png)$/i;
+
+  // Test if the thumbnailUrl matches the valid extensions
+  return validExtensions.test(thumbnailUrl);
+}
+
+function isValidThumbnailUrlStarting(thumbnailUrl: string) {
+  // Regular expression to match if the thumbnailUrl begins with http:// or https://
+  var validPrefix = /^(http|https):\/\//i;
+
+  // Test if the thumbnailUrl starts with the valid prefix
+  return validPrefix.test(thumbnailUrl);
+}
+
 export {
   adminQuizSessionCreate,
   adminQuizSessionUpdate,
@@ -502,5 +656,6 @@ export {
   adminQuizSessionJoin,
   v2adminQuizRemove,
   v2adminQuizTransfer,
-  v2adminQuizCreate
+  v2adminQuizCreate,
+  v2AdminQuizQuestionCreate
 };

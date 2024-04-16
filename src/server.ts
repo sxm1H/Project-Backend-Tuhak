@@ -44,6 +44,7 @@ import {
   v2adminQuizCreate,
   v2adminQuizRemove,
   v2adminQuizTransfer,
+  v2AdminQuizQuestionCreate,
 } from './v2quiz'
 
 // import {
@@ -432,18 +433,15 @@ app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
   res.json(response);
 });
 
-/// / Requires new implementation to input thumbnail parameters into the question
-//
-/// / Also more errors zZzZz
-// app.post('/v2/admin/quiz/:quizid/question', (req: Request, res: Response) => {
-//   const quizId = parseInt(req.params.quizid);
-//   const token = req.headers.token as string;
-//   const { questionBody, thumbnailUrl } = req.body;
-//   const response = v2AdminQuizQuestionCreate(quizId, token, questionBody, thumbnailUrl);
+app.post('/v2/admin/quiz/:quizid/question', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const token = req.headers.token as string;
+  const { questionBody } = req.body;
+  const response = v2AdminQuizQuestionCreate(quizId, token, questionBody);
 
-//   save();
-//   res.json(response);
-// });
+  save();
+  res.json(response);
+});
 
 /// / This simply just requires a new thumbnail parameter (new function in quiz.ts, prepended w/ v2)
 //
