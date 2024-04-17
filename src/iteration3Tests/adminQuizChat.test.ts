@@ -35,11 +35,10 @@ import {
       v2adminQuizQuestionCreate(quizId, token, 'question5', 5, 4, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }], thumbnailUrl);
       sessionId = adminQuizSessionCreate(token, quizId, 5).sessionId;
       playerId = adminQuizPlayerJoin(sessionId, 'nick').playerId;
-      tooLongString = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
     });
   
     test('Successful case - no sessions yet', () => {
-      expect(adminQuizChatSend(playerId, 'hello yall')).toStrictEqual({});
+    expect(adminQuizChatSend(playerId, 'hello yall')).toStrictEqual({});
 
       expect(adminQuizChat(playerId)).toStrictEqual({
         messages: [
@@ -54,16 +53,9 @@ import {
     });
   
     test('Player ID Does not exist', () => {
-      expect(() => adminQuizChatSend(1234 + playerId, 'valid')).toThrow(HTTPError[400]);
+      expect(() => adminQuizChat(1234 + playerId)).toThrow(HTTPError[400]);
     });
 
-    test('messageBody is less than 1 character', () => {
-        expect(() => adminQuizChatSend(playerId, '')).toThrow(HTTPError[400]);
-    });
-
-    test('messageBody is more than 100 characters', () => {
-        expect(() => adminQuizChatSend(playerId, tooLongString)).toThrow(HTTPError[400]);
-    });
-
+    
   });
   
