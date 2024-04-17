@@ -11,7 +11,6 @@ import {
   QuizId,
   Question,
   newQuizInfoReturn,
-  QuestionResultsReturn,
 } from './interfaces';
 import HTTPError from 'http-errors';
 interface timeoutobj {
@@ -253,7 +252,6 @@ function adminQuizPlayerSubmitAnswer (answerIds: number[], playerid: number, que
   const possibleAnswers = session.metadata.questions[session.atQuestion - 1].answers;
   
   let counter = 0;
-  
   for (const answer of answerIds) {
     let findAnswer = possibleAnswers.find(answers => answers.answerId === answer);
     if (!findAnswer) {
@@ -265,9 +263,8 @@ function adminQuizPlayerSubmitAnswer (answerIds: number[], playerid: number, que
   };
 
   const findQuestion = findPlayer.questions[questionposition - 1];
-
   if (counter === answerIds.length) {
-    findQuestion.isCorrect === true;
+    findQuestion.isCorrect = true;
   }
 
   let timeEnd = Math.floor(Date.now() / 1000);
@@ -570,7 +567,7 @@ function v2AdminQuizInfo(token: string, quizId: number): ErrorObject | newQuizIn
   if (!findToken) {
     throw HTTPError(401, 'Token is empty or invalid');
   } else if (!findQuiz) {
-    throw HTTPError(403, 'Quiz Id invalid. :(');
+    throw HTTPError(403, 'Quiz Id invalid.');
   }
 
   if (findToken.userId !== findQuiz.authUserId) {
@@ -828,6 +825,107 @@ function adminQuizGetSessionStatus (quizId: number, sessionId: number, token: st
   }
 }
 
+function adminQuizQuestionResults(playerid: number, questionPosition: number): QuestionResultsReturn {
+  const data = getData();
+
+  // Double for loop, to iterate through two arrays.
+
+  let session: quizState | undefined;
+  let findPlayer: Player;
+  for (const sessions of data.quizActiveState) {
+    for (const player of sessions.players) {
+      if (player.playerId === playerid) {
+        findPlayer = player;
+        session = sessions;
+      }
+    }
+  }
+
+  //Error Checks
+  if (session === undefined) {
+    throw HTTPError(400, 'player ID does not exist');
+  }
+
+  if (session.state !== States.ANSWER_SHOW) {
+    throw HTTPError(400, 'Session is not in ANSWER_SHOW state');
+  }
+  if (questionPosition > session.metadata.numQuestions) {
+    throw HTTPError(400, 'question position is not valid for the session this player is in');
+  }
+
+  if (questionPosition !== session.atQuestion) {
+    throw HTTPError(400, 'session is not yet up to this question');
+  }
+
+  return getQuestionResults(session, questionPosition);
+}
+
+function adminQuizFinalResults(playerId: number) {
+  const data = getData();
+
+  // Double for loop, to iterate through two arrays.
+
+  let session: quizState | undefined;
+  let findPlayer: Player;
+  for (const sessions of data.quizActiveState) {
+    for (const player of sessions.players) {
+      if (player.playerId === playerId) {
+        findPlayer = player;
+        session = sessions;
+      }
+    }
+  }
+
+  //Error Checks
+  if (session === undefined) {
+    throw HTTPError(400, 'player ID does not exist');
+  }
+
+  if (session.state !== States.FINAL_RESULTS) {
+    throw HTTPError(400, 'Session is not in FINAL_RESULTS state');
+  }
+
+  return getFinalScoreSummary(session);
+}
+
+function adminQuizCompletedQuizResults(quizId: number, sessionId: number, token: string) {
+  const data = getData();
+
+  // Double for loop, to iterate through two arrays.
+
+  let session: quizState | undefined;
+  for (const sessions of data.quizActiveState) {
+    if (sessions.sessionId === sessionId) {
+      session = sessions;
+    }
+  }
+
+  //Error Checks
+  if (session === undefined) {
+    throw HTTPError(400, 'Session does not exist');
+  }
+
+  if (session.state !== States.FINAL_RESULTS) {
+    throw HTTPError(400, 'Session is not in FINAL_RESULTS state');
+  }
+
+  const searchToken = data.sessions.find(session => session.token === token);
+  if (!searchToken) {
+    throw HTTPError(401, 'Token is empty or invalid');
+  }
+
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  console.log(findQuiz, data, quizId);
+  if (!findQuiz) {
+    throw HTTPError(403, 'Quiz ID does not refer to a valid quiz');
+  }
+  if (findQuiz.authUserId !== searchToken.userId) {
+    throw HTTPError(403, 'User does not own this quiz.');
+  }
+
+  return getFinalScoreSummary(session);
+}
+
 function adminQuizPlayerStatus (playerid: number) {
 
   const data = getData();
@@ -944,109 +1042,6 @@ function adminQuizChatSend (playerid: number, messageBody: string) {
   return {}
 }
 
-function adminQuizFinalResults(playerId: number) {
-  const data = getData();
-  console.log(playerId);
-
-  // Double for loop, to iterate through two arrays.
-
-  let session: quizState | undefined;
-  let findPlayer: Player;
-  for (const sessions of data.quizActiveState) {
-    for (const player of sessions.players) {
-      if (player.playerId === playerId) {
-        findPlayer = player;
-        session = sessions;
-      }
-    }
-  }
-  console.log(session, findPlayer);
-
-  //Error Checks
-  if (session === undefined) {
-    throw HTTPError(400, 'player ID does not exist');
-  }
-
-  if (session.state !== States.FINAL_RESULTS) {
-    throw HTTPError(400, 'Session is not in FINAL_RESULTS state');
-  }
-  console.log('hello');
-
-  return getFinalScoreSummary(session);
-}
-
-function adminQuizQuestionResults(playerid: number, questionPosition: number): QuestionResultsReturn {
-  const data = getData();
-
-  // Double for loop, to iterate through two arrays.
-
-  let session: quizState | undefined;
-  let findPlayer: Player;
-  for (const sessions of data.quizActiveState) {
-    for (const player of sessions.players) {
-      if (player.playerId === playerid) {
-        findPlayer = player;
-        session = sessions;
-      }
-    }
-  }
-
-  //Error Checks
-  if (session === undefined) {
-    throw HTTPError(400, 'player ID does not exist');
-  }
-
-  if (session.state !== States.ANSWER_SHOW) {
-    throw HTTPError(400, 'Session is not in ANSWER_SHOW state');
-  }
-  if (questionPosition > session.metadata.numQuestions) {
-    throw HTTPError(400, 'question position is not valid for the session this player is in');
-  }
-
-  if (questionPosition !== session.atQuestion) {
-    throw HTTPError(400, 'session is not yet up to this question');
-  }
-
-  return getQuestionResults(session, questionPosition);
-}
-function adminQuizCompletedQuizResults(quizId: number, sessionId: number, token: string) {
-  const data = getData();
-
-  // Double for loop, to iterate through two arrays.
-
-  let session: quizState | undefined;
-  for (const sessions of data.quizActiveState) {
-    if (sessions.sessionId === sessionId) {
-      session = sessions;
-    }
-  }
-
-  //Error Checks
-  if (session === undefined) {
-    throw HTTPError(400, 'Session does not exist');
-  }
-
-  if (session.state !== States.FINAL_RESULTS) {
-    throw HTTPError(400, 'Session is not in FINAL_RESULTS state');
-  }
-
-  const searchToken = data.sessions.find(session => session.token === token);
-  if (!searchToken) {
-    throw HTTPError(401, 'Token is empty or invalid');
-  }
-
-  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
-  console.log(findQuiz, data, quizId);
-  if (!findQuiz) {
-    throw HTTPError(403, 'Quiz ID does not refer to a valid quiz');
-  }
-  if (findQuiz.authUserId !== searchToken.userId) {
-    throw HTTPError(403, 'User does not own this quiz.');
-  }
-
-  return getFinalScoreSummary(session);
-}
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1069,66 +1064,6 @@ function generateRandomName() {
   name += shuffledNumbers.slice(0, 3).join('');
 
   return name;
-}
-
-function getFinalScoreSummary(session: quizState) {
-  // Calculating Scores for Each Player
-  let usersRankedByScore = [];
-  console.log(session.players);
-  for (const player of session.players) {
-    let score = 0;
-    for (const questionResult of player.questions) {
-      if (questionResult.isCorrect === true) {
-        score++;
-      }
-    }
-    usersRankedByScore.push({
-      name: player.name,
-      score: score,
-    });
-    console.log(player.name, score);
-  }
-  //Sorting the Users by Score In Descending Order
-  console.log("USER RANKED NBY SCORE", usersRankedByScore);
-  usersRankedByScore.sort((a, b) => {
-    return b.score - a.score;
-  })
-  console.log("USER RANKED NBY SCORE", usersRankedByScore);
-
-  // Pushing on the QuestionResults for each Question.
-  let questionResults = [];
-  for (let i = 0; i < session.metadata.numQuestions; i++) {
-    questionResults.push(getQuestionResults(session, i + 1));
-  }
-
-  return {
-    usersRankedByScore: usersRankedByScore,
-    questionResults: questionResults,
-  }
-}
-
-function getQuestionResults(session: quizState, questionPosition: number): QuestionResultsReturn {
-  let playersCorrectList = [];
-  let averageAnswerTime = 0;
-
-  //Pushing People onto the Array Who got the Question Right and tracking response time
-  for (let player of session.players) {
-    if (player.questions[questionPosition - 1].isCorrect === true) {
-      playersCorrectList.push(player.name);
-    }
-    averageAnswerTime += player.questions[questionPosition - 1].timeTaken;
-  }
-
-  //Calculating Average and Correct Percentage
-  averageAnswerTime = Math.round(averageAnswerTime / session.players.length);
-  let percentageCorrect = Math.round((playersCorrectList.length / session.players.length) * 100);
-
-  return {
-    questionId: session.metadata.questions[questionPosition - 1].questionId,
-    playersCorrectList: playersCorrectList,
-    averageAnswerTime: averageAnswerTime,
-    percentageCorrect: percentageCorrect,
-  }
 }
 
 function quizWaitThreeHelper (session: quizState) {
@@ -1282,6 +1217,62 @@ function isValidThumbnailUrlStarting(thumbnailUrl: string) {
   return validPrefix.test(thumbnailUrl);
 }
 
+function getQuestionResults(session: quizState, questionPosition: number): QuestionResultsReturn {
+  let playersCorrectList = [];
+  let averageAnswerTime = 0;
+
+  //Pushing People onto the Array Who got the Question Right and tracking response time
+  for (let player of session.players) {
+    if (player.questions[questionPosition - 1].isCorrect === true) {
+      playersCorrectList.push(player.name);
+    }
+    averageAnswerTime += player.questions[questionPosition - 1].timeTaken;
+  }
+
+  //Calculating Average and Correct Percentage
+  averageAnswerTime = Math.round(averageAnswerTime / session.players.length);
+  let percentageCorrect = Math.round((playersCorrectList.length / session.players.length) * 100);
+
+  return {
+    questionId: session.metadata.questions[questionPosition - 1].questionId,
+    playersCorrectList: playersCorrectList,
+    averageAnswerTime: averageAnswerTime,
+    percentageCorrect: percentageCorrect,
+  }
+}
+
+function getFinalScoreSummary(session: number) {
+  // Calculating Scores for Each Player
+  let usersRankedByScore = [];
+  for (const player of session.players) {
+    let score = 0;
+    for (const questionResult of player.questions) {
+      if (questionResult.isCorrect === true) {
+        score++;
+      }
+    }
+    usersRankedByScore.push({
+      name: player.name,
+      score: score,
+    });
+  }
+  //Sorting the Users by Score In Descending Order
+  usersRankedByScore.sort((a, b) => {
+    return b.score - a.score;
+  })
+
+  // Pushing on the QuestionResults for each Question.
+  let questionResults = [];
+  for (let i = 0; i < session.metadata.numQuestions; i++) {
+    questionResults.push(getQuestionResults(session, i + 1));
+  }
+
+  return {
+    usersRankedByScore: usersRankedByScore,
+    questionResults: questionResults,
+  }
+}
+
 export {
   adminQuizSessionCreate,
   adminQuizSessionUpdate,
@@ -1297,11 +1288,14 @@ export {
   v2adminQuizQuestionDelete,
   adminQuizSessions,
   adminQuizGetSessionStatus,
-  adminQuizPlayerStatus,
-  adminQuizPlayerQuestionInformation,
-  adminQuizChat,
-  adminQuizChatSend,
   adminQuizQuestionResults,
   adminQuizFinalResults,
   adminQuizCompletedQuizResults,
+  adminQuizChat,
+  adminQuizChatSend,
+  adminQuizPlayerQuestionInformation,
+  adminQuizPlayerStatus,
 };
+
+
+
