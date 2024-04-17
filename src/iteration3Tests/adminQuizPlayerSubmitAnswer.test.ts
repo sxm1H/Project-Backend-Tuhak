@@ -16,7 +16,6 @@ import {
   Actions,
 } from '../interfaces';
 import HTTPError from 'http-errors';
-import { getData, counters } from '../dataStore';
 
 
 // Define the structure of each question and answer
@@ -60,9 +59,6 @@ interface MockData {
 let mockData: MockData = { quizActiveState: [] };
 
 
-
-
-
 // Function to set mock data state with proper typing
 function setMockDataState(newState: QuizState) {
   mockData.quizActiveState = [newState];
@@ -72,7 +68,6 @@ describe('adminQuizPlayerSubmitAnswer', () => {
   let playerid: number;
   let questionPosition: number;
   let answerIds: number[];
-  let token: string;
   let token1: string;
   let token2: string;
   let quizId: number;
