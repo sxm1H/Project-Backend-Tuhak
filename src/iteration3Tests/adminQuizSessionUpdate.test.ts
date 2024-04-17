@@ -135,23 +135,5 @@ describe('Testing PUT /v1/admin/quiz/{quizid}/session/{sessionid}', () => {
     let newToken =  adminAuthRegister('pog@gmail.com', 'pogggg1234', 'pog', 'pog').token;
     expect(() => adminQuizSessionUpdate(newToken, quizId, sessionId, Actions.GO_TO_FINAL_RESULTS)).toThrow(HTTPError[403]);
   })
-  //////////////////////Testing invalid Actions for states//////////////////////////////////////
-  // test('Action cannot be applied: LOBBY', () => {
-  //   expect(() => adminQuizSessionUpdate(token, quizId, sessionId, Actions.GO_TO_FINAL_RESULTS)).toThrow(HTTPError[400]);
-  // });
-
-  // test('Action cannot be applied: QUESTION_COUNTDOWN', () => {
-  //   adminQuizSessionUpdate(token, quizId, sessionId, Actions.NEXT_QUESTION)
-  //   expect(() => adminQuizSessionUpdate(token, quizId, sessionId, Actions.GO_TO_FINAL_RESULTS)).toThrow(HTTPError[400]);
-  //   adminQuizSessionUpdate(token, quizId, sessionId, Actions.END);
-  // });
-
-  // test('Action cannot be applied: QUESTION_OPEN', () => {
-  //   adminQuizSessionUpdate(token, quizId, sessionId, Actions.NEXT_QUESTION);
-  //   adminQuizSessionUpdate(token, quizId, sessionId, Actions.SKIP_COUNTDOWN);
-  //   expect(() => adminQuizSessionUpdate(token, quizId, sessionId, Actions.GO_TO_FINAL_RESULTS)).toThrow(HTTPError[400]);
-  // });
-
-  // test('')
 });
   
