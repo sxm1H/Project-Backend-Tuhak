@@ -817,6 +817,124 @@ function adminQuizGetSessionStatus (quizId: number, sessionId: number, token: st
   }
 }
 
+function adminQuizPlayerStatus (playerid: number) {
+
+  const data = getData();
+
+  let session: quizState | undefined;
+  for (const sessions of data.quizActiveState) {
+    for (const players of sessions.players) {
+      if (players.playerId === playerid) {
+        session = sessions;
+      }
+    }
+  }
+
+  if (session === undefined) {
+    throw HTTPError(400, 'player ID does not exist');
+  }
+
+  return {
+    state: session.state,
+    numQuestions: session.metadata.numQuestions,
+    atQuestion: session.atQuestion,
+  }
+}
+
+function adminQuizPlayerQuestionInformation (playerid: number, questionposition: number) {
+  const data = getData();
+
+  let session: quizState | undefined;
+  for (const sessions of data.quizActiveState) {
+    for (const players of sessions.players) {
+      if (players.playerId === playerid) {
+        session = sessions;
+      }
+    }
+  }
+
+  if (session === undefined) {
+    throw HTTPError(400, 'player ID does not exist');
+  }
+
+  if (session.atQuestion === questionposition) {
+    throw HTTPError(400, 'session is not currently on this question');
+  }
+
+  if (questionposition > session.metadata.numQuestions) {
+    throw HTTPError(400, 'Question position not valid for the session');
+  }
+
+  if (session.state === States.LOBBY || sessionStorage.state === States.QUESTION_COUNTDOWN ||
+      session.state === States.END) {
+        throw HTTPError(400, 'Session is in LOBBY, QUESTION_COUNTDOWN, or END state');
+  }
+
+  return {
+    questionId: session.metadata.questions[questionposition - 1].questionId,
+    question: session.metadata.questions[questionposition - 1].question,
+    duration: session.metadata.questions[questionposition - 1].duration,
+    thumbnailUrl: session.metadata.questions[questionposition - 1].thumbnailUrl,
+    points: session.metadata.questions[questionposition - 1].points,
+    answers: session.metadata.questions[questionposition - 1].answers,
+  }
+}
+
+function adminQuizChat (playerid: number) {
+  const data = getData();
+
+  let session: quizState | undefined;
+  for (const sessions of data.quizActiveState) {
+    for (const players of sessions.players) {
+      if (players.playerId === playerid) {
+        session = sessions;
+      }
+    }
+  }
+
+  if (session === undefined) {
+    throw HTTPError(400, 'player ID does not exist');
+  }
+
+  return {
+    messages: session.messages,
+  }
+}
+
+function adminQuizChatSend (playerid: number, messageBody: string) {
+  const data = getData();
+
+  let session: quizState | undefined;
+  let name: string | undefined;
+  for (const sessions of data.quizActiveState) {
+    for (const players of sessions.players) {
+      if (players.playerId === playerid) {
+        session = sessions;
+        name = players.name;
+      }
+    }
+  }
+
+  if (session === undefined) {
+    throw HTTPError(400, 'player ID does not exist');
+  }
+
+  if (messageBody.length < 1 || messageBody.length > 100) {
+    throw HTTPError(400, ' message body is less than 1 character or more than 100 characters');
+  }
+
+  session.messages.push({
+    messageBody: messageBody,
+    playerId: playerid,
+    playerName: name,
+    timeSent: Math.floor(Date.now() / 1000),
+  })
+
+  return {}
+}
+
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////// HELPER FUNCTIONS //////////////////////////////////////////
@@ -995,4 +1113,8 @@ export {
   v2adminQuizQuestionDelete,
   adminQuizSessions,
   adminQuizGetSessionStatus,
+  adminQuizPlayerStatus,
+  adminQuizPlayerQuestionInformation,
+  adminQuizChat,
+  adminQuizChatSend,
 };

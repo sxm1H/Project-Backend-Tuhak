@@ -51,6 +51,10 @@ import {
   v2adminQuizQuestionDelete,
   adminQuizSessions,
   adminQuizGetSessionStatus,
+  adminQuizPlayerStatus,
+  adminQuizPlayerQuestionInformation,
+  adminQuizChat,
+  adminQuizChatSend,
 } from './v2quiz'
 
 // import {
@@ -567,6 +571,39 @@ app.get('/v1/admin/quiz/:quizid/sessions/:sessionid', (req: Request, res: Respon
   res.json(response);
 });
 
+app.get('/v1/player/:playerid', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const response = adminQuizPlayerStatus(playerId);
+
+  save();
+  res.json(response);
+});
+
+app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const questionposition = parseInt(req.params.questionposition);
+  const response = adminQuizPlayerQuestionInformation(playerId, questionposition);
+
+  save();
+  res.json(response);
+});
+
+app.get('/v1/player/:playerid/chat', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const response = adminQuizChat(playerId);
+
+  save();
+  res.json(response);
+});
+
+app.post('/v1/player/:playerid/chat', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const { message } = req.body;
+  const response = adminQuizChatSend(playerId, message.messageBody);
+
+  save();
+  res.json(response);
+});
 
 
 // ====================================================================

@@ -182,6 +182,27 @@ const adminQuizGetSessionStatus = (quizid: number, sessionid: number, token: str
   return requestHelper('GET', `/v1/admin/quiz/${quizid}/sessions/${sessionid}`, { quizid, sessionid }, {token});
 }
 
+const adminQuizPlayerStatus = (playerid: number) => {
+  return requestHelper('GET', `/v1/player/${playerid}`, { playerid }, {});
+}
+
+const adminQuizPlayerQuestionInformation = (playerid: number, questionposition: number) => {
+  return requestHelper('GET', `/v1/player/${playerid}/question/${questionposition}`, { playerid, questionposition }, {});
+}
+
+const adminQuizChat = (playerid: number) => {
+  return requestHelper('GET', `/v1/player/${playerid}/chat`, { playerid }, {});
+}
+
+const adminQuizChatSend = (playerid: number, messageBody: string) => {
+
+  const message = {
+    messageBody: messageBody,
+  }
+
+  return requestHelper('POST', `/v1/player/${playerid}/chat`, { playerid, message }, {});
+}
+
 
 // ============================================================================================== //
 
@@ -212,4 +233,7 @@ export {
   adminQuizThumbnailUpdate,
   adminQuizSessions,
   adminQuizGetSessionStatus,
+  adminQuizPlayerStatus,
+  adminQuizPlayerQuestionInformation,
+  adminQuizChat,
 };
