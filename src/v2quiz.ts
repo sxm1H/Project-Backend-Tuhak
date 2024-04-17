@@ -860,6 +860,37 @@ function adminQuizQuestionResults(playerid: number, questionPosition: number): Q
   return getQuestionResults(session, questionPosition);
 }
 
+function adminQuizFinalResults(playerId: number) {
+  const data = getData();
+  console.log(playerId);
+
+  // Double for loop, to iterate through two arrays.
+
+  let session: quizState | undefined;
+  let findPlayer: Player;
+  for (const sessions of data.quizActiveState) {
+    for (const player of sessions.players) {
+      if (player.playerId === playerId) {
+        findPlayer = player;
+        session = sessions;
+      }
+    }
+  }
+  console.log(session, findPlayer);
+
+  //Error Checks
+  if (session === undefined) {
+    throw HTTPError(400, 'player ID does not exist');
+  }
+
+  if (session.state !== States.FINAL_RESULTS) {
+    throw HTTPError(400, 'Session is not in FINAL_RESULTS state');
+  }
+  console.log('hello');
+
+  return getFinalScoreSummary(session);
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////// HELPER FUNCTIONS //////////////////////////////////////////
@@ -1058,6 +1089,42 @@ function getQuestionResults(session: quizState, questionPosition: number): Quest
   }
 }
 
+function getFinalScoreSummary(session: number) {
+  // Calculating Scores for Each Player
+  let usersRankedByScore = [];
+  console.log(session.players);
+  for (const player of session.players) {
+    let score = 0;
+    for (const questionResult of player.questions) {
+      if (questionResult.isCorrect === true) {
+        score++;
+      }
+    }
+    usersRankedByScore.push({
+      name: player.name,
+      score: score,
+    });
+    console.log(player.name, score);
+  }
+  //Sorting the Users by Score In Descending Order
+  console.log("USER RANKED NBY SCORE", usersRankedByScore);
+  usersRankedByScore.sort((a, b) => {
+    return b.score - a.score;
+  })
+  console.log("USER RANKED NBY SCORE", usersRankedByScore);
+
+  // Pushing on the QuestionResults for each Question.
+  let questionResults = [];
+  for (let i = 0; i < session.metadata.numQuestions; i++) {
+    questionResults.push(getQuestionResults(session, i + 1));
+  }
+
+  return {
+    usersRankedByScore: usersRankedByScore,
+    questionResults: questionResults,
+  }
+}
+
 export {
   adminQuizSessionCreate,
   adminQuizSessionUpdate,
@@ -1074,4 +1141,5 @@ export {
   adminQuizSessions,
   adminQuizGetSessionStatus,
   adminQuizQuestionResults,
+  adminQuizFinalResults,
 };
