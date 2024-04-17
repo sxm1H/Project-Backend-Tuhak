@@ -190,6 +190,10 @@ const adminQuizFinalResults = (playerid: number) => {
   return requestHelper('GET', `/v1/player/${playerid}/results`, {}, {});
 }
 
+const adminQuizCompletedQuizResults = (quizid: number, sessionid: number, token: string) => {
+  return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}/results`, { }, { token });
+}
+
 
 // ============================================================================================== //
 
@@ -221,5 +225,6 @@ export {
   adminQuizSessions,
   adminQuizGetSessionStatus,
   adminQuizQuestionResults,
-  adminQuizFinalResults
+  adminQuizFinalResults,
+  adminQuizCompletedQuizResults
 };
