@@ -179,7 +179,7 @@ const adminQuizSessions = (quizid: number, token: string) => {
 }
 
 const adminQuizGetSessionStatus = (quizid: number, sessionid: number, token: string) => {
-  return requestHelper('GET', `/v1/admin/quiz/${quizid}/sessions/${sessionid}`, { quizid, sessionid }, {token});
+  return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}`, { quizid, sessionid }, {token});
 }
 
 const adminQuizPlayerStatus = (playerid: number) => {
@@ -236,4 +236,5 @@ export {
   adminQuizPlayerStatus,
   adminQuizPlayerQuestionInformation,
   adminQuizChat,
+  adminQuizChatSend,
 };

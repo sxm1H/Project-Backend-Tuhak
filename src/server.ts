@@ -375,7 +375,13 @@ app.delete('/v2/admin/quiz/:quizId', (req: Request, res: Response) => {
   res.json(result);
 });
 
+app.get('/v2/admin/quiz/trash', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const response = adminQuizTrashView(token);
 
+  save();
+  res.json(response);
+});
 
 app.get('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
@@ -401,14 +407,6 @@ app.put('/v2/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const { description } = req.body;
   const response = adminQuizDescriptionUpdate(token, quizId, description);
-
-  save();
-  res.json(response);
-});
-
-app.get('/v2/admin/quiz/trash', (req: Request, res: Response) => {
-  const token = req.headers.token as string;
-  const response = adminQuizTrashView(token);
 
   save();
   res.json(response);
@@ -561,7 +559,7 @@ app.get('/v1/admin/quiz/:quizid/sessions', (req: Request, res: Response) => {
   res.json(response);
 });
 
-app.get('/v1/admin/quiz/:quizid/sessions/:sessionid', (req: Request, res: Response) => {
+app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const quizId = parseInt(req.params.quizid);
   const sessionId = parseInt(req.params.sessionid);

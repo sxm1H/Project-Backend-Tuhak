@@ -313,7 +313,7 @@ function adminQuizInfo(token: string, quizId: number): ErrorObject | QuizInfoRet
   if (!findToken) {
     throw HTTPError(401, 'Token is empty or invalid');
   } else if (!findQuiz) {
-    throw HTTPError(403, 'Quiz Id invalid.');
+    throw HTTPError(403, 'Quiz Id invalid. :(');
   }
 
   if (findToken.userId !== findQuiz.authUserId) {
@@ -657,7 +657,7 @@ function adminQuizTrashEmpty(token: string, quizIds: string): Record<string, nev
     const doesQuizExistInTrash = data.trash.find(quiz => quiz.quizId === userQuizIds);
     if (!doesQuizExistInQuizzes) {
       if (!doesQuizExistInTrash) {
-        throw HTTPError(403, 'QuizId Is Invalid');
+        throw HTTPError(403, 'QuizId Is Invalid :(');
       }
     }
   }
