@@ -862,7 +862,6 @@ function adminQuizQuestionResults(playerid: number, questionPosition: number): Q
 
 function adminQuizFinalResults(playerId: number) {
   const data = getData();
-  console.log(playerId);
 
   // Double for loop, to iterate through two arrays.
 
@@ -876,7 +875,6 @@ function adminQuizFinalResults(playerId: number) {
       }
     }
   }
-  console.log(session, findPlayer);
 
   //Error Checks
   if (session === undefined) {
@@ -886,10 +884,48 @@ function adminQuizFinalResults(playerId: number) {
   if (session.state !== States.FINAL_RESULTS) {
     throw HTTPError(400, 'Session is not in FINAL_RESULTS state');
   }
-  console.log('hello');
 
   return getFinalScoreSummary(session);
 }
+
+function adminQuizCompletedQuizResults(quizId: number, sessionId: number, token: string) {
+  const data = getData();
+
+  // Double for loop, to iterate through two arrays.
+
+  let session: quizState | undefined;
+  for (const sessions of data.quizActiveState) {
+    if (sessions.sessionId === sessionId) {
+      session = sessions;
+    }
+  }
+
+  //Error Checks
+  if (session === undefined) {
+    throw HTTPError(400, 'Session does not exist');
+  }
+
+  if (session.state !== States.FINAL_RESULTS) {
+    throw HTTPError(400, 'Session is not in FINAL_RESULTS state');
+  }
+
+  const searchToken = data.sessions.find(session => session.token === token);
+  if (!searchToken) {
+    throw HTTPError(401, 'Token is empty or invalid');
+  }
+
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  console.log(findQuiz, data, quizId);
+  if (!findQuiz) {
+    throw HTTPError(403, 'Quiz ID does not refer to a valid quiz');
+  }
+  if (findQuiz.authUserId !== searchToken.userId) {
+    throw HTTPError(403, 'User does not own this quiz.');
+  }
+
+  return getFinalScoreSummary(session);
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1092,7 +1128,6 @@ function getQuestionResults(session: quizState, questionPosition: number): Quest
 function getFinalScoreSummary(session: number) {
   // Calculating Scores for Each Player
   let usersRankedByScore = [];
-  console.log(session.players);
   for (const player of session.players) {
     let score = 0;
     for (const questionResult of player.questions) {
@@ -1104,14 +1139,11 @@ function getFinalScoreSummary(session: number) {
       name: player.name,
       score: score,
     });
-    console.log(player.name, score);
   }
   //Sorting the Users by Score In Descending Order
-  console.log("USER RANKED NBY SCORE", usersRankedByScore);
   usersRankedByScore.sort((a, b) => {
     return b.score - a.score;
   })
-  console.log("USER RANKED NBY SCORE", usersRankedByScore);
 
   // Pushing on the QuestionResults for each Question.
   let questionResults = [];
@@ -1142,4 +1174,5 @@ export {
   adminQuizGetSessionStatus,
   adminQuizQuestionResults,
   adminQuizFinalResults,
+  adminQuizCompletedQuizResults,
 };
