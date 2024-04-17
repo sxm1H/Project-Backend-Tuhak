@@ -1,10 +1,7 @@
 import {
     v2adminQuizCreate,
-    adminQuizSessions,
     adminQuizSessionCreate,
-    adminQuizSessionUpdate,
     v2adminQuizQuestionCreate,
-    v2adminQuizRemove,
     adminQuizPlayerStatus,
     adminQuizPlayerJoin,
   } from './v2testHelpers';
@@ -12,17 +9,12 @@ import {
     clear,
     adminAuthRegister
   } from '../iteration2Tests/testHelpers';
-  import {
-    States,
-    Actions,
-  } from '../interfaces';
   import HTTPError from 'http-errors';
   
   describe('adminQuizPlayerStatus', () => {
     let token: string;
     let thumbnailUrl: string;
     let quizId: number;
-    let action: string;
   
     beforeEach(() => {
       clear();
