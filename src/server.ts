@@ -51,6 +51,9 @@ import {
   v2adminQuizQuestionDelete,
   adminQuizSessions,
   adminQuizGetSessionStatus,
+  adminQuizQuestionResults,
+  adminQuizFinalResults,
+  adminQuizCompletedQuizResults,
 } from './v2quiz'
 
 // import {
@@ -566,6 +569,33 @@ app.get('/v1/admin/quiz/:quizid/sessions/:sessionid', (req: Request, res: Respon
   save();
   res.json(response);
 });
+
+app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const questionPosition = parseInt(req.params.questionposition);
+  const response = adminQuizQuestionResults(playerId, questionPosition);
+
+  save();
+  res.json(response);
+})
+
+app.get('/v1/player/:playerid/results', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const response = adminQuizFinalResults(playerId);
+
+  save();
+  res.json(response);
+})
+
+app.get('/v1/admin/quiz/:quizid/session/:sessionid/results', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const sessionId = parseInt(req.params.sessionid);
+  const token = req.headers.token as string;
+  const response = adminQuizCompletedQuizResults(quizId, sessionId, token);
+
+  save();
+  res.json(response);
+})
 
 
 
