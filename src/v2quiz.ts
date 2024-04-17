@@ -1009,11 +1009,43 @@ function adminQuizQuestionResults(playerid: number, questionPosition: number): Q
 
   return getQuestionResults(session, questionPosition);
 }
+function adminQuizCompletedQuizResults(quizId: number, sessionId: number, token: string) {
+  const data = getData();
 
+  // Double for loop, to iterate through two arrays.
 
+  let session: quizState | undefined;
+  for (const sessions of data.quizActiveState) {
+    if (sessions.sessionId === sessionId) {
+      session = sessions;
+    }
+  }
 
+  //Error Checks
+  if (session === undefined) {
+    throw HTTPError(400, 'Session does not exist');
+  }
 
+  if (session.state !== States.FINAL_RESULTS) {
+    throw HTTPError(400, 'Session is not in FINAL_RESULTS state');
+  }
 
+  const searchToken = data.sessions.find(session => session.token === token);
+  if (!searchToken) {
+    throw HTTPError(401, 'Token is empty or invalid');
+  }
+
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  console.log(findQuiz, data, quizId);
+  if (!findQuiz) {
+    throw HTTPError(403, 'Quiz ID does not refer to a valid quiz');
+  }
+  if (findQuiz.authUserId !== searchToken.userId) {
+    throw HTTPError(403, 'User does not own this quiz.');
+  }
+
+  return getFinalScoreSummary(session);
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1271,4 +1303,5 @@ export {
   adminQuizChatSend,
   adminQuizQuestionResults,
   adminQuizFinalResults,
+  adminQuizCompletedQuizResults,
 };
