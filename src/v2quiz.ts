@@ -212,68 +212,68 @@ function adminQuizSessionJoin(sessionId: number, name: string) {
 }
 
 function adminQuizPlayerSubmitAnswer (answerIds: number[], playerid: number, questionposition: number) {
-  // const data = getData();
+  const data = getData();
 
-  // // Double for loop, to iterate through two arrays.
+  // Double for loop, to iterate through two arrays.
 
-  // // session thingo might not work
+  // session thingo might not work
 
-  // let session: quizState | undefined;
-  // let findPlayer: Player;
-  // for (const sessions of data.quizActiveState) {
-  //   for (const players of sessions.players) {
-  //     if (players.playerId === playerid) {
-  //       findPlayer = players;
-  //       session = sessions;
-  //     }
-  //   }
-  // }
+  let session: quizState | undefined;
+  let findPlayer: Player;
+  for (const sessions of data.quizActiveState) {
+    for (const players of sessions.players) {
+      if (players.playerId === playerid) {
+        findPlayer = players;
+        session = sessions;
+      }
+    }
+  }
 
-  // if (session === undefined) {
-  //   throw HTTPError(400, 'player ID does not exist');
-  // }
+  if (session === undefined) {
+    throw HTTPError(400, 'player ID does not exist');
+  }
 
-  // if (session.state !== States.QUESTION_OPEN) {
-  //   throw HTTPError(400, 'Session is not in QUESTION_OPEN state');
-  // }
+  if (session.state !== States.QUESTION_OPEN) {
+    throw HTTPError(400, 'Session is not in QUESTION_OPEN state');
+  }
 
-  // if (questionposition > session.metadata.numQuestions) {
-  //   throw HTTPError(400, 'question position is not valid for the session this player is in');
-  // }
+  if (questionposition > session.metadata.numQuestions) {
+    throw HTTPError(400, 'question position is not valid for the session this player is in');
+  }
 
-  // if (questionposition !== session.atQuestion) {
-  //   throw HTTPError(400, 'session is not yet up to this question');
-  // }
+  if (questionposition !== session.atQuestion) {
+    throw HTTPError(400, 'session is not yet up to this question');
+  }
 
-  // if (answerIds.length < 1) {
-  //   throw HTTPError(400, 'Less than 1 answer ID was submitted');
-  // }
+  if (answerIds.length < 1) {
+    throw HTTPError(400, 'Less than 1 answer ID was submitted');
+  }
 
-  // const possibleAnswers = session.metadata.questions[session.atQuestion - 1].answers;
+  const possibleAnswers = session.metadata.questions[session.atQuestion - 1].answers;
   
-  // let counter = 0;
+  let counter = 0;
   
-  // for (const answer of answerIds) {
-  //   let findAnswer = possibleAnswers.find(answers => answers.answerId === answer);
-  //   if (!findAnswer) {
-  //     throw HTTPError(400, 'Answer IDs are not valid for this particular question');
-  //   }
-  //   if (findAnswer.correct === true) {
-  //     counter++;
-  //   }
-  // };
+  for (const answer of answerIds) {
+    let findAnswer = possibleAnswers.find(answers => answers.answerId === answer);
+    if (!findAnswer) {
+      throw HTTPError(400, 'Answer IDs are not valid for this particular question');
+    }
+    if (findAnswer.correct === true) {
+      counter++;
+    }
+  };
 
-  // const findQuestion = findPlayer.questions[questionposition - 1];
+  const findQuestion = findPlayer.questions[questionposition - 1];
 
-  // if (counter === answerIds.length) {
-  //   findQuestion.isCorrect === true;
-  // }
+  if (counter === answerIds.length) {
+    findQuestion.isCorrect === true;
+  }
 
-  // let timeEnd = Math.floor(Date.now() / 1000);
+  let timeEnd = Math.floor(Date.now() / 1000);
 
-  // findQuestion.timeEnd = timeEnd;
-  // findQuestion.timeTaken = timeEnd - findQuestion.timeStart;
-  // findQuestion.answers = answerIds;
+  findQuestion.timeEnd = timeEnd;
+  findQuestion.timeTaken = timeEnd - findQuestion.timeStart;
+  findQuestion.answers = answerIds;
 
   return {};
 }
