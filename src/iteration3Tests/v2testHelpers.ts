@@ -203,6 +203,14 @@ const adminQuizChatSend = (playerid: number, messageBody: string) => {
   return requestHelper('POST', `/v1/player/${playerid}/chat`, { playerid, message }, {});
 }
 
+const adminQuizQuestionResults = (playerid: number, questionposition: number) => {
+  return requestHelper('GET', `/v1/player/${playerid}/question/${questionposition}/results`, {}, {});
+}
+
+const adminQuizFinalResults = (playerid: number) => {
+  return requestHelper('GET', `/v1/player/${playerid}/results`, {}, {});
+}
+
 
 // ============================================================================================== //
 
@@ -237,4 +245,6 @@ export {
   adminQuizPlayerQuestionInformation,
   adminQuizChat,
   adminQuizChatSend,
+  adminQuizQuestionResults,
+  adminQuizFinalResults
 };

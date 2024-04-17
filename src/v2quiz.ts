@@ -11,6 +11,7 @@ import {
   QuizId,
   Question,
   newQuizInfoReturn,
+  QuestionResultsReturn,
 } from './interfaces';
 import HTTPError from 'http-errors';
 interface timeoutobj {
@@ -943,6 +944,76 @@ function adminQuizChatSend (playerid: number, messageBody: string) {
   return {}
 }
 
+function adminQuizFinalResults(playerId: number) {
+  const data = getData();
+  console.log(playerId);
+
+  // Double for loop, to iterate through two arrays.
+
+  let session: quizState | undefined;
+  let findPlayer: Player;
+  for (const sessions of data.quizActiveState) {
+    for (const player of sessions.players) {
+      if (player.playerId === playerId) {
+        findPlayer = player;
+        session = sessions;
+      }
+    }
+  }
+  console.log(session, findPlayer);
+
+  //Error Checks
+  if (session === undefined) {
+    throw HTTPError(400, 'player ID does not exist');
+  }
+
+  if (session.state !== States.FINAL_RESULTS) {
+    throw HTTPError(400, 'Session is not in FINAL_RESULTS state');
+  }
+  console.log('hello');
+
+  return getFinalScoreSummary(session);
+}
+
+function adminQuizQuestionResults(playerid: number, questionPosition: number): QuestionResultsReturn {
+  const data = getData();
+
+  // Double for loop, to iterate through two arrays.
+
+  let session: quizState | undefined;
+  let findPlayer: Player;
+  for (const sessions of data.quizActiveState) {
+    for (const player of sessions.players) {
+      if (player.playerId === playerid) {
+        findPlayer = player;
+        session = sessions;
+      }
+    }
+  }
+
+  //Error Checks
+  if (session === undefined) {
+    throw HTTPError(400, 'player ID does not exist');
+  }
+
+  if (session.state !== States.ANSWER_SHOW) {
+    throw HTTPError(400, 'Session is not in ANSWER_SHOW state');
+  }
+  if (questionPosition > session.metadata.numQuestions) {
+    throw HTTPError(400, 'question position is not valid for the session this player is in');
+  }
+
+  if (questionPosition !== session.atQuestion) {
+    throw HTTPError(400, 'session is not yet up to this question');
+  }
+
+  return getQuestionResults(session, questionPosition);
+}
+
+
+
+
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -966,6 +1037,66 @@ function generateRandomName() {
   name += shuffledNumbers.slice(0, 3).join('');
 
   return name;
+}
+
+function getFinalScoreSummary(session: quizState) {
+  // Calculating Scores for Each Player
+  let usersRankedByScore = [];
+  console.log(session.players);
+  for (const player of session.players) {
+    let score = 0;
+    for (const questionResult of player.questions) {
+      if (questionResult.isCorrect === true) {
+        score++;
+      }
+    }
+    usersRankedByScore.push({
+      name: player.name,
+      score: score,
+    });
+    console.log(player.name, score);
+  }
+  //Sorting the Users by Score In Descending Order
+  console.log("USER RANKED NBY SCORE", usersRankedByScore);
+  usersRankedByScore.sort((a, b) => {
+    return b.score - a.score;
+  })
+  console.log("USER RANKED NBY SCORE", usersRankedByScore);
+
+  // Pushing on the QuestionResults for each Question.
+  let questionResults = [];
+  for (let i = 0; i < session.metadata.numQuestions; i++) {
+    questionResults.push(getQuestionResults(session, i + 1));
+  }
+
+  return {
+    usersRankedByScore: usersRankedByScore,
+    questionResults: questionResults,
+  }
+}
+
+function getQuestionResults(session: quizState, questionPosition: number): QuestionResultsReturn {
+  let playersCorrectList = [];
+  let averageAnswerTime = 0;
+
+  //Pushing People onto the Array Who got the Question Right and tracking response time
+  for (let player of session.players) {
+    if (player.questions[questionPosition - 1].isCorrect === true) {
+      playersCorrectList.push(player.name);
+    }
+    averageAnswerTime += player.questions[questionPosition - 1].timeTaken;
+  }
+
+  //Calculating Average and Correct Percentage
+  averageAnswerTime = Math.round(averageAnswerTime / session.players.length);
+  let percentageCorrect = Math.round((playersCorrectList.length / session.players.length) * 100);
+
+  return {
+    questionId: session.metadata.questions[questionPosition - 1].questionId,
+    playersCorrectList: playersCorrectList,
+    averageAnswerTime: averageAnswerTime,
+    percentageCorrect: percentageCorrect,
+  }
 }
 
 function quizWaitThreeHelper (session: quizState) {
@@ -1138,4 +1269,6 @@ export {
   adminQuizPlayerQuestionInformation,
   adminQuizChat,
   adminQuizChatSend,
+  adminQuizQuestionResults,
+  adminQuizFinalResults,
 };

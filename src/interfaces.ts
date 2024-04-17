@@ -155,6 +155,13 @@ interface QuizInfoReturn {
   duration: number;
 }
 
+interface QuestionResultsReturn {
+  questionId: number;
+  playersCorrectList: string[];
+  averageAnswerTime: number;
+  percentageCorrect: number;
+}
+
 interface newQuizInfoReturn {
   quizId: number;
   name: string;
@@ -226,4 +233,5 @@ export {
   quizState,
   Player,
   newQuizInfoReturn,
+  QuestionResultsReturn,
 };

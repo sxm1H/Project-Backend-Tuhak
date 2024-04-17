@@ -55,6 +55,8 @@ import {
   adminQuizPlayerQuestionInformation,
   adminQuizChat,
   adminQuizChatSend,
+  adminQuizQuestionResults,
+  adminQuizFinalResults,
 } from './v2quiz'
 
 // import {
@@ -602,6 +604,23 @@ app.post('/v1/player/:playerid/chat', (req: Request, res: Response) => {
   save();
   res.json(response);
 });
+app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const questionPosition = parseInt(req.params.questionposition);
+  const response = adminQuizQuestionResults(playerId, questionPosition);
+
+  save();
+  res.json(response);
+})
+
+app.get('/v1/player/:playerid/results', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const response = adminQuizFinalResults(playerId);
+
+  save();
+  res.json(response);
+})
+
 
 
 // ====================================================================
