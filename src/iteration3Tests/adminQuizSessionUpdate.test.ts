@@ -70,7 +70,7 @@ describe('Testing PUT /v1/admin/quiz/{quizid}/session/{sessionid}', () => {
     adminQuizSessionUpdate(token, quizId, sessionId, Actions.SKIP_COUNTDOWN);
     expect(() => adminQuizSessionUpdate(token, quizId, sessionId, Actions.GO_TO_FINAL_RESULTS)).toThrow(HTTPError[400]);
     expect(adminQuizSessionUpdate(token, quizId, sessionId, Actions.END)).toStrictEqual({});
-  })
+  });
   
   test('Testing QUESTION_CLOSE goes to END', () => {
     adminQuizSessionUpdate(token, quizId, sessionId, Actions.NEXT_QUESTION);
@@ -78,7 +78,7 @@ describe('Testing PUT /v1/admin/quiz/{quizid}/session/{sessionid}', () => {
     sleepSync(1.25*1000);
     expect(() => adminQuizSessionUpdate(token, quizId, sessionId, Actions.SKIP_COUNTDOWN)).toThrow(HTTPError[400]);
     expect(adminQuizSessionUpdate(token, quizId, sessionId, Actions.END)).toStrictEqual({});
-  })
+  });
 
   test('Testing FINAL_RESULTS goes to END', () => {
     adminQuizSessionUpdate(token, quizId, sessionId, Actions.NEXT_QUESTION);
@@ -89,7 +89,7 @@ describe('Testing PUT /v1/admin/quiz/{quizid}/session/{sessionid}', () => {
     expect(adminQuizSessionUpdate(token, quizId, sessionId, Actions.END)).toStrictEqual({});
   });
 
-  test('Testing goes to ANSWER_SHOW goes to END', () => {
+  test('Testing QUESTION_OPEN goes to ANSWER_SHOW goes to END', () => {
     adminQuizSessionUpdate(token, quizId, sessionId, Actions.NEXT_QUESTION);
     adminQuizSessionUpdate(token, quizId, sessionId, Actions.SKIP_COUNTDOWN);
     expect(adminQuizSessionUpdate(token, quizId, sessionId, Actions.GO_TO_ANSWER)).toStrictEqual({});
@@ -125,15 +125,15 @@ describe('Testing PUT /v1/admin/quiz/{quizid}/session/{sessionid}', () => {
 
   test('Token is empty or invalid', () => {
     expect(() => adminQuizSessionUpdate(token + '1', quizId, sessionId, Actions.END)).toThrow(HTTPError[401]);
-  });
+  });;
 
   test('QuizId is not valid', () => {
     expect(() => adminQuizSessionUpdate(token, quizId+1, sessionId, Actions.GO_TO_FINAL_RESULTS)).toThrow(HTTPError[403]);
-  })
+  });
 
   test('User does not own quiz', () => {
     let newToken =  adminAuthRegister('pog@gmail.com', 'pogggg1234', 'pog', 'pog').token;
     expect(() => adminQuizSessionUpdate(newToken, quizId, sessionId, Actions.GO_TO_FINAL_RESULTS)).toThrow(HTTPError[403]);
-  })
+  });
 });
   
