@@ -1,46 +1,68 @@
-// import {
-//     adminQuizCreate,
-//     adminQuizSessionStart,
-//     //v2adminQuizRemove,
-//   } from './v2testHelpers';
-//   import {
-//     clear,
-//     adminAuthRegister
-//   } from '../iteration2Tests/testHelpers';
-//   import HTTPError from 'http-errors';
+import {
+    adminQuizPlayerSubmitAnswer,
+    v2adminQuizCreate,
+    v2adminQuizQuestionCreate,
+    adminQuizSessionCreate,
+    adminQuizPlayerJoin,
+    adminQuizSessionUpdate,
+    v2adminQuizInfo
+  } from './v2testHelpers';
+  import {
+    clear,
+    adminAuthRegister
+  } from '../iteration2Tests/testHelpers';
+  import HTTPError from 'http-errors';
 
-  
-//   let token: string;
-//   let quizId: number;
-//   beforeEach(() => {
-//     clear();
-  
-//     token = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian').token;
-//     quizId = adminQuizCreate(token, 'QuizName', 'QuizDescription').quizId;
-//   });
-  
-//     describe('adminQuizSessionStart', () => {
-//     test('Successful test case', () => {
-//       expect(adminQuizSessionStart(token, quizId, 3)).toStrictEqual({});
-//     });
-  
-//     test('autoStartNum being greater than 50', () => {
-//       expect(() => adminQuizSessionStart(token, quizId, 51)).toThrow(HTTPError[400]);
-//     });
-  
-//     // adminQuizRemove currently being worked on.
-//     // test('Quiz ID does not refer to a valid quiz.', () => {
-//     //   adminQuizRemove(token, quizId);
-//     //   expect(() => adminQuizSessionStart(token, quizId, 3)).toThrow(HTTPError[400]);
-//     // });
 
-//     // Need to make another one that uses question create, since quiz does not have any questions
-//     // error
-  
+  let token1: string;
+  let token2: string;
+  let quizId: number;
+  let action: string;
+  let questionId: number;
+  let thumbnailUrl = 'https://www.unsw.edu.au/content/dam/images/photos/events/open-day/2020-12-homepage-update/OpenDay_2019_campaign%20-0307-crop.cropimg.width=1920.crop=square.jpg';
 
-//   });
 
-test('temp', () => {
-    expect(2 + 2).toBe(4);
-});
-  
+    
+  describe('adminQuizSessionJoin', () => {
+    beforeEach(() => {
+      clear();
+
+      questionId = 1;
+      token1 = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian').token;
+      token2 = adminAuthRegister('name@gmail.com', 'abcd1234', 'name', 'lastname').token;
+      quizId = v2adminQuizCreate(token1, 'QuizName', 'QuizDescription').quizId;
+      questionId = v2adminQuizQuestionCreate(quizId, token1, 'question1', 5, 4, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }], thumbnailUrl).questionId;
+    });
+    test('Valid join to session', () => {
+      const sessionId = adminQuizSessionCreate(token1, quizId,  0).sessionId;;
+      const result = adminQuizPlayerJoin(sessionId, 'Dilhan').playerId;
+      expect(result).toStrictEqual(expect.any(Number));
+    });
+    
+    test('Invalid session ID', () => {
+      const sessionId = 2187129231879;
+      
+      expect(() => adminQuizPlayerJoin(sessionId, 'Dilhan')).toThrow(HTTPError[400]);
+    });
+
+    test('Session not in lobby state', () => {
+      const sessionId = adminQuizSessionCreate(token1, quizId,  0).sessionId;
+      adminQuizSessionUpdate(token1,quizId,sessionId,'NEXT_QUESTION')
+      expect(() => adminQuizPlayerJoin(sessionId, 'Dilhan')).toThrow(HTTPError[400]);
+      
+    });
+    test('Duplicate player name in the session', () => {
+      const sessionId = adminQuizSessionCreate(token1, quizId,  0).sessionId;;
+      adminQuizPlayerJoin(sessionId, 'Dilhan').playerId;
+      
+      expect(() => adminQuizPlayerJoin(sessionId, 'Dilhan')).toThrow(HTTPError[400]);
+      
+    });
+    test('Empty name generates a random name', () => {
+      const sessionId = adminQuizSessionCreate(token1, quizId, 0).sessionId;
+      const emptyName = '';
+      const result = adminQuizPlayerJoin(sessionId, emptyName).playerId;
+      expect(result).toStrictEqual(expect.any(Number));
+    });
+  });
+
