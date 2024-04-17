@@ -182,6 +182,10 @@ const adminQuizGetSessionStatus = (quizid: number, sessionid: number, token: str
   return requestHelper('GET', `/v1/admin/quiz/${quizid}/sessions/${sessionid}`, { quizid, sessionid }, {token});
 }
 
+const adminQuizQuestionResults = (playerid: number, questionposition: number) => {
+  return requestHelper('GET', `/v1/player/${playerid}/question/${questionposition}/results`, {}, {});
+}
+
 
 // ============================================================================================== //
 
@@ -212,4 +216,5 @@ export {
   adminQuizThumbnailUpdate,
   adminQuizSessions,
   adminQuizGetSessionStatus,
+  adminQuizQuestionResults,
 };
