@@ -251,6 +251,13 @@ function adminQuizPlayerSubmitAnswer (answerIds: number[], playerid: number, que
 
   const possibleAnswers = session.metadata.questions[session.atQuestion - 1].answers;
   
+  let actualAnswerCounter = 0;
+  for (const actualAnswers of possibleAnswers) {
+    if (actualAnswers.correct === true) {
+      actualAnswerCounter++;
+    }
+  }
+
   let counter = 0;
   for (const answer of answerIds) {
     let findAnswer = possibleAnswers.find(answers => answers.answerId === answer);
@@ -263,7 +270,7 @@ function adminQuizPlayerSubmitAnswer (answerIds: number[], playerid: number, que
   };
 
   const findQuestion = findPlayer.questions[questionposition - 1];
-  if (counter === answerIds.length) {
+  if (counter === actualAnswerCounter) {
     findQuestion.isCorrect = true;
   }
 
