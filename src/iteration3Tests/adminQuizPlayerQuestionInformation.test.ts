@@ -55,7 +55,7 @@ import {
     test('Player ID Does not exist', () => {
 
 
-      expect(() => adminQuizPlayerQuestionInformation(1234, 1)).toThrow(HTTPError[400]);
+      expect(() => adminQuizPlayerQuestionInformation(1234 + playerId, 1)).toThrow(HTTPError[400]);
     });
 
     test('question position is invalid (more than questions in quiz)', () => {
