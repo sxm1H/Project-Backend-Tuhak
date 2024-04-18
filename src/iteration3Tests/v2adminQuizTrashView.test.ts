@@ -74,5 +74,5 @@ describe('Test GET /v1/admin/quiz/trash', () => {
 */
 
 test('1+1', () => {
-  expect(1+1).toStrictEqual(2);
-})
+  expect(1 + 1).toStrictEqual(2);
+});

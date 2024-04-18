@@ -178,12 +178,6 @@ interface QuizId {
   quizId: number;
 }
 
-interface RequestHelperReturnType {
-  statusCode: number;
-  jsonBody?: Record<string, never>;
-  error?: string;
-}
-
 interface DuplicateQuestionReturn {
   newQuestionId: number;
 }
@@ -224,7 +218,6 @@ export {
   QuizListInfo,
   QuizInfoReturn,
   QuizId,
-  RequestHelperReturnType,
   QuizTrashReturnObject,
   QuestionId,
   DuplicateQuestionReturn,

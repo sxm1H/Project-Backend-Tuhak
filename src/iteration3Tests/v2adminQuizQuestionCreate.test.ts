@@ -8,7 +8,6 @@ import {
   v2adminQuizCreate,
 } from './v2testHelpers';
 
-
 import HTTPError from 'http-errors';
 let token: string;
 let quizId: number;
@@ -61,10 +60,10 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
   ])('Test Successful: Creating a Question with One or More Answers', (question, duration, points, answers) => {
     expect(v2adminQuizQuestionCreate(quizId, token, question, duration, points, answers, thumbnailUrl)).toStrictEqual({
 
-        questionId: expect.any(Number),
+      questionId: expect.any(Number),
 
+    });
   });
-});
   test.each([
     ['Q?', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]],
     ['Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }]],
@@ -121,7 +120,7 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
     const duration = 5;
     const points = 1;
     const answers = [{ answer: 'Sydney', correct: false }, { answer: 'Melbourne', correct: false }];
-    expect(() => v2adminQuizQuestionCreate(quizId, token, question, duration, points, answers,thumbnailUrl)).toThrow(HTTPError[400]);
+    expect(() => v2adminQuizQuestionCreate(quizId, token, question, duration, points, answers, thumbnailUrl)).toThrow(HTTPError[400]);
   });
 
   test('Test Unsuccessful: Quiz Duration Exceed 3 Minutes.', () => {
@@ -153,12 +152,12 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
   });
 
   test('Test Unsuccessful: Invalid Quiz Id', () => {
-    let question = 'Question1';
-    let points = 4;
-    let duration = 3;
-    let answers = [{answer: 'Sydney', correct: true}, {answer: 'NSW', correct: false}];
+    const question = 'Question1';
+    const points = 4;
+    const duration = 3;
+    const answers = [{ answer: 'Sydney', correct: true }, { answer: 'NSW', correct: false }];
     expect(() => v2adminQuizQuestionCreate(-1, token, question, duration, points, answers, thumbnailUrl)).toThrow(HTTPError[403]);
-  })
+  });
 
   test.each([
     ['What is the best city in Australia', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }], 'www.unsw.edu.au/content/dam/images/photos/events/open-day/2020-12-homepage-update/OpenDay_2019_campaign%20-0307-crop.cropimg.width=1920.crop=square.jpg'],
@@ -166,7 +165,5 @@ describe('Testing POST /v1/admin/quiz/:quizid/question', () => {
     ['What is the best city in Australia', 4, 5, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }], 'https://www.unsw.edu.au/content/dam/images/photos/events/open-day/2020-12-homepage-update/OpenDay_2019_campaign%20-0307-crop.cropimg.width=1920.crop=square'],
   ])('Test Successful: Creating a Question with One or More Answers', (question, duration, points, answers, thumbnailUrl) => {
     expect(() => v2adminQuizQuestionCreate(quizId, token, question, duration, points, answers, thumbnailUrl)).toThrow(HTTPError[400]);
-});
-
-  
+  });
 });

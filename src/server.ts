@@ -38,8 +38,8 @@ import {
 
 import {
   adminQuizPlayerSubmitAnswer,
-  adminQuizSessionCreate, 
-  adminQuizSessionJoin, 
+  adminQuizSessionCreate,
+  adminQuizSessionJoin,
   adminQuizSessionUpdate,
   adminQuizThumbnailUpdate,
   v2adminQuizCreate,
@@ -58,7 +58,7 @@ import {
   adminQuizQuestionResults,
   adminQuizFinalResults,
   adminQuizCompletedQuizResults,
-} from './v2quiz'
+} from './v2quiz';
 
 // import {
 //   v2adminUserDetails,
@@ -453,8 +453,6 @@ app.post('/v2/admin/quiz/:quizid/question', (req: Request, res: Response) => {
   res.json(response);
 });
 
-
-
 app.put('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const { questionBody } = req.body;
@@ -545,13 +543,13 @@ app.put('/v1/player/:playerid/question/:questionposition/answer', (req: Request,
 app.put('/v1/admin/quiz/:quizid/thumbnail', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const token = req.headers.token as string;
-  const {imgUrl} = req.body;
+  const { imgUrl } = req.body;
 
   const response = adminQuizThumbnailUpdate(quizId, token, imgUrl);
 
   save();
   res.json(response);
-})
+});
 
 app.get('/v1/admin/quiz/:quizid/sessions', (req: Request, res: Response) => {
   const token = req.headers.token as string;
@@ -612,7 +610,7 @@ app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request
 
   save();
   res.json(response);
-})
+});
 
 app.get('/v1/player/:playerid/results', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);
@@ -620,7 +618,7 @@ app.get('/v1/player/:playerid/results', (req: Request, res: Response) => {
 
   save();
   res.json(response);
-})
+});
 
 app.get('/v1/admin/quiz/:quizid/session/:sessionid/results', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
@@ -630,9 +628,7 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid/results', (req: Request, res:
 
   save();
   res.json(response);
-})
-
-
+});
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

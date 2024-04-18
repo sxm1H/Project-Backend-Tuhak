@@ -7,14 +7,11 @@ import {
   v2adminQuizInfo,
   v2adminQuizCreate,
 } from './v2testHelpers';
+import HTTPError from 'http-errors';
 
 let token: string;
 let quizId: number;
 let time: number;
-let thumbnailUrl: string;
-
-import HTTPError from 'http-errors';
-
 beforeEach(() => {
   clear();
 
@@ -25,7 +22,6 @@ beforeEach(() => {
 
 describe('Testing GET /v1/admin/quiz/:quizid', () => {
   test('Successfully retrieves info', () => {
-
     const info = v2adminQuizInfo(token, quizId);
 
     expect(info.timeCreated).toBeGreaterThanOrEqual(time);
@@ -34,15 +30,15 @@ describe('Testing GET /v1/admin/quiz/:quizid', () => {
     expect(info.timeLastEdited).toBeLessThanOrEqual(time + 2);
 
     expect(info).toStrictEqual({
-        quizId: expect.any(Number),
-        name: expect.any(String),
-        timeCreated: expect.any(Number),
-        timeLastEdited: expect.any(Number),
-        description: expect.any(String),
-        duration: expect.any(Number),
-        questions: [],
-        numQuestions: 0,
-        thumbnailUrl: expect.any(String),
+      quizId: expect.any(Number),
+      name: expect.any(String),
+      timeCreated: expect.any(Number),
+      timeLastEdited: expect.any(Number),
+      description: expect.any(String),
+      duration: expect.any(Number),
+      questions: [],
+      numQuestions: 0,
+      thumbnailUrl: expect.any(String),
     });
   });
 
