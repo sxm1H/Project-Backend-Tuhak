@@ -12,18 +12,8 @@ import {
   clear,
   adminAuthRegister,
 } from '../iteration2Tests/testHelpers';
-import {
-  States,
-  Answer,
- } from '../interfaces';
+import { Answer } from '../interfaces';
 import HTTPError from 'http-errors';
-
-function sleepSync(ms: number) {
-  const startTime = new Date().getTime();
-  while (new Date().getTime() - startTime < ms) {
-    // zzzZZ - comment needed so eslint doesn't complain
-  }
-}
 
 const thumbnailUrl = 'https://www.unsw.edu.au/content/dam/images/photos/events/open-day/2020-12-homepage-update/OpenDay_2019_campaign%20-0307-crop.cropimg.width=1920.crop=square.jpg';
 let playerId: number;
@@ -40,9 +30,9 @@ beforeEach(() => {
 
   v2adminQuizQuestionCreate(quizId, token, 'question1', 5, 4, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }], thumbnailUrl);
   v2adminQuizQuestionCreate(quizId, token, 'question1', 5, 4,
-    [{ answer: 'Adelaide', correct: true }, { answer: 'Perth', correct: false }, { answer: 'Canberra', correct: true }], 
+    [{ answer: 'Adelaide', correct: true }, { answer: 'Perth', correct: false }, { answer: 'Canberra', correct: true }],
     thumbnailUrl);
-    
+
   sessionId = adminQuizSessionCreate(token, quizId, 0).sessionId;
   playerId = adminQuizPlayerJoin(sessionId, 'Sami').playerId;
   answerId = v2adminQuizInfo(token, quizId).questions[0].answers;
@@ -53,8 +43,8 @@ beforeEach(() => {
 
 describe('adminQuizPlayerSubmitAnswer', () => {
   test('Correctly submits one answer', () => {
-    atQuestion = adminQuizGetSessionStatus(quizId, sessionId, token).atQuestion
-    
+    atQuestion = adminQuizGetSessionStatus(quizId, sessionId, token).atQuestion;
+
     expect(adminQuizPlayerSubmitAnswer(playerId, atQuestion, [answerId[0].answerId])).toStrictEqual({});
   });
 
@@ -62,12 +52,12 @@ describe('adminQuizPlayerSubmitAnswer', () => {
     adminQuizSessionUpdate(token, quizId, sessionId, 'GO_TO_ANSWER');
     adminQuizSessionUpdate(token, quizId, sessionId, 'NEXT_QUESTION');
     adminQuizSessionUpdate(token, quizId, sessionId, 'SKIP_COUNTDOWN');
-    
-    atQuestion = adminQuizGetSessionStatus(quizId, sessionId, token).atQuestion
+
+    atQuestion = adminQuizGetSessionStatus(quizId, sessionId, token).atQuestion;
     const answerId2 = v2adminQuizInfo(token, quizId).questions[atQuestion - 1].answers;
-    
+
     expect(adminQuizPlayerSubmitAnswer(playerId, atQuestion, [answerId2[0].answerId, answerId2[2].answerId])).toStrictEqual({});
-  })
+  });
 
   test('Invalid player ID', () => {
     expect(() => adminQuizPlayerSubmitAnswer(playerId + 1, atQuestion, [answerId[0].answerId])).toThrow(HTTPError[400]);

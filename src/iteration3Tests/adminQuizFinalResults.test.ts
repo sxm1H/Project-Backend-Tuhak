@@ -2,12 +2,11 @@ import {
   v2adminQuizCreate,
   v2adminQuizQuestionCreate,
   adminQuizSessionCreate,
-  adminQuizQuestionResults,
   adminQuizSessionUpdate,
   adminQuizPlayerJoin,
   adminQuizPlayerSubmitAnswer,
   v2adminQuizInfo,
-  adminQuizFinalResults,
+  adminQuizFinalResults
 } from './v2testHelpers';
 import {
   clear,
@@ -110,4 +109,3 @@ describe('Testing /v1/{playerid}/results', () => {
     expect(() => adminQuizFinalResults(playerId1)).toThrow(HTTPError[400]);
   });
 });
-
