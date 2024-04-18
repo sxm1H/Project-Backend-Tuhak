@@ -20,7 +20,6 @@ beforeEach(() => {
 
   token = adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo').token;
   quizId = v2adminQuizCreate(token, 'quiz1', 'lorem ipsum').quizId;
-
   time = Math.floor(Date.now() / 1000);
 });
 

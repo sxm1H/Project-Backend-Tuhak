@@ -8,16 +8,8 @@ import {
   clear,
   adminAuthRegister
 } from '../iteration2Tests/testHelpers';
-import {
-  Actions,
-} from '../interfaces';
-
+import { Actions } from '../interfaces';
 import HTTPError from 'http-errors';
-
-let token: string;
-let quizId: number;
-const validUrl = 'https://s3-eu-west-1.amazonaws.com/blog-ecotree/blog/0001/01/ad46dbb447cd0e9a6aeecd64cc2bd332b0cbcb79.jpeg';
-let sessionId: number;
 
 function sleepSync(ms: number) {
   const startTime = new Date().getTime();
@@ -26,12 +18,16 @@ function sleepSync(ms: number) {
   }
 }
 
+const thumbnailUrl = 'https://s3-eu-west-1.amazonaws.com/blog-ecotree/blog/0001/01/ad46dbb447cd0e9a6aeecd64cc2bd332b0cbcb79.jpeg';
+let token: string;
+let quizId: number;
+let sessionId: number;
 beforeEach(() => {
   clear();
 
   token = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian').token;
   quizId = v2adminQuizCreate(token, 'QuizName', 'QuizDescription').quizId;
-  v2adminQuizQuestionCreate(quizId, token, 'question1', 1, 4, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }], validUrl);
+  v2adminQuizQuestionCreate(quizId, token, 'question1', 1, 4, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }], thumbnailUrl);
   sessionId = adminQuizSessionCreate(token, quizId, 5).sessionId;
 });
 
@@ -46,7 +42,7 @@ describe('Testing PUT /v1/admin/quiz/{quizid}/session/{sessionid}', () => {
   test('Successful test case two sessions QUESTION_COUNTDOWN', () => {
     const newToken = adminAuthRegister('pog@gmail.com', 'pogggg1234', 'pog', 'pog').token;
     const newquizId = v2adminQuizCreate(newToken, 'jkldfjaf', 'djfaldkjfkd').quizId;
-    v2adminQuizQuestionCreate(newquizId, newToken, 'question1', 3, 4, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }], validUrl);
+    v2adminQuizQuestionCreate(newquizId, newToken, 'question1', 3, 4, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }], thumbnailUrl);
     const newSessionId = adminQuizSessionCreate(newToken, newquizId, 5).sessionId;
 
     expect(adminQuizSessionUpdate(token, quizId, sessionId, Actions.NEXT_QUESTION)).toStrictEqual({});
@@ -101,7 +97,7 @@ describe('Testing PUT /v1/admin/quiz/{quizid}/session/{sessionid}', () => {
   });
 
   test('Testing ANSWER_SHOW goes to QUESTION_COUNTDOWN', () => {
-    v2adminQuizQuestionCreate(quizId, token, 'question2', 5, 4, [{ answer: 'yep', correct: true }, { answer: 'nope', correct: false }], validUrl);
+    v2adminQuizQuestionCreate(quizId, token, 'question2', 5, 4, [{ answer: 'yep', correct: true }, { answer: 'nope', correct: false }], thumbnailUrl);
     adminQuizSessionUpdate(token, quizId, sessionId, Actions.NEXT_QUESTION);
     adminQuizSessionUpdate(token, quizId, sessionId, Actions.SKIP_COUNTDOWN);
     sleepSync(1.25 * 1000);

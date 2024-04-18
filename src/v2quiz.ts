@@ -26,7 +26,6 @@ interface timeoutobj {
 }
 const timeoutIds: timeoutobj[] = [];
 
-
 function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: string): ErrorObject | Record<string, never> {
   const data = getData();
 
@@ -1284,8 +1283,8 @@ function rankScorePlayers(session: quizState): Record<string, never> {
   const allplayers = session.players;
   const atQuestion = session.atQuestion - 1;
   const questionPoints = session.metadata.questions[atQuestion].points;
-  let rankedArray: Player[] = [];
-  let incorrectPlayers: Player[] = [];
+  const rankedArray: Player[] = [];
+  const incorrectPlayers: Player[] = [];
 
   let player: Player;
   for (player of allplayers) {
@@ -1300,8 +1299,8 @@ function rankScorePlayers(session: quizState): Record<string, never> {
   for (player of rankedArray) {
     const findPlayer = session.players.find(ids => ids.playerId === player.playerId);
     findPlayer.rank.push(rank);
-    findPlayer.scorePer.push(questionPoints * 1/rank);
-    findPlayer.score += questionPoints * 1/rank;
+    findPlayer.scorePer.push(questionPoints * 1 / rank);
+    findPlayer.score += questionPoints * 1 / rank;
     rank++;
   }
 
@@ -1311,7 +1310,7 @@ function rankScorePlayers(session: quizState): Record<string, never> {
     findPlayer.scorePer.push(0);
   }
 
-  return ;
+  return {};
 }
 
 export {

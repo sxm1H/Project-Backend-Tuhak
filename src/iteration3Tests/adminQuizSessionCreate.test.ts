@@ -13,16 +13,14 @@ import {
 import { States } from '../interfaces';
 import HTTPError from 'http-errors';
 
+const thumbnailUrl = 'https://www.unsw.edu.au/content/dam/images/photos/events/open-day/2020-12-homepage-update/OpenDay_2019_campaign%20-0307-crop.cropimg.width=1920.crop=square.jpg';
 let token: string;
-let thumbnailUrl: string;
 let quizId: number;
 beforeEach(() => {
   clear();
-  const user = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian');
-  token = user.token;
-  const quiz = v2adminQuizCreate(token, 'QuizName', 'QuizDescription');
-  quizId = quiz.quizId;
-  thumbnailUrl = 'https://www.unsw.edu.au/content/dam/images/photos/events/open-day/2020-12-homepage-update/OpenDay_2019_campaign%20-0307-crop.cropimg.width=1920.crop=square.jpg';
+
+  token = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian').token;
+  quizId = v2adminQuizCreate(token, 'QuizName', 'QuizDescription').quizId;
 });
 
 describe('adminQuizSessions', () => {

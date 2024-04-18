@@ -5,10 +5,9 @@ import {
 } from '../iteration2Tests/testHelpers';
 import HTTPError from 'http-errors';
 
+const thumbnailUrl = 'https://s3-eu-west-1.amazonaws.com/blog-ecotree/blog/0001/01/ad46dbb447cd0e9a6aeecd64cc2bd332b0cbcb79.jpeg';
 let token: string;
 let quizId: number;
-const validimgUrl = 'https://s3-eu-west-1.amazonaws.com/blog-ecotree/blog/0001/01/ad46dbb447cd0e9a6aeecd64cc2bd332b0cbcb79.jpeg';
-
 beforeEach(() => {
   clear();
 
@@ -18,11 +17,11 @@ beforeEach(() => {
 
 describe('Test PUT /v1/admin/quiz/{quizid}/thumbnail', () => {
   test('Valid img update', () => {
-    expect(adminQuizThumbnailUpdate(quizId, token, validimgUrl)).toStrictEqual({});
+    expect(adminQuizThumbnailUpdate(quizId, token, thumbnailUrl)).toStrictEqual({});
   });
 
   test('Token invalid', () => {
-    expect(() => adminQuizThumbnailUpdate(quizId, token + 1, validimgUrl)).toThrow(HTTPError[401]);
+    expect(() => adminQuizThumbnailUpdate(quizId, token + 1, thumbnailUrl)).toThrow(HTTPError[401]);
   });
 
   test.each([
@@ -40,11 +39,11 @@ describe('Test PUT /v1/admin/quiz/{quizid}/thumbnail', () => {
   });
 
   test('Quiz Id does not exist', () => {
-    expect(() => adminQuizThumbnailUpdate(quizId + 1, token, validimgUrl)).toThrow(HTTPError[403]);
+    expect(() => adminQuizThumbnailUpdate(quizId + 1, token, thumbnailUrl)).toThrow(HTTPError[403]);
   });
 
   test('User does not own quiz', () => {
     const newToken = adminAuthRegister('pog@gmail.com', 'pogggg1234', 'pog', 'pog').token;
-    expect(() => adminQuizThumbnailUpdate(quizId, newToken, validimgUrl)).toThrow(HTTPError[403]);
+    expect(() => adminQuizThumbnailUpdate(quizId, newToken, thumbnailUrl)).toThrow(HTTPError[403]);
   });
 });

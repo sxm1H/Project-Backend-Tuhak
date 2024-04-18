@@ -11,9 +11,9 @@ import {
 } from '../iteration2Tests/testHelpers';
 import HTTPError from 'http-errors';
 
+const thumbnailUrl = 'https://www.unsw.edu.au/content/dam/images/photos/events/open-day/2020-12-homepage-update/OpenDay_2019_campaign%20-0307-crop.cropimg.width=1920.crop=square.jpg';
 let token1: string;
 let quizId: number;
-const thumbnailUrl = 'https://www.unsw.edu.au/content/dam/images/photos/events/open-day/2020-12-homepage-update/OpenDay_2019_campaign%20-0307-crop.cropimg.width=1920.crop=square.jpg';
 beforeEach(() => {
   clear();
 

@@ -2,12 +2,11 @@ import {
   v2adminQuizCreate,
   v2adminQuizQuestionCreate,
   adminQuizSessionCreate,
-  adminQuizQuestionResults,
   adminQuizSessionUpdate,
   adminQuizPlayerJoin,
   adminQuizPlayerSubmitAnswer,
   v2adminQuizInfo,
-  adminQuizFinalResults,
+  adminQuizFinalResults
 } from './v2testHelpers';
 import {
   clear,
@@ -22,16 +21,15 @@ function sleepSync(ms: number) {
   }
 }
 
+const thumbnailUrl = 'https://www.unsw.edu.au/content/dam/images/photos/events/open-day/2020-12-homepage-update/OpenDay_2019_campaign%20-0307-crop.cropimg.width=1920.crop=square.jpg';
 let token1: string;
-let token2: string;
 let quizId: number;
 let questionId: number;
 let questionId2: number;
-const thumbnailUrl = 'https://www.unsw.edu.au/content/dam/images/photos/events/open-day/2020-12-homepage-update/OpenDay_2019_campaign%20-0307-crop.cropimg.width=1920.crop=square.jpg';
 beforeEach(() => {
   clear();
+
   token1 = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian').token;
-  token2 = adminAuthRegister('name@gmail.com', 'abcd1234', 'name', 'lastname').token;
   quizId = v2adminQuizCreate(token1, 'QuizName', 'QuizDescription').quizId;
   questionId = v2adminQuizQuestionCreate(quizId, token1, 'question1', 5, 4, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }], thumbnailUrl).questionId;
   questionId2 = v2adminQuizQuestionCreate(quizId, token1, 'question1', 5, 4, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }], thumbnailUrl).questionId;
@@ -111,4 +109,3 @@ describe('Testing /v1/{playerid}/results', () => {
     expect(() => adminQuizFinalResults(playerId1)).toThrow(HTTPError[400]);
   });
 });
-
