@@ -26,18 +26,6 @@ interface timeoutobj {
 }
 const timeoutIds: timeoutobj[] = [];
 
-// Helper function to check if the url is valid
-function validateImageUrl(imgUrl: string): boolean {
-  const allowedExtensions = ['.jpg', '.jpeg', '.png'];
-  const urlPrefixes = ['http://', 'https://'];
-
-  const isValidPrefix = urlPrefixes.some(prefix => imgUrl.toLowerCase().startsWith(prefix));
-  const urlExtension = imgUrl.substring(imgUrl.lastIndexOf('.')).toLowerCase();
-  const isValidExtension = allowedExtensions.includes(urlExtension);
-
-  return isValidPrefix && isValidExtension;
-}
-
 function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: string): ErrorObject | Record<string, never> {
   const data = getData();
 
@@ -54,7 +42,7 @@ function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: string)
     throw HTTPError(403, 'User does not own this quiz.');
   }
 
-  if (!validateImageUrl(imgUrl)) {
+  if (!isValidThumbnailUrlEnding(imgUrl) || !isValidThumbnailUrlStarting(imgUrl)) {
     throw HTTPError(400, 'Invalid image url');
   }
 
@@ -1269,15 +1257,9 @@ function getFinalScoreSummary(session: quizState): FinalScoreReturn {
   // Calculating Scores for Each Player
   const usersRankedByScore = [];
   for (const player of session.players) {
-    let score = 0;
-    for (const questionResult of player.questions) {
-      if (questionResult.isCorrect === true) {
-        score++;
-      }
-    }
     usersRankedByScore.push({
       name: player.name,
-      score: score,
+      score: player.score,
     });
   }
   // Sorting the Users by Score In Descending Order
@@ -1301,13 +1283,13 @@ function rankScorePlayers(session: quizState): Record<string, never> {
   const allplayers = session.players;
   const atQuestion = session.atQuestion - 1;
   const questionPoints = session.metadata.questions[atQuestion].points;
+  let rankedArray: Player[] = [];
+  let incorrectPlayers: Player[] = [];
 
-  const rankedArray: Player[] = [];
-  const losers: Player[] = [];
   let player: Player;
   for (player of allplayers) {
     if (player.questions[atQuestion].isCorrect === false) {
-      losers.push(player);
+      incorrectPlayers.push(player);
     } else {
       rankedArray.push(player);
     }
@@ -1315,19 +1297,20 @@ function rankScorePlayers(session: quizState): Record<string, never> {
   rankedArray.sort((a, b) => a.questions[atQuestion].timeTaken - b.questions[atQuestion].timeTaken);
   let rank = 1;
   for (player of rankedArray) {
-    const cool = session.players.find(ids => ids.playerId === player.playerId);
-    cool.rank.push(rank);
-    cool.scorePer.push(questionPoints * 1 / rank);
+    const findPlayer = session.players.find(ids => ids.playerId === player.playerId);
+    findPlayer.rank.push(rank);
+    findPlayer.scorePer.push(questionPoints * 1/rank);
+    findPlayer.score += questionPoints * 1/rank;
     rank++;
   }
 
-  for (player of losers) {
-    const notcool = session.players.find(ids => ids.playerId === player.playerId);
-    notcool.rank.push(rank);
-    notcool.scorePer.push(0);
+  for (player of incorrectPlayers) {
+    const findPlayer = session.players.find(ids => ids.playerId === player.playerId);
+    findPlayer.rank.push(rank);
+    findPlayer.scorePer.push(0);
   }
 
-  return {};
+  return ;
 }
 
 export {

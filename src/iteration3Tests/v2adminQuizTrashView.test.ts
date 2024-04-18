@@ -28,8 +28,8 @@ describe('Test GET /v1/admin/quiz/trash', () => {
     }
   ])('Successful Quiz Created', ({ name, description }) => {
     const quizId = v2adminQuizCreate(token, name, description).quizId;
-    console.log(v2adminQuizRemove(token, quizId));
-    // console.log(adminQuizTrashView(token));
+    v2adminQuizRemove(token, quizId)
+    
     expect(adminQuizTrashView(token)).toStrictEqual({
       quizzes: [
         {

@@ -49,7 +49,7 @@ describe('Testing /v1/admin/{quizid}/session/{sessionid}/results', () => {
     adminQuizSessionUpdate(token1, quizId, sessionId, 'GO_TO_FINAL_RESULTS');
 
     expect(adminQuizCompletedQuizResults(quizId, sessionId, token1)).toStrictEqual({
-      usersRankedByScore: [{ name: 'Sami', score: 1 }, { name: 'Dun Yao', score: 0 }],
+      usersRankedByScore: [{ name: 'Sami', score: 4 }, { name: 'Dun Yao', score: 0 }],
       questionResults: [
         {
           questionId: questionId,
