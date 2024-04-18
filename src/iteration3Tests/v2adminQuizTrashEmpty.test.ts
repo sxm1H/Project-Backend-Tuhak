@@ -92,7 +92,7 @@ describe('Testing DELETE /v1/admin/quiz/trash/empty', () => {
           quizId: quizId,
           name: 'quiz1'
         }
-        ]
+      ]
     });
 
     v2adminQuizRemove(token, quizId);

@@ -12,7 +12,7 @@ const requestHelper = (
   method: HttpVerb,
   path: string,
   payload: object = {}
-): any => {
+): Record<string, never> => {
   let qs = {};
   let json = {};
   if (['GET', 'DELETE'].includes(method)) {
@@ -23,20 +23,20 @@ const requestHelper = (
   }
   const res = request(method, SERVER_URL + path, { qs, json, timeout: TIMEOUT_MS });
 
-  let responseBody: any;
+  let responseBody: Record<string, never>;
   try {
     responseBody = JSON.parse(res.body.toString());
-  } catch (err: any) {
+  } catch (err) {
     if (res.statusCode === 200) {
       throw HTTPError(500,
         `Non-jsonifiable body despite code 200: '${res.body}'.\n
         Check that you are not doing res.json(undefined) instead of res.json({}), e.g. in '/clear'`
       );
     }
-    responseBody = { error: `Failed to parse JSON: '${err.message}'` };
+    responseBody = JSON.parse(`Failed to parse JSON: '${err.message}'`);
   }
 
-  const errorMessage = `[${res.statusCode}] ` + responseBody?.error || responseBody || 'No message specified!';
+  const errorMessage = `[${res.statusCode}] ` + responseBody.error || 'No message specified!';
 
   // NOTE: the error is rethrown in the test below. This is useful becasuse the
   // test suite will halt (stop) if there's an error, rather than carry on and

@@ -25,11 +25,11 @@ describe('Testing PUT /v1/admin/quiz/{quizid}/question/{questionid}/move', () =>
   test('Successful question move', () => {
     const questionId = v2adminQuizQuestionCreate(quizId, token, 'cool question', 5, 5, [{ answer: 'Correct', correct: true }, { answer: 'Wrong', correct: false }], thumbnailUrl).questionId;
     v2adminQuizQuestionCreate(quizId, token, 'cool question', 5, 5, [{ answer: 'Correct', correct: true }, { answer: 'Wrong', correct: false }], thumbnailUrl);
-    expect(adminQuizQuestionMove(quizId, questionId, token, 1)).toStrictEqual({})
+    expect(adminQuizQuestionMove(quizId, questionId, token, 1)).toStrictEqual({});
   });
 
   test('Question Id is does not refer to valid question', () => {
-    expect(() => adminQuizQuestionMove(quizId, 10, token, 1)).toThrow(HTTPError[400])
+    expect(() => adminQuizQuestionMove(quizId, 10, token, 1)).toThrow(HTTPError[400]);
   });
 
   test('New Position is less than 0', () => {

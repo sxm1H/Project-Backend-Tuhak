@@ -52,7 +52,7 @@ describe('Testing PUT v1/admin/quiz/:quizid/description', () => {
 
   test('Test Unsuccessful: Desc Too Long', () => {
     expect(() => adminQuizDescriptionUpdate(token, quizId,
-    'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem ')).toThrow(HTTPError[400]);
+      'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem ')).toThrow(HTTPError[400]);
   });
 
   test('Test Unsuccessful: Quiz Is Not Owned By User', () => {
@@ -60,6 +60,6 @@ describe('Testing PUT v1/admin/quiz/:quizid/description', () => {
     const token2 = adminAuthRegister('qwert.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh');
     const quizId1 = v2adminQuizCreate(token1.token, 'Australian Cities', 'lorem ipsum');
     expect(() => adminQuizDescriptionUpdate(token2.token, quizId1.quizId,
-    'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem ')).toThrow(HTTPError[403]);
+      'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem ')).toThrow(HTTPError[403]);
   });
 });
