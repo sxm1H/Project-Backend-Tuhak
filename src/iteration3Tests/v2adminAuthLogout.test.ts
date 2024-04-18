@@ -9,7 +9,6 @@ import {
   adminAuthRegister,
   adminAuthLogin
 } from '../iteration2Tests/testHelpers';
-
 import HTTPError from 'http-errors';
 
 let token: string;

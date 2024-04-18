@@ -8,8 +8,9 @@ import {
   clear,
   adminAuthRegister,
 } from '../iteration2Tests/testHelpers';
-
 import HTTPError from 'http-errors';
+
+const thumbnailUrl = 'https://www.unsw.edu.au/content/dam/images/photos/events/open-day/2020-12-homepage-update/OpenDay_2019_campaign%20-0307-crop.cropimg.width=1920.crop=square.jpg';
 let token: string;
 let quizId: number;
 let questionId: number;
@@ -18,8 +19,7 @@ beforeEach(() => {
 
   token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').token;
   quizId = v2adminQuizCreate(token, 'Australian Cities', 'lorem ipsum').quizId;
-  questionId = v2adminQuizQuestionCreate(quizId, token, 'Question1', 5, 5, [{ answer: 'Melb', correct: true }, { answer: 'Syd', correct: false }],
-    'https://www.unsw.edu.au/content/dam/images/photos/events/open-day/2020-12-homepage-update/OpenDay_2019_campaign%20-0307-crop.cropimg.width=1920.crop=square.jpg').questionId;
+  questionId = v2adminQuizQuestionCreate(quizId, token, 'Question1', 5, 5, [{ answer: 'Melb', correct: true }, { answer: 'Syd', correct: false }], thumbnailUrl).questionId;
 });
 
 describe('Testing DELETE /v1/admin/quiz/:quizid/question/:questionid', () => {

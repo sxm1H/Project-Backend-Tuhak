@@ -46,7 +46,6 @@ function adminAuthRegister(email: string, password: string, nameFirst: string, n
     throw HTTPError(400, 'Password must have at least one number and one letter.');
   }
 
-
   // Generation of authUserId and token
   const id = data.user.length + 1;
   // counters.sessionIdCounter++;
@@ -337,14 +336,14 @@ function getHash(string: string) {
 }
 
 function getRandomToken() {
-  let data = getData();
-  let token = Math.floor(Math.random()*100000).toString();
+  const data = getData();
+  const token = Math.floor(Math.random() * 100000).toString();
 
-  let found = data.sessions.find(id => id.token === token)
+  const found = data.sessions.find(id => id.token === token);
 
   if (found) {
     getRandomToken();
-  } 
+  }
 
   return token;
 }

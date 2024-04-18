@@ -1,4 +1,3 @@
-/*
 import {
   clear,
   adminAuthRegister,
@@ -28,9 +27,9 @@ describe('Test GET /v1/admin/quiz/trash', () => {
       description: ''
     }
   ])('Successful Quiz Created', ({ name, description }) => {
-    const quizId = v2adminQuizCreate(token, name, description).quizId
+    const quizId = v2adminQuizCreate(token, name, description).quizId;
     console.log(v2adminQuizRemove(token, quizId));
-    //console.log(adminQuizTrashView(token));
+    // console.log(adminQuizTrashView(token));
     expect(adminQuizTrashView(token)).toStrictEqual({
       quizzes: [
         {
@@ -38,7 +37,7 @@ describe('Test GET /v1/admin/quiz/trash', () => {
           name: expect.any(String)
         }
       ]
-    })
+    });
   });
 
   test.each([
@@ -70,9 +69,4 @@ describe('Test GET /v1/admin/quiz/trash', () => {
     v2adminQuizRemove(token, quizId);
     expect(() => adminQuizTrashView(token + '1')).toThrow(HTTPError[401]);
   });
-});
-*/
-
-test('1+1', () => {
-  expect(1 + 1).toStrictEqual(2);
 });

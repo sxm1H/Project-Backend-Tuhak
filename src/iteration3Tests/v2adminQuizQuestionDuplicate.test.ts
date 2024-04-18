@@ -11,15 +11,14 @@ import {
 
 import HTTPError from 'http-errors';
 
+const thumbnailUrl = 'https://www.unsw.edu.au/content/dam/images/photos/events/open-day/2020-12-homepage-update/OpenDay_2019_campaign%20-0307-crop.cropimg.width=1920.crop=square.jpg';
 let token: string;
 let quizId: number;
-let thumbnailUrl: string;
 beforeEach(() => {
   clear();
 
   token = adminAuthRegister('abcd.efgh@gmail.com', 'abcd1234', 'abcd', 'efgh').token;
   quizId = v2adminQuizCreate(token, 'cool quiz', 'cool desc').quizId;
-  thumbnailUrl = 'https://www.unsw.edu.au/content/dam/images/photos/events/open-day/2020-12-homepage-update/OpenDay_2019_campaign%20-0307-crop.cropimg.width=1920.crop=square.jpg';
 });
 
 describe('Testing POST /v1/admin/quiz/:quizid/question/:questionid/duplicate', () => {

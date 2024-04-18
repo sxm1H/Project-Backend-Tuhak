@@ -12,9 +12,9 @@ import {
 } from './v2testHelpers';
 import HTTPError from 'http-errors';
 
+const thumbnail = 'https://www.unsw.edu.au/content/dam/images/photos/events/open-day/2020-12-homepage-update/OpenDay_2019_campaign%20-0307-crop.cropimg.width=1920.crop=square.jpg';
 let token: string;
 let quizId: number;
-const thumbnail = 'https://www.unsw.edu.au/content/dam/images/photos/events/open-day/2020-12-homepage-update/OpenDay_2019_campaign%20-0307-crop.cropimg.width=1920.crop=square.jpg';
 beforeEach(() => {
   clear();
 

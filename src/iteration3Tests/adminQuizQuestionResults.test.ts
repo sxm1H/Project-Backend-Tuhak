@@ -21,12 +21,13 @@ function sleepSync(ms: number) {
   }
 }
 
+const thumbnailUrl = 'https://www.unsw.edu.au/content/dam/images/photos/events/open-day/2020-12-homepage-update/OpenDay_2019_campaign%20-0307-crop.cropimg.width=1920.crop=square.jpg';
 let token1: string;
 let quizId: number;
 let questionId: number;
-const thumbnailUrl = 'https://www.unsw.edu.au/content/dam/images/photos/events/open-day/2020-12-homepage-update/OpenDay_2019_campaign%20-0307-crop.cropimg.width=1920.crop=square.jpg';
 beforeEach(() => {
   clear();
+
   token1 = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian').token;
   adminAuthRegister('name@gmail.com', 'abcd1234', 'name', 'lastname');
   quizId = v2adminQuizCreate(token1, 'QuizName', 'QuizDescription').quizId;
