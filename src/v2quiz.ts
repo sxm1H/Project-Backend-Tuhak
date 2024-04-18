@@ -2,9 +2,6 @@ import { Session } from 'inspector';
 import { getData, counters } from './dataStore';
 import {
   ErrorObject,
-  TokenReturn,
-  UserDetailsReturnObject,
-  UserData,
   States,
   Actions,
   quizState,
@@ -12,22 +9,24 @@ import {
   QuizId,
   Question,
   newQuizInfoReturn,
+  QuestionResultsReturn
 } from './interfaces';
 import HTTPError from 'http-errors';
 interface timeoutobj {
   sessionId: number;
   timeoutId: ReturnType<typeof setTimeout>;
 }
-let timeoutIds: timeoutobj[] = [];
+const timeoutIds: timeoutobj[] = [];
 
-//Helper function to check if the url is valid
-function validateImageUrl(imgUrl: string) :boolean{
+// Helper function to check if the url is valid
+function validateImageUrl(imgUrl: string): boolean {
   const allowedExtensions = ['.jpg', '.jpeg', '.png'];
   const urlPrefixes = ['http://', 'https://'];
 
   const isValidPrefix = urlPrefixes.some(prefix => imgUrl.toLowerCase().startsWith(prefix));
   const urlExtension = imgUrl.substring(imgUrl.lastIndexOf('.')).toLowerCase();
   const isValidExtension = allowedExtensions.includes(urlExtension);
+
   return isValidPrefix && isValidExtension;
 }
 
@@ -51,7 +50,6 @@ function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: string)
     throw HTTPError(400, 'Invalid image url');
   }
 
-  const date = Math.floor(Date.now() / 1000);
   findQuiz.thumbnailUrl = imgUrl;
   findQuiz.timeLastEdited = Math.floor(Date.now() / 1000);
 
@@ -59,7 +57,6 @@ function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: string)
 }
 
 function adminQuizSessionCreate(token: string, quizId: number, autoStartNum: number) {
-
   const data = getData();
   const findToken = data.sessions.find(ids => ids.token === token);
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
@@ -146,7 +143,7 @@ function adminQuizSessionUpdate(token: string, quizId: number, sessionId: number
   if (findSession.state === States.LOBBY) {
     if (action === Actions.NEXT_QUESTION) {
       findSession.state = States.QUESTION_COUNTDOWN;
-      let timeoutId = setTimeout(quizWaitThreeHelper, 3 * 1000, findSession);
+      const timeoutId = setTimeout(quizWaitThreeHelper, 3 * 1000, findSession);
       timeoutIds.push({
         sessionId: sessionId,
         timeoutId: timeoutId
@@ -253,7 +250,7 @@ function adminQuizPlayerSubmitAnswer (answerIds: number[], playerid: number, que
   }
 
   const possibleAnswers = session.metadata.questions[session.atQuestion - 1].answers;
-  
+
   let actualAnswerCounter = 0;
   for (const actualAnswers of possibleAnswers) {
     if (actualAnswers.correct === true) {
@@ -263,21 +260,21 @@ function adminQuizPlayerSubmitAnswer (answerIds: number[], playerid: number, que
 
   let counter = 0;
   for (const answer of answerIds) {
-    let findAnswer = possibleAnswers.find(answers => answers.answerId === answer);
+    const findAnswer = possibleAnswers.find(answers => answers.answerId === answer);
     if (!findAnswer) {
       throw HTTPError(400, 'Answer IDs are not valid for this particular question');
     }
     if (findAnswer.correct === true) {
       counter++;
     }
-  };
+  }
 
   const findQuestion = findPlayer.questions[questionposition - 1];
   if (counter === actualAnswerCounter) {
     findQuestion.isCorrect = true;
   }
 
-  let timeEnd = Math.floor(Date.now() / 1000);
+  const timeEnd = Math.floor(Date.now() / 1000);
 
   findQuestion.timeEnd = timeEnd;
   findQuestion.timeTaken = timeEnd - findQuestion.timeStart;
@@ -352,7 +349,7 @@ function v2adminQuizCreate(token: string, name: string, description: string): Er
 
 function v2adminQuizRemove(token: string, quizId: number) {
   const newdata = getData();
-  
+
   const findToken = newdata.sessions.find(session => session.token === token);
   const findQuizIndex = newdata.quizzes.findIndex(quiz => quiz.quizId === quizId);
 
@@ -363,7 +360,7 @@ function v2adminQuizRemove(token: string, quizId: number) {
   } else if (newdata.quizzes[findQuizIndex].authUserId !== findToken.userId) {
     throw HTTPError(403, 'User does not own this quiz.');
   }
-  
+
   for (const activeSessions of newdata.quizActiveState) {
     if (activeSessions.metadata.quizId === quizId) {
       if (activeSessions.state !== States.END) {
@@ -375,7 +372,7 @@ function v2adminQuizRemove(token: string, quizId: number) {
   newdata.quizzes[findQuizIndex].timeLastEdited = Math.floor(Date.now() / 1000);
   newdata.trash.push(newdata.quizzes[findQuizIndex]);
   newdata.quizzes.splice(findQuizIndex, 1);
-  
+
   return {};
 }
 
@@ -715,7 +712,7 @@ function v2AdminQuizQuestionUpdate(questionBody: Question, token: string, quizId
  * @returns { Error Object } -  Object containing the key 'error' and the value being the relevant error message
  * @returns { Empty Object } - Empty Object to indicate succesful addition of the question.
  */
-function v2adminQuizQuestionDelete(token: string, quizId: number, questionId: number): ErrorObject | Record<string, never> {
+function v2adminQuizQuestionDelete(token: string, quizId: number, questionId: number): Record<string, never> {
   const data = getData();
 
   // Finds the authUserId, quiz and that quiz's index.
@@ -770,8 +767,8 @@ function adminQuizSessions (token: string, quizId: number) {
     throw HTTPError(403, 'User does not own this quiz.');
   }
 
-  let activeSessions = [];
-  let inactiveSessions = [];
+  const activeSessions = [];
+  const inactiveSessions = [];
 
   for (const sessionsOfQuiz of data.quizActiveState) {
     if (sessionsOfQuiz.metadata.quizId === quizId) {
@@ -786,7 +783,7 @@ function adminQuizSessions (token: string, quizId: number) {
   return {
     activeSessions: activeSessions,
     inactiveSessions: inactiveSessions,
-  }
+  };
 }
 
 function adminQuizGetSessionStatus (quizId: number, sessionId: number, token: string) {
@@ -809,7 +806,7 @@ function adminQuizGetSessionStatus (quizId: number, sessionId: number, token: st
     throw HTTPError(400, 'SessionId is invalid');
   }
 
-  let newPlayers = []
+  const newPlayers = [];
 
   for (const players of findSession.players) {
     newPlayers.push(players.name);
@@ -825,14 +822,14 @@ function adminQuizGetSessionStatus (quizId: number, sessionId: number, token: st
     questions: findSession.metadata.questions,
     duration: findSession.metadata.duration,
     thumbnailUrl: findSession.metadata.thumbnailUrl,
-  }
+  };
 
   return {
     state: findSession.state,
     atQuestion: findSession.atQuestion,
     players: newPlayers,
     metadata: metadata,
-  }
+  };
 }
 
 function adminQuizQuestionResults(playerid: number, questionPosition: number): QuestionResultsReturn {
@@ -841,17 +838,15 @@ function adminQuizQuestionResults(playerid: number, questionPosition: number): Q
   // Double for loop, to iterate through two arrays.
 
   let session: quizState | undefined;
-  let findPlayer: Player;
   for (const sessions of data.quizActiveState) {
     for (const player of sessions.players) {
       if (player.playerId === playerid) {
-        findPlayer = player;
         session = sessions;
       }
     }
   }
 
-  //Error Checks
+  // Error Checks
   if (session === undefined) {
     throw HTTPError(400, 'player ID does not exist');
   }
@@ -876,17 +871,15 @@ function adminQuizFinalResults(playerId: number) {
   // Double for loop, to iterate through two arrays.
 
   let session: quizState | undefined;
-  let findPlayer: Player;
   for (const sessions of data.quizActiveState) {
     for (const player of sessions.players) {
       if (player.playerId === playerId) {
-        findPlayer = player;
         session = sessions;
       }
     }
   }
 
-  //Error Checks
+  // Error Checks
   if (session === undefined) {
     throw HTTPError(400, 'player ID does not exist');
   }
@@ -910,7 +903,7 @@ function adminQuizCompletedQuizResults(quizId: number, sessionId: number, token:
     }
   }
 
-  //Error Checks
+  // Error Checks
   if (session === undefined) {
     throw HTTPError(400, 'Session does not exist');
   }
@@ -936,7 +929,6 @@ function adminQuizCompletedQuizResults(quizId: number, sessionId: number, token:
 }
 
 function adminQuizPlayerStatus (playerid: number) {
-
   const data = getData();
 
   let session: quizState | undefined;
@@ -956,7 +948,7 @@ function adminQuizPlayerStatus (playerid: number) {
     state: session.state,
     numQuestions: session.metadata.numQuestions,
     atQuestion: session.atQuestion,
-  }
+  };
 }
 
 function adminQuizPlayerQuestionInformation (playerid: number, questionposition: number) {
@@ -985,7 +977,7 @@ function adminQuizPlayerQuestionInformation (playerid: number, questionposition:
 
   if (session.state === States.LOBBY || session.state === States.QUESTION_COUNTDOWN ||
       session.state === States.END) {
-        throw HTTPError(400, 'Session is in LOBBY, QUESTION_COUNTDOWN, or END state');
+    throw HTTPError(400, 'Session is in LOBBY, QUESTION_COUNTDOWN, or END state');
   }
 
   return {
@@ -995,7 +987,7 @@ function adminQuizPlayerQuestionInformation (playerid: number, questionposition:
     thumbnailUrl: session.metadata.questions[questionposition - 1].thumbnailUrl,
     points: session.metadata.questions[questionposition - 1].points,
     answers: session.metadata.questions[questionposition - 1].answers,
-  }
+  };
 }
 
 function adminQuizChat (playerid: number) {
@@ -1016,7 +1008,7 @@ function adminQuizChat (playerid: number) {
 
   return {
     messages: session.messages,
-  }
+  };
 }
 
 function adminQuizChatSend (playerid: number, messageBody: string) {
@@ -1046,17 +1038,16 @@ function adminQuizChatSend (playerid: number, messageBody: string) {
     playerId: playerid,
     playerName: name,
     timeSent: Math.floor(Date.now() / 1000),
-  })
+  });
 
-  return {}
+  return {};
 }
 
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////// HELPER FUNCTIONS //////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////////////////////////////////
+/// //////////////////////////////////// HELPER FUNCTIONS //////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////////////////////////////////
 
 function generateRandomName() {
   const letters = 'abcdefghijklmnopqrstuvwxyz';
@@ -1076,7 +1067,7 @@ function generateRandomName() {
 }
 
 function quizWaitThreeHelper (session: quizState) {
-  let findSession = timeoutIds.findIndex(ids => ids.sessionId === session.sessionId);
+  const findSession = timeoutIds.findIndex(ids => ids.sessionId === session.sessionId);
   timeoutIds.splice(findSession, 1);
   quizSkipCountdownHelper(session);
 }
@@ -1104,7 +1095,7 @@ function quizSkipCountdownHelper (session: quizState) {
       timeTaken: duration,
       isCorrect: false,
       answers: [],
-    })
+    });
   }
 }
 
@@ -1115,9 +1106,8 @@ function quizOpenQuestionDurationHelper (session: quizState) {
   timeoutIds.splice(findSession, 1);
 }
 
-
 function clearTimeoutId (session: quizState) {
-  let findSession = timeoutIds.findIndex(ids => ids.sessionId === session.sessionId);
+  const findSession = timeoutIds.findIndex(ids => ids.sessionId === session.sessionId);
   if (findSession !== -1) {
     clearTimeout(timeoutIds[findSession].timeoutId);
     timeoutIds.splice(findSession, 1);
@@ -1160,7 +1150,7 @@ function quizCloseHelper (session: quizState, action: string) {
     session.state = States.END;
   } else if (action === Actions.NEXT_QUESTION) {
     session.state = States.QUESTION_COUNTDOWN;
-    let timeoutId = setTimeout(quizWaitThreeHelper, 3 * 1000, session);
+    const timeoutId = setTimeout(quizWaitThreeHelper, 3 * 1000, session);
     timeoutIds.push({
       sessionId: session.sessionId,
       timeoutId: timeoutId
@@ -1176,7 +1166,7 @@ function quizCloseHelper (session: quizState, action: string) {
 function quizShowHelper (session: quizState, action: string) {
   if (action === Actions.NEXT_QUESTION) {
     session.state = States.QUESTION_COUNTDOWN;
-    let timeoutId = setTimeout(quizWaitThreeHelper, 3 * 1000, session);
+    const timeoutId = setTimeout(quizWaitThreeHelper, 3 * 1000, session);
     timeoutIds.push({
       sessionId: session.sessionId,
       timeoutId: timeoutId
@@ -1220,7 +1210,7 @@ function getRandomColour(): string {
 
 function isValidThumbnailUrlEnding(thumbnailUrl: string) {
   // Regular expression to match if the thumbnailUrl ends with jpg, jpeg, or png
-  var validExtensions = /\.(jpg|jpeg|png)$/i;
+  const validExtensions = /\.(jpg|jpeg|png)$/i;
 
   // Test if the thumbnailUrl matches the valid extensions
   return validExtensions.test(thumbnailUrl);
@@ -1228,39 +1218,39 @@ function isValidThumbnailUrlEnding(thumbnailUrl: string) {
 
 function isValidThumbnailUrlStarting(thumbnailUrl: string) {
   // Regular expression to match if the thumbnailUrl begins with http:// or https://
-  var validPrefix = /^(http|https):\/\//i;
+  const validPrefix = /^(http|https):\/\//i;
 
   // Test if the thumbnailUrl starts with the valid prefix
   return validPrefix.test(thumbnailUrl);
 }
 
 function getQuestionResults(session: quizState, questionPosition: number): QuestionResultsReturn {
-  let playersCorrectList = [];
+  const playersCorrectList = [];
   let averageAnswerTime = 0;
 
-  //Pushing People onto the Array Who got the Question Right and tracking response time
-  for (let player of session.players) {
+  // Pushing People onto the Array Who got the Question Right and tracking response time
+  for (const player of session.players) {
     if (player.questions[questionPosition - 1].isCorrect === true) {
       playersCorrectList.push(player.name);
     }
     averageAnswerTime += player.questions[questionPosition - 1].timeTaken;
   }
 
-  //Calculating Average and Correct Percentage
+  // Calculating Average and Correct Percentage
   averageAnswerTime = Math.round(averageAnswerTime / session.players.length);
-  let percentageCorrect = Math.round((playersCorrectList.length / session.players.length) * 100);
+  const percentageCorrect = Math.round((playersCorrectList.length / session.players.length) * 100);
 
   return {
     questionId: session.metadata.questions[questionPosition - 1].questionId,
     playersCorrectList: playersCorrectList,
     averageAnswerTime: averageAnswerTime,
     percentageCorrect: percentageCorrect,
-  }
+  };
 }
 
-function getFinalScoreSummary(session: number) {
+function getFinalScoreSummary(session: quizState) {
   // Calculating Scores for Each Player
-  let usersRankedByScore = [];
+  const usersRankedByScore = [];
   for (const player of session.players) {
     let score = 0;
     for (const questionResult of player.questions) {
@@ -1273,13 +1263,13 @@ function getFinalScoreSummary(session: number) {
       score: score,
     });
   }
-  //Sorting the Users by Score In Descending Order
+  // Sorting the Users by Score In Descending Order
   usersRankedByScore.sort((a, b) => {
     return b.score - a.score;
-  })
+  });
 
   // Pushing on the QuestionResults for each Question.
-  let questionResults = [];
+  const questionResults = [];
   for (let i = 0; i < session.metadata.numQuestions; i++) {
     questionResults.push(getQuestionResults(session, i + 1));
   }
@@ -1287,7 +1277,7 @@ function getFinalScoreSummary(session: number) {
   return {
     usersRankedByScore: usersRankedByScore,
     questionResults: questionResults,
-  }
+  };
 }
 
 function rankScorePlayers(session: quizState) {
@@ -1345,6 +1335,3 @@ export {
   adminQuizPlayerQuestionInformation,
   adminQuizPlayerStatus,
 };
-
-
-
