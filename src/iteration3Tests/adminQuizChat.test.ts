@@ -2,10 +2,7 @@ import {
   v2adminQuizCreate,
   adminQuizSessionCreate,
   v2adminQuizQuestionCreate,
-  adminQuizPlayerStatus,
   adminQuizPlayerJoin,
-  adminQuizPlayerQuestionInformation,
-  adminQuizSessionUpdate,
   adminQuizChatSend,
   adminQuizChat,
 } from './v2testHelpers';
@@ -21,8 +18,6 @@ describe('adminQuizPlayerQuestionInformation', () => {
   let quizId: number;
   let playerId: number;
   let sessionId: number;
-  let questionId: number;
-  let tooLongString: string;
 
   beforeEach(() => {
     clear();
@@ -31,7 +26,7 @@ describe('adminQuizPlayerQuestionInformation', () => {
     token = user.token;
     const quiz = v2adminQuizCreate(token, 'QuizName', 'QuizDescription');
     quizId = quiz.quizId;
-    questionId = v2adminQuizQuestionCreate(quizId, token, 'question1', 5, 4, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }], thumbnailUrl).questionId;
+    v2adminQuizQuestionCreate(quizId, token, 'question1', 5, 4, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }], thumbnailUrl);
     v2adminQuizQuestionCreate(quizId, token, 'question5', 5, 4, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }], thumbnailUrl);
     sessionId = adminQuizSessionCreate(token, quizId, 5).sessionId;
     playerId = adminQuizPlayerJoin(sessionId, 'nick').playerId;

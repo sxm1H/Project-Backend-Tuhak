@@ -8,14 +8,13 @@ import HTTPError from 'http-errors';
 let token: string;
 let quizId: number;
 const validUrl = 'https://s3-eu-west-1.amazonaws.com/blog-ecotree/blog/0001/01/ad46dbb447cd0e9a6aeecd64cc2bd332b0cbcb79.jpeg';
-let questionId: number;
 let sessionId: number;
 beforeEach(() => {
   clear();
 
   token = adminAuthRegister('nick1234@gmail.com', 'nick1234', 'Nicholas', 'Sebastian').token;
   quizId = v2adminQuizCreate(token, 'QuizName', 'QuizDescription').quizId;
-  questionId = v2adminQuizQuestionCreate(quizId, token, 'question1', 5, 4, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }], validUrl).questionId;
+  v2adminQuizQuestionCreate(quizId, token, 'question1', 5, 4, [{ answer: 'Sydney', correct: true }, { answer: 'Melbourne', correct: false }], validUrl);
   adminQuizThumbnailUpdate(quizId, token, validUrl);
   sessionId = adminQuizSessionCreate(token, quizId, 5).sessionId;
 });

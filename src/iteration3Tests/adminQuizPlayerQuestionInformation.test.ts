@@ -2,10 +2,9 @@ import {
   v2adminQuizCreate,
   adminQuizSessionCreate,
   v2adminQuizQuestionCreate,
-  adminQuizPlayerStatus,
   adminQuizPlayerJoin,
   adminQuizPlayerQuestionInformation,
-  adminQuizSessionUpdate,
+  adminQuizSessionUpdate
 } from './v2testHelpers';
 import {
   clear,
