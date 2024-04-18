@@ -1,3 +1,4 @@
+import { Session } from 'inspector';
 import { getData, counters } from './dataStore';
 import {
   ErrorObject,
@@ -202,6 +203,8 @@ function adminQuizSessionJoin(sessionId: number, name: string) {
     name: name,
     playerId: playerId,
     questions: [],
+    rank: [],
+    scorePer: [],
     score: 0
   });
 
@@ -915,7 +918,6 @@ function adminQuizCompletedQuizResults(quizId: number, sessionId: number, token:
   }
 
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
-  console.log(findQuiz, data, quizId);
   if (!findQuiz) {
     throw HTTPError(403, 'Quiz ID does not refer to a valid quiz');
   }
@@ -1078,7 +1080,12 @@ function quizSkipCountdownHelper (session: quizState) {
 
   const duration = session.metadata.questions[session.atQuestion - 1].duration;
 
-  setTimeout(quizOpenQuestionDurationHelper, duration * 1000, session);
+  let timeoutId = setTimeout(quizOpenQuestionDurationHelper, duration * 1000, session);
+  
+  timeoutIds.push({
+    sessionId: session.sessionId,
+    timeoutId: timeoutId
+  });
 
   for (const player of session.players) {
     player.questions.push({
@@ -1094,7 +1101,8 @@ function quizSkipCountdownHelper (session: quizState) {
 
 function quizOpenQuestionDurationHelper (session: quizState) {
   session.state = States.QUESTION_CLOSE;
-  const findSession = timeoutIds.findIndex(ids => ids.sessionId === session.sessionId);
+  rankScorePlayers(session);
+  let findSession = timeoutIds.findIndex(ids => ids.sessionId === session.sessionId);
   timeoutIds.splice(findSession, 1);
 }
 
@@ -1121,9 +1129,11 @@ function quizCountdownHelper (session: quizState, action: string) {
 function quizOpenHelper (session: quizState, action: string) {
   if (action === Actions.GO_TO_ANSWER) {
     clearTimeoutId(session);
+    rankScorePlayers(session);
     session.state = States.ANSWER_SHOW;
   } else if (action === Actions.END) {
     clearTimeoutId(session);
+    rankScorePlayers(session);
     session.state = States.END;
   } else {
     // Finds the duration of the questions it's currently at, and waits that long till switching
@@ -1268,6 +1278,38 @@ function getFinalScoreSummary(session: quizState) {
     usersRankedByScore: usersRankedByScore,
     questionResults: questionResults,
   };
+}
+
+function rankScorePlayers(session: quizState) {
+  const allplayers = session.players;
+  const atQuestion = session.atQuestion - 1;
+  const questionPoints = session.metadata.questions[atQuestion].points;
+
+  let rankedArray: Player[] = [];
+  let losers: Player[] = [];
+  let player: Player;
+  for (player of allplayers) {
+    if (player.questions[atQuestion].isCorrect === false) {
+      losers.push(player);
+    } else {
+      rankedArray.push(player);
+    }
+  }
+  rankedArray.sort((a,b) => a.questions[atQuestion].timeTaken -  b.questions[atQuestion].timeTaken);
+  let rank = 1;
+  for (player of rankedArray) {
+    const cool = session.players.find(ids => ids.playerId === player.playerId);
+    cool.rank.push(rank);
+    cool.scorePer.push(questionPoints * 1/rank);
+    rank++;
+  };
+
+  for (player of losers) {
+    const notcool = session.players.find(ids => ids.playerId === player.playerId);
+    notcool.rank.push(rank);
+    notcool.scorePer.push(0);
+  }
+
 }
 
 export {

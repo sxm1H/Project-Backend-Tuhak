@@ -37,6 +37,8 @@ interface Player {
   name: string;
   playerId: number;
   questions: answeredQuestion[];
+  rank: number[];
+  scorePer: number[]; 
   score: number;
 }
 
