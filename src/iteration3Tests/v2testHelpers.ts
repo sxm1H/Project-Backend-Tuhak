@@ -107,7 +107,6 @@ const v2adminQuizInfo = (token: string, quizId: number) => {
 };
 
 const adminQuizTrashView = (token: string) => {
-  console.log(token, 'IN API');
   return requestHelper('GET', '/v2/admin/quiz/trash', {}, { token });
 };
 

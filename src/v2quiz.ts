@@ -1309,6 +1309,8 @@ function rankScorePlayers(session: quizState): Record<string, never> {
     findPlayer.rank.push(rank);
     findPlayer.scorePer.push(0);
   }
+
+  return {};
 }
 
 export {
