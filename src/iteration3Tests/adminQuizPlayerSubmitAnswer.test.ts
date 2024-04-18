@@ -39,11 +39,12 @@ beforeEach(() => {
 
   adminQuizSessionUpdate(token, quizId, sessionId, 'NEXT_QUESTION');
   adminQuizSessionUpdate(token, quizId, sessionId, 'SKIP_COUNTDOWN');
+
+  atQuestion = adminQuizGetSessionStatus(quizId, sessionId, token).atQuestion;
 });
 
 describe('adminQuizPlayerSubmitAnswer', () => {
   test('Correctly submits one answer', () => {
-    atQuestion = adminQuizGetSessionStatus(quizId, sessionId, token).atQuestion;
 
     expect(adminQuizPlayerSubmitAnswer(playerId, atQuestion, [answerId[0].answerId])).toStrictEqual({});
   });
@@ -74,12 +75,29 @@ describe('adminQuizPlayerSubmitAnswer', () => {
   });
 
   test('Session is not yet up to this question', () => {
-    const answerId2 = v2adminQuizInfo(token, quizId).questions[atQuestion - 1].answers;
+    const answerId2 = v2adminQuizInfo(token, quizId).questions[atQuestion].answers;
 
     expect(() => adminQuizPlayerSubmitAnswer(playerId, atQuestion + 1, [answerId2[0].answerId, answerId2[2].answerId])).toThrow(HTTPError[400]);
   });
 
   test('No answers submitted', () => {
     expect(() => adminQuizPlayerSubmitAnswer(playerId, atQuestion, [])).toThrow(HTTPError[400]);
+  });
+
+  test('Answer ID is not valid for this test', () => {
+    const quizId2 = v2adminQuizCreate(token, 'anotheroen', 'QuizDescription').quizId;
+    
+    v2adminQuizQuestionCreate(quizId2, token, 'heheheheh', 5, 4, [{ answer: 'YUHUH', correct: true },
+    { answer: 'NUHUH', correct: false }], thumbnailUrl);
+
+    const sessionId2 = adminQuizSessionCreate(token, quizId2, 0).sessionId;
+    const playerId2 = adminQuizPlayerJoin(sessionId2, 'Sami').playerId;
+  
+    adminQuizSessionUpdate(token, quizId2, sessionId2, 'NEXT_QUESTION');
+    adminQuizSessionUpdate(token, quizId2, sessionId2, 'SKIP_COUNTDOWN');
+  
+    atQuestion = adminQuizGetSessionStatus(quizId2, sessionId2, token).atQuestion;
+
+    expect(() => adminQuizPlayerSubmitAnswer(playerId2, atQuestion, [answerId[0].answerId])).toThrow(HTTPError[400]);
   });
 });
