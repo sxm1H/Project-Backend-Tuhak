@@ -45,7 +45,6 @@ beforeEach(() => {
 
 describe('adminQuizPlayerSubmitAnswer', () => {
   test('Correctly submits one answer', () => {
-
     expect(adminQuizPlayerSubmitAnswer(playerId, atQuestion, [answerId[0].answerId])).toStrictEqual({});
   });
 
@@ -86,16 +85,16 @@ describe('adminQuizPlayerSubmitAnswer', () => {
 
   test('Answer ID is not valid for this test', () => {
     const quizId2 = v2adminQuizCreate(token, 'anotheroen', 'QuizDescription').quizId;
-    
+
     v2adminQuizQuestionCreate(quizId2, token, 'heheheheh', 5, 4, [{ answer: 'YUHUH', correct: true },
-    { answer: 'NUHUH', correct: false }], thumbnailUrl);
+      { answer: 'NUHUH', correct: false }], thumbnailUrl);
 
     const sessionId2 = adminQuizSessionCreate(token, quizId2, 0).sessionId;
     const playerId2 = adminQuizPlayerJoin(sessionId2, 'Sami').playerId;
-  
+
     adminQuizSessionUpdate(token, quizId2, sessionId2, 'NEXT_QUESTION');
     adminQuizSessionUpdate(token, quizId2, sessionId2, 'SKIP_COUNTDOWN');
-  
+
     atQuestion = adminQuizGetSessionStatus(quizId2, sessionId2, token).atQuestion;
 
     expect(() => adminQuizPlayerSubmitAnswer(playerId2, atQuestion, [answerId[0].answerId])).toThrow(HTTPError[400]);
