@@ -108,7 +108,7 @@ const v2adminQuizInfo = (token: string, quizId: number) => {
 
 const adminQuizTrashView = (token: string) => {
   console.log(token, 'IN API');
-  return requestHelper('GET', '/v2/admin/quiz/trash', {}, { token });
+  return requestHelper('GET', `/v2/admin/quiz/trash`, {}, { token });
 };
 
 const adminQuizNameUpdate = (token: string, quizId: number, name: string) => {
@@ -168,7 +168,7 @@ const adminQuizSessionUpdate = (token: string, quizId: number, sessionId: number
 };
 
 const adminQuizPlayerJoin = (sessionId: number, name: string) => {
-  return requestHelper('POST', '/v1/player/join', { sessionId, name });
+  return requestHelper('POST', `/v1/player/join`, { sessionId, name });
 };
 
 const adminQuizPlayerSubmitAnswer = (playerId: number, questionPosition: number, answerIds: number[]) => {
@@ -176,48 +176,50 @@ const adminQuizPlayerSubmitAnswer = (playerId: number, questionPosition: number,
 };
 
 const adminQuizThumbnailUpdate = (quizid: number, token: string, imgUrl: string) => {
-  return requestHelper('PUT', `/v1/admin/quiz/${quizid}/thumbnail`, { quizid, imgUrl }, { token });
-};
+  return requestHelper('PUT', `/v1/admin/quiz/${quizid}/thumbnail`, {quizid, imgUrl}, {token});
+}
 
 const adminQuizSessions = (quizid: number, token: string) => {
-  return requestHelper('GET', `/v1/admin/quiz/${quizid}/sessions`, { quizid }, { token });
-};
+  return requestHelper('GET', `/v1/admin/quiz/${quizid}/sessions`, { quizid }, {token});
+}
 
 const adminQuizGetSessionStatus = (quizid: number, sessionid: number, token: string) => {
-  return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}`, { quizid, sessionid }, { token });
-};
+  return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}`, { quizid, sessionid }, {token});
+}
 
 const adminQuizPlayerStatus = (playerid: number) => {
   return requestHelper('GET', `/v1/player/${playerid}`, { playerid }, {});
-};
+}
 
 const adminQuizPlayerQuestionInformation = (playerid: number, questionposition: number) => {
   return requestHelper('GET', `/v1/player/${playerid}/question/${questionposition}`, { playerid, questionposition }, {});
-};
+}
 
 const adminQuizChat = (playerid: number) => {
   return requestHelper('GET', `/v1/player/${playerid}/chat`, { playerid }, {});
-};
+}
 
 const adminQuizChatSend = (playerid: number, messageBody: string) => {
+
   const message = {
     messageBody: messageBody,
-  };
+  }
 
   return requestHelper('POST', `/v1/player/${playerid}/chat`, { playerid, message }, {});
-};
+}
 
 const adminQuizQuestionResults = (playerid: number, questionposition: number) => {
   return requestHelper('GET', `/v1/player/${playerid}/question/${questionposition}/results`, {}, {});
-};
+}
 
 const adminQuizFinalResults = (playerid: number) => {
   return requestHelper('GET', `/v1/player/${playerid}/results`, {}, {});
-};
+}
 
 const adminQuizCompletedQuizResults = (quizid: number, sessionid: number, token: string) => {
   return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}/results`, { }, { token });
-};
+}
+
 
 // ============================================================================================== //
 
