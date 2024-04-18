@@ -1,6 +1,6 @@
 import request, { HttpVerb } from 'sync-request-curl';
 import { port, url } from '../config.json';
-import { Answer } from '../interfaces';
+import { Answer, RequestHelperReturnType } from '../interfaces';
 import { IncomingHttpHeaders } from 'http';
 import HTTPError from 'http-errors';
 
@@ -13,7 +13,7 @@ const requestHelper = (
   path: string,
   payload: object = {},
   headers: IncomingHttpHeaders = {}
-): Record<string, never> => {
+): RequestHelperReturnType | Record<string, never> => {
   let qs = {};
   let json = {};
   if (['GET', 'DELETE'].includes(method.toUpperCase())) {
@@ -26,7 +26,7 @@ const requestHelper = (
   const url = SERVER_URL + path;
   const res = request(method, url, { qs, json, headers, timeout: TIMEOUT_MS });
 
-  let responseBody: Record<string, never>;
+  let responseBody: RequestHelperReturnType | Record<string, never>;
   try {
     responseBody = JSON.parse(res.body.toString());
   } catch (err) {

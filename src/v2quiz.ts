@@ -1,4 +1,3 @@
-import { Session } from 'inspector';
 import { getData, counters } from './dataStore';
 import {
   ErrorObject,
@@ -8,10 +7,19 @@ import {
   Player,
   QuizId,
   Question,
-  newQuizInfoReturn,
-  QuestionResultsReturn
+  QuizInfoReturn,
+  QuestionResultsReturn,
+  PlayerId,
+  ChatReturn,
+  SessionIdReturn,
+  QuizSessionReturn,
+  SessionStatusReturn,
+  FinalScoreReturn,
+  QuizPlayerReturn,
+  QuestionId
 } from './interfaces';
 import HTTPError from 'http-errors';
+
 interface timeoutobj {
   sessionId: number;
   timeoutId: ReturnType<typeof setTimeout>;
@@ -30,7 +38,7 @@ function validateImageUrl(imgUrl: string): boolean {
   return isValidPrefix && isValidExtension;
 }
 
-function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: string) {
+function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: string): ErrorObject | Record<string, never> {
   const data = getData();
 
   const findToken = data.sessions.find(ids => ids.token === token);
@@ -56,7 +64,7 @@ function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: string)
   return {};
 }
 
-function adminQuizSessionCreate(token: string, quizId: number, autoStartNum: number) {
+function adminQuizSessionCreate(token: string, quizId: number, autoStartNum: number): ErrorObject | SessionIdReturn {
   const data = getData();
   const findToken = data.sessions.find(ids => ids.token === token);
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
@@ -113,7 +121,7 @@ function adminQuizSessionCreate(token: string, quizId: number, autoStartNum: num
   return { sessionId: newSessionId };
 }
 
-function adminQuizSessionUpdate(token: string, quizId: number, sessionId: number, action: string) {
+function adminQuizSessionUpdate(token: string, quizId: number, sessionId: number, action: string): ErrorObject | Record<string, never> {
   const data = getData();
   const findToken = data.sessions.find(ids => ids.token === token);
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
@@ -175,7 +183,7 @@ function adminQuizSessionUpdate(token: string, quizId: number, sessionId: number
   return {};
 }
 
-function adminQuizSessionJoin(sessionId: number, name: string) {
+function adminQuizSessionJoin(sessionId: number, name: string): ErrorObject | PlayerId {
   const data = getData();
   const findSession = data.quizActiveState.find(session => session.sessionId === sessionId);
 
@@ -211,7 +219,7 @@ function adminQuizSessionJoin(sessionId: number, name: string) {
   return { playerId: playerId };
 }
 
-function adminQuizPlayerSubmitAnswer (answerIds: number[], playerid: number, questionposition: number) {
+function adminQuizPlayerSubmitAnswer (answerIds: number[], playerid: number, questionposition: number): ErrorObject | Record<string, never> {
   const data = getData();
 
   // Double for loop, to iterate through two arrays.
@@ -347,7 +355,7 @@ function v2adminQuizCreate(token: string, name: string, description: string): Er
   return { quizId: counters.quizIdCounter };
 }
 
-function v2adminQuizRemove(token: string, quizId: number) {
+function v2adminQuizRemove(token: string, quizId: number): ErrorObject | Record<string, never> {
   const newdata = getData();
 
   const findToken = newdata.sessions.find(session => session.token === token);
@@ -376,7 +384,7 @@ function v2adminQuizRemove(token: string, quizId: number) {
   return {};
 }
 
-function v2adminQuizTransfer(token: string, userEmail: string, quizId: number) {
+function v2adminQuizTransfer(token: string, userEmail: string, quizId: number): ErrorObject | Record<string, never> {
   const data = getData();
 
   // Returns session object corresponding the given token.
@@ -451,7 +459,7 @@ function v2adminQuizTransfer(token: string, userEmail: string, quizId: number) {
  * @returns { Empty Object } - Empty Object to indicate succesful addition of the question.
  */
 
-function v2AdminQuizQuestionCreate(quizId: number, token: string, questionBody: Question) {
+function v2AdminQuizQuestionCreate(quizId: number, token: string, questionBody: Question): ErrorObject | QuestionId {
   const data = getData();
   const date = Math.floor(Date.now() / 1000);
 
@@ -566,7 +574,7 @@ function v2AdminQuizQuestionCreate(quizId: number, token: string, questionBody: 
   *   }
   * } - Returns the quiz information user wants to access.
 */
-function v2AdminQuizInfo(token: string, quizId: number): ErrorObject | newQuizInfoReturn {
+function v2AdminQuizInfo(token: string, quizId: number): ErrorObject | QuizInfoReturn {
   const data = getData();
   const findToken = data.sessions.find(session => session.token === token);
   const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
@@ -712,7 +720,7 @@ function v2AdminQuizQuestionUpdate(questionBody: Question, token: string, quizId
  * @returns { Error Object } -  Object containing the key 'error' and the value being the relevant error message
  * @returns { Empty Object } - Empty Object to indicate succesful addition of the question.
  */
-function v2adminQuizQuestionDelete(token: string, quizId: number, questionId: number): Record<string, never> {
+function v2adminQuizQuestionDelete(token: string, quizId: number, questionId: number): ErrorObject | Record<string, never> {
   const data = getData();
 
   // Finds the authUserId, quiz and that quiz's index.
@@ -751,7 +759,7 @@ function v2adminQuizQuestionDelete(token: string, quizId: number, questionId: nu
   return {};
 }
 
-function adminQuizSessions (token: string, quizId: number) {
+function adminQuizSessions (token: string, quizId: number): ErrorObject | QuizSessionReturn {
   const data = getData();
 
   // Finds the authUserId, quiz and that quiz's index.
@@ -786,7 +794,7 @@ function adminQuizSessions (token: string, quizId: number) {
   };
 }
 
-function adminQuizGetSessionStatus (quizId: number, sessionId: number, token: string) {
+function adminQuizGetSessionStatus (quizId: number, sessionId: number, token: string): ErrorObject | SessionStatusReturn {
   const data = getData();
 
   // Finds the authUserId, quiz and that quiz's index.
@@ -832,7 +840,7 @@ function adminQuizGetSessionStatus (quizId: number, sessionId: number, token: st
   };
 }
 
-function adminQuizQuestionResults(playerid: number, questionPosition: number): QuestionResultsReturn {
+function adminQuizQuestionResults(playerid: number, questionPosition: number): ErrorObject | QuestionResultsReturn {
   const data = getData();
 
   // Double for loop, to iterate through two arrays.
@@ -865,7 +873,7 @@ function adminQuizQuestionResults(playerid: number, questionPosition: number): Q
   return getQuestionResults(session, questionPosition);
 }
 
-function adminQuizFinalResults(playerId: number) {
+function adminQuizFinalResults(playerId: number): ErrorObject | FinalScoreReturn {
   const data = getData();
 
   // Double for loop, to iterate through two arrays.
@@ -891,7 +899,7 @@ function adminQuizFinalResults(playerId: number) {
   return getFinalScoreSummary(session);
 }
 
-function adminQuizCompletedQuizResults(quizId: number, sessionId: number, token: string) {
+function adminQuizCompletedQuizResults(quizId: number, sessionId: number, token: string): ErrorObject | FinalScoreReturn {
   const data = getData();
 
   // Double for loop, to iterate through two arrays.
@@ -928,7 +936,7 @@ function adminQuizCompletedQuizResults(quizId: number, sessionId: number, token:
   return getFinalScoreSummary(session);
 }
 
-function adminQuizPlayerStatus (playerid: number) {
+function adminQuizPlayerStatus (playerid: number): ErrorObject | QuizPlayerReturn {
   const data = getData();
 
   let session: quizState | undefined;
@@ -951,7 +959,7 @@ function adminQuizPlayerStatus (playerid: number) {
   };
 }
 
-function adminQuizPlayerQuestionInformation (playerid: number, questionposition: number) {
+function adminQuizPlayerQuestionInformation (playerid: number, questionposition: number): ErrorObject | Question {
   const data = getData();
 
   let session: quizState | undefined;
@@ -990,7 +998,7 @@ function adminQuizPlayerQuestionInformation (playerid: number, questionposition:
   };
 }
 
-function adminQuizChat (playerid: number) {
+function adminQuizChat (playerid: number): ErrorObject | ChatReturn {
   const data = getData();
 
   let session: quizState | undefined;
@@ -1011,7 +1019,7 @@ function adminQuizChat (playerid: number) {
   };
 }
 
-function adminQuizChatSend (playerid: number, messageBody: string) {
+function adminQuizChatSend (playerid: number, messageBody: string): ErrorObject | Record<string, never> {
   const data = getData();
 
   let session: quizState | undefined;
@@ -1049,7 +1057,7 @@ function adminQuizChatSend (playerid: number, messageBody: string) {
 /// ////////////////////////////////////////////////////////////////////////////////////////////////
 /// ////////////////////////////////////////////////////////////////////////////////////////////////
 
-function generateRandomName() {
+function generateRandomName(): string {
   const letters = 'abcdefghijklmnopqrstuvwxyz';
   let name = '';
 
@@ -1066,13 +1074,15 @@ function generateRandomName() {
   return name;
 }
 
-function quizWaitThreeHelper (session: quizState) {
+function quizWaitThreeHelper (session: quizState): Record<string, never> {
   const findSession = timeoutIds.findIndex(ids => ids.sessionId === session.sessionId);
   timeoutIds.splice(findSession, 1);
   quizSkipCountdownHelper(session);
+
+  return {};
 }
 
-function quizSkipCountdownHelper (session: quizState) {
+function quizSkipCountdownHelper (session: quizState): Record<string, never> {
   session.state = States.QUESTION_OPEN;
   session.atQuestion++;
 
@@ -1080,8 +1090,8 @@ function quizSkipCountdownHelper (session: quizState) {
 
   const duration = session.metadata.questions[session.atQuestion - 1].duration;
 
-  let timeoutId = setTimeout(quizOpenQuestionDurationHelper, duration * 1000, session);
-  
+  const timeoutId = setTimeout(quizOpenQuestionDurationHelper, duration * 1000, session);
+
   timeoutIds.push({
     sessionId: session.sessionId,
     timeoutId: timeoutId
@@ -1097,24 +1107,30 @@ function quizSkipCountdownHelper (session: quizState) {
       answers: [],
     });
   }
+
+  return {};
 }
 
-function quizOpenQuestionDurationHelper (session: quizState) {
+function quizOpenQuestionDurationHelper (session: quizState): Record<string, never> {
   session.state = States.QUESTION_CLOSE;
   rankScorePlayers(session);
-  let findSession = timeoutIds.findIndex(ids => ids.sessionId === session.sessionId);
+  const findSession = timeoutIds.findIndex(ids => ids.sessionId === session.sessionId);
   timeoutIds.splice(findSession, 1);
+
+  return {};
 }
 
-function clearTimeoutId (session: quizState) {
+function clearTimeoutId (session: quizState): Record<string, never> {
   const findSession = timeoutIds.findIndex(ids => ids.sessionId === session.sessionId);
   if (findSession !== -1) {
     clearTimeout(timeoutIds[findSession].timeoutId);
     timeoutIds.splice(findSession, 1);
   }
+
+  return {};
 }
 
-function quizCountdownHelper (session: quizState, action: string) {
+function quizCountdownHelper (session: quizState, action: string): Record<string, never> {
   if (action === Actions.SKIP_COUNTDOWN) {
     quizSkipCountdownHelper(session);
   } else if (action === Actions.END) {
@@ -1126,7 +1142,7 @@ function quizCountdownHelper (session: quizState, action: string) {
   return {};
 }
 
-function quizOpenHelper (session: quizState, action: string) {
+function quizOpenHelper (session: quizState, action: string): Record<string, never> {
   if (action === Actions.GO_TO_ANSWER) {
     clearTimeoutId(session);
     rankScorePlayers(session);
@@ -1143,7 +1159,7 @@ function quizOpenHelper (session: quizState, action: string) {
   return {};
 }
 
-function quizCloseHelper (session: quizState, action: string) {
+function quizCloseHelper (session: quizState, action: string): Record<string, never> {
   if (action === Actions.GO_TO_ANSWER) {
     session.state = States.ANSWER_SHOW;
   } else if (action === Actions.END) {
@@ -1163,7 +1179,7 @@ function quizCloseHelper (session: quizState, action: string) {
   return {};
 }
 
-function quizShowHelper (session: quizState, action: string) {
+function quizShowHelper (session: quizState, action: string): Record<string, never> {
   if (action === Actions.NEXT_QUESTION) {
     session.state = States.QUESTION_COUNTDOWN;
     const timeoutId = setTimeout(quizWaitThreeHelper, 3 * 1000, session);
@@ -1181,9 +1197,10 @@ function quizShowHelper (session: quizState, action: string) {
   return {};
 }
 
-function quizFinalHelper (session: quizState, action: string) {
+function quizFinalHelper (session: quizState, action: string): ErrorObject | Record<string, never> {
   if (action === Actions.END) {
     session.state = States.END;
+    return {};
   } else {
     throw HTTPError(400, 'Action enum cannot be applied in the current state');
   }
@@ -1208,7 +1225,7 @@ function getRandomColour(): string {
   }
 }
 
-function isValidThumbnailUrlEnding(thumbnailUrl: string) {
+function isValidThumbnailUrlEnding(thumbnailUrl: string): boolean {
   // Regular expression to match if the thumbnailUrl ends with jpg, jpeg, or png
   const validExtensions = /\.(jpg|jpeg|png)$/i;
 
@@ -1216,7 +1233,7 @@ function isValidThumbnailUrlEnding(thumbnailUrl: string) {
   return validExtensions.test(thumbnailUrl);
 }
 
-function isValidThumbnailUrlStarting(thumbnailUrl: string) {
+function isValidThumbnailUrlStarting(thumbnailUrl: string): boolean {
   // Regular expression to match if the thumbnailUrl begins with http:// or https://
   const validPrefix = /^(http|https):\/\//i;
 
@@ -1248,7 +1265,7 @@ function getQuestionResults(session: quizState, questionPosition: number): Quest
   };
 }
 
-function getFinalScoreSummary(session: quizState) {
+function getFinalScoreSummary(session: quizState): FinalScoreReturn {
   // Calculating Scores for Each Player
   const usersRankedByScore = [];
   for (const player of session.players) {
@@ -1280,13 +1297,13 @@ function getFinalScoreSummary(session: quizState) {
   };
 }
 
-function rankScorePlayers(session: quizState) {
+function rankScorePlayers(session: quizState): Record<string, never> {
   const allplayers = session.players;
   const atQuestion = session.atQuestion - 1;
   const questionPoints = session.metadata.questions[atQuestion].points;
 
-  let rankedArray: Player[] = [];
-  let losers: Player[] = [];
+  const rankedArray: Player[] = [];
+  const losers: Player[] = [];
   let player: Player;
   for (player of allplayers) {
     if (player.questions[atQuestion].isCorrect === false) {
@@ -1295,14 +1312,14 @@ function rankScorePlayers(session: quizState) {
       rankedArray.push(player);
     }
   }
-  rankedArray.sort((a,b) => a.questions[atQuestion].timeTaken -  b.questions[atQuestion].timeTaken);
+  rankedArray.sort((a, b) => a.questions[atQuestion].timeTaken - b.questions[atQuestion].timeTaken);
   let rank = 1;
   for (player of rankedArray) {
     const cool = session.players.find(ids => ids.playerId === player.playerId);
     cool.rank.push(rank);
-    cool.scorePer.push(questionPoints * 1/rank);
+    cool.scorePer.push(questionPoints * 1 / rank);
     rank++;
-  };
+  }
 
   for (player of losers) {
     const notcool = session.players.find(ids => ids.playerId === player.playerId);
@@ -1310,6 +1327,7 @@ function rankScorePlayers(session: quizState) {
     notcool.scorePer.push(0);
   }
 
+  return {};
 }
 
 export {
