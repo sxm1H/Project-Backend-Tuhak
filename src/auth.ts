@@ -7,7 +7,7 @@ import {
   UserData
 } from './interfaces';
 import HTTPError from 'http-errors';
-
+import crypto from 'crypto';
 /**
   * Registers a user with a given email, password, first name and last name. The function pushes
   * the new user to be stores in the dataStore object and returns the new generated adminAuthId for
@@ -46,11 +46,12 @@ function adminAuthRegister(email: string, password: string, nameFirst: string, n
     throw HTTPError(400, 'Password must have at least one number and one letter.');
   }
 
+
   // Generation of authUserId and token
   const id = data.user.length + 1;
-  counters.sessionIdCounter++;
-  const token = counters.sessionIdCounter.toString();
-
+  // counters.sessionIdCounter++;
+  // const token = counters.sessionIdCounter.toString();
+  const token = getRandomToken();
   // Adds token to dataStore
   data.sessions.push({
     userId: id,
@@ -60,7 +61,7 @@ function adminAuthRegister(email: string, password: string, nameFirst: string, n
   // Adds new user to dataStore
   data.user.push({
     email: email,
-    password: password,
+    password: getHash(password),
     nameFirst: nameFirst,
     nameLast: nameLast,
     userId: id,
@@ -87,7 +88,7 @@ function adminAuthLogin(email: string, password: string): ErrorObject | TokenRet
 
   if (!findUser) {
     throw HTTPError(400, 'Email address does not exist.');
-  } else if (findUser.password !== password) {
+  } else if (findUser.password !== getHash(password)) {
     findUser.numFailedPasswordsSinceLastLogin++;
     throw HTTPError(400, 'Password is not correct for the given email.');
   }
@@ -291,7 +292,7 @@ function adminUserPasswordUpdate(token: string, oldPassword: string, newPassword
   const userInfo = data.user.find(id => id.userId === findToken.userId);
 
   // Checking if the current pass was entered correctly.
-  if (oldPassword !== userInfo.password) {
+  if (getHash(oldPassword) !== userInfo.password) {
     throw HTTPError(400, 'Password Entered Is Incorrect.');
   }
 
@@ -299,8 +300,8 @@ function adminUserPasswordUpdate(token: string, oldPassword: string, newPassword
   passwordChecker(userInfo, oldPassword, newPassword);
 
   // Now checking the contents of the return.
-  userInfo.passwordHistory.push(newPassword);
-  userInfo.password = newPassword;
+  userInfo.passwordHistory.push(getHash(newPassword));
+  userInfo.password = getHash(newPassword);
   return {};
 }
 
@@ -329,6 +330,23 @@ function adminAuthLogout(token: string): ErrorObject | Record<string, never> {
   data.sessions.splice(findTokenIndex, 1);
 
   return {};
+}
+
+function getHash(string: string) {
+  return crypto.createHash('sha256').update(string).digest('hex');
+}
+
+function getRandomToken() {
+  let data = getData();
+  let token = Math.floor(Math.random()*100000).toString();
+
+  let found = data.sessions.find(id => id.token === token)
+
+  if (found) {
+    getRandomToken();
+  } 
+
+  return token;
 }
 
 export {
