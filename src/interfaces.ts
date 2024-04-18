@@ -38,7 +38,7 @@ interface Player {
   playerId: number;
   questions: answeredQuestion[];
   rank: number[];
-  scorePer: number[]; 
+  scorePer: number[];
   score: number;
 }
 
@@ -64,7 +64,7 @@ interface Quiz {
   quizId: number;
   name: string;
   description: string;
-  authUserId: number;
+  authUserId?: number;
   timeCreated: number;
   timeLastEdited: number;
   numQuestions: number;
@@ -108,6 +108,10 @@ interface TokenReturn {
 
 interface QuestionId {
   questionId: number;
+}
+
+interface PlayerId {
+  playerId: number;
 }
 
 interface UserDetails {
@@ -155,6 +159,7 @@ interface QuizInfoReturn {
   numQuestions: number;
   questions: Question[],
   duration: number;
+  thumbnailUrl?: string;
 }
 
 interface QuestionResultsReturn {
@@ -164,24 +169,76 @@ interface QuestionResultsReturn {
   percentageCorrect: number;
 }
 
-interface newQuizInfoReturn {
-  quizId: number;
-  name: string;
-  timeCreated: number;
-  timeLastEdited: number;
-  description: string;
-  numQuestions: number;
-  questions: Question[],
-  duration: number;
-  thumbnailUrl: string;
-}
-
 interface QuizId {
   quizId: number;
 }
 
 interface DuplicateQuestionReturn {
   newQuestionId: number;
+}
+
+interface ChatReturn {
+  messages: Message[];
+}
+
+interface SessionIdReturn {
+  sessionId: number;
+}
+
+interface QuizSessionReturn {
+  activeSessions: number[];
+  inactiveSessions: number[];
+}
+
+interface SessionStatusReturn {
+  state: string;
+  atQuestion: number;
+  players: string[];
+  metadata: Quiz;
+}
+
+interface UserRanks {
+  name: string;
+  score: number;
+}
+
+interface FinalScoreReturn {
+  usersRankedByScore: UserRanks[];
+  questionResults: QuestionResultsReturn[];
+}
+
+interface QuizPlayerReturn {
+  state: string;
+  numQuestions: number;
+  atQuestion: number;
+}
+
+interface RequestHelperReturnType {
+  token?: string;
+  error?: string;
+  quizzes?: QuizListInfo[];
+  quizId?: number;
+  name?: string;
+  timeCreated?: number;
+  timeLastEdited?: number;
+  description?: string;
+  numQuestions?: number;
+  duration?: number;
+  questions?: Question[];
+  questionId?: number;
+  newQuestionId?: number;
+  sessionId?: number;
+  playerId?: number;
+  thumbnailUrl?: string;
+  activeSessions?: number[];
+  inactiveSessions?: number[];
+  state?: string;
+  atQuestion?: number;
+  players?: Player[];
+  metadata?: Quiz;
+  messageBody?: string;
+  playerName?: string;
+  timeSent?: number;
 }
 
 enum States {
@@ -227,6 +284,13 @@ export {
   Actions,
   quizState,
   Player,
-  newQuizInfoReturn,
   QuestionResultsReturn,
+  PlayerId,
+  ChatReturn,
+  SessionIdReturn,
+  QuizSessionReturn,
+  SessionStatusReturn,
+  FinalScoreReturn,
+  QuizPlayerReturn,
+  RequestHelperReturnType
 };
