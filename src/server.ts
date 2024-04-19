@@ -10,7 +10,7 @@ import fs from 'fs';
 import path from 'path';
 import process from 'process';
 import { clear } from './other';
-import { createClient } from '@vercel/kv';
+// import { createClient } from '@vercel/kv';
 import {
   adminAuthLogin,
   adminAuthRegister,

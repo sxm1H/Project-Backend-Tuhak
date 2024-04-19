@@ -35,15 +35,15 @@ const timeoutIds: timeoutobj[] = [];
 
 /**
  * adminQuizThumbnailUpdate will update the thumbnail URL to a Quiz to a URL of there choice. It will update
- * the last time the quiz was edited. It should throw errors when 
+ * the last time the quiz was edited. It should throw errors when
  *  - Token is invalid (User is not logged in)
  *  - The User does not own the quiz being edited
  *  - The ThumbnailUrl the user wants to update is not a valid link to an image
- * 
+ *
  * @param {string} token - Token of the user updating the quiz
  * @param {number} quizId - The Quiz the user wants to update
  * @param {string} imgUrl - The url of the image of that the user wants to update to
- * 
+ *
  * @return {object {}} - return an empty object when successful
  */
 function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: string): ErrorObject | Record<string, never> {
@@ -74,17 +74,17 @@ function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: string)
 }
 
 /**
- * adminQuizSessionCreate will Create a new session for the given quizId. 
+ * adminQuizSessionCreate will Create a new session for the given quizId.
  * This session will start at LOBBY state and will stay there until the corresponding
  * number of players join the session. The function should check if:
  *   - The token is valid
  *   - The Quiz exists/is valid
- *   - The user owns the quiz 
+ *   - The user owns the quiz
  *   - If the autoStartNum is greater than 50
  *   - There are more than 10 active sessions for the quiz
- *   - The Quiz does not have any questions in it 
+ *   - The Quiz does not have any questions in it
  *   - THe quiz is in the trash
- * 
+ *
  * @param {string} token - token of the user creating the session
  * @param {number} quizId - the quiz that the session is being created from
  * @param {number} autoStartNum - the number of players that have to join to automatically start the quiz
@@ -150,19 +150,19 @@ function adminQuizSessionCreate(token: string, quizId: number, autoStartNum: num
 /**
  * adminQuizSessionUpdate will update the session's state based on the current state of the session
  * and the action provided. When the session switches from QUESTION_OPEN state to another state, all players
- * last submitted answers will be calculated. 
+ * last submitted answers will be calculated.
  * This function will check if:
  *  - The token is valid and owns the quiz
- *  - The user owns this quiz 
+ *  - The user owns this quiz
  *  - The SessionId is a valid session
  *  - The Aciton is a valid action that can be taken
  *  - The action being taken is a valid action for the current state
- * @param { string } token 
- * @param { number } quizId 
- * @param { number } sessionId 
- * @param { string } action 
- * 
- * @returns {object {}} - it will return an object if successful 
+ * @param { string } token
+ * @param { number } quizId
+ * @param { number } sessionId
+ * @param { string } action
+ *
+ * @returns {object {}} - it will return an object if successful
  */
 function adminQuizSessionUpdate(token: string, quizId: number, sessionId: number, action: string): ErrorObject | Record<string, never> {
   const data = getData();
@@ -228,14 +228,14 @@ function adminQuizSessionUpdate(token: string, quizId: number, sessionId: number
   return {};
 }
 /**
- * adminQuizSessionJoin will allow a guest player to be created and join an active 
+ * adminQuizSessionJoin will allow a guest player to be created and join an active
  * session. Each player will be assigned a unique player id. The function should test for
  *  - If the session is valid and in LOBBY State
  *  - If the player that joins does not have a unique name
- * 
- * 
+ *
+ *
  * @param { number } sessionId
- * @param {string} name 
+ * @param {string} name
  * @returns {object {playerId: number}}
  */
 function adminQuizSessionJoin(sessionId: number, name: string): ErrorObject | PlayerId {
@@ -276,21 +276,21 @@ function adminQuizSessionJoin(sessionId: number, name: string): ErrorObject | Pl
 }
 
 /**
- * adminQuizPlayerSubmitAnswer will allow a player to submit an answer to the current question in the session. 
+ * adminQuizPlayerSubmitAnswer will allow a player to submit an answer to the current question in the session.
  * The player is allowed to submit as many answers they can as long as the session is QUESTION_OPEN state. Only their
- * last answer they submitted will be considered when the question closes. 
- * The function should check if: 
+ * last answer they submitted will be considered when the question closes.
+ * The function should check if:
  *  - The playerId exists in the current session
  *  - The session Is in QUESTION_OPEN state
  *  - The questionposition corresponds to a position outside the number of questions in the quiz
  *  - The quiz is up to the questionPosition
  *  - An answer is not submitted
  *  - The answers submitted do not correspond to the answers in the current question
- * 
- * @param {number[]} answerIds - the array of answer selections a player has chosen 
+ *
+ * @param {number[]} answerIds - the array of answer selections a player has chosen
  * @param {number} playerid - the player Id of the player answering the question
  * @param questionposition - the question the player is answering
- * 
+ *
  * @returns {object {}} - will return an empty object when successful
  */
 function adminQuizPlayerSubmitAnswer (answerIds: number[], playerid: number, questionposition: number): ErrorObject | Record<string, never> {
@@ -438,7 +438,7 @@ function v2adminQuizCreate(token: string, name: string, description: string): Er
   *    - the quizId does not refer to a quiz that the user owns
   *    - Quiz Id does not refer to a quiz
   *    - There is a session of a quiz that is not in END state
-  * 
+  *
   * @param {Number} token - the token created in adminAuthRegister.
   * @param {number} quizId - quizId which may or may not be registered in the data
   *
@@ -867,14 +867,14 @@ function v2adminQuizQuestionDelete(token: string, quizId: number, questionId: nu
   return {};
 }
 /**
- * adminQuizSessions will return a list of all active and inactive sessions for a given quiz. A session is 
- * considered inactive when it is at the END state and active on every other state. 
+ * adminQuizSessions will return a list of all active and inactive sessions for a given quiz. A session is
+ * considered inactive when it is at the END state and active on every other state.
  * This should check if:
  *  - The token is valid (empty or doesn't belong to a user)
  *  - The user does not own the quiz or the quizId does not exist
- * 
- * @param {string} token 
- * @param {number} quizId 
+ *
+ * @param {string} token
+ * @param {number} quizId
  * @returns {object {
  * activeSessions: number[],
  * inactiveSessions: number[]
@@ -917,19 +917,19 @@ function adminQuizSessions (token: string, quizId: number): ErrorObject | QuizSe
 }
 /**
  * adminQuizGetSessionStatus gets info about the given session, i.e state, atquestion
- * players, and the quiz. 
- *  
- * @param {number} quizId 
- * @param {number} sessionId 
- * @param {string} token 
- * 
+ * players, and the quiz.
+ *
+ * @param {number} quizId
+ * @param {number} sessionId
+ * @param {string} token
+ *
  * @returns {
  *  object {
  *    state: string,
  *    atQuestion: number,
  *    players: string[],
  *    metadata: Quiz
- * }} 
+ * }}
  */
 function adminQuizGetSessionStatus (quizId: number, sessionId: number, token: string): ErrorObject | SessionStatusReturn {
   const data = getData();
@@ -978,14 +978,14 @@ function adminQuizGetSessionStatus (quizId: number, sessionId: number, token: st
   };
 }
 /**
- * adminQuizQuestionResult will return an object containing the questionId, the list 
+ * adminQuizQuestionResult will return an object containing the questionId, the list
  * of players who got the question correct, the average answer time and the percentage of people
- * who got it correct. It calls getQuestionResult, which contains the logic to caculate the average 
+ * who got it correct. It calls getQuestionResult, which contains the logic to caculate the average
  * time and percentagecorrect, as well as push all players who got it correct into the CorrectList array.
- * 
- * @param {number} playerid 
- * @param {number} questionPosition 
- * 
+ *
+ * @param {number} playerid
+ * @param {number} questionPosition
+ *
  * @returns {Object {
  * questionId: number,
  * playersCorrectList: string[],
@@ -1028,15 +1028,15 @@ function adminQuizQuestionResults(playerid: number, questionPosition: number): E
 }
 
 /**
- * The adminQuizFinalResults will get the total final results for session given a playerId, returning 
- * a ranked list of all the player performances and and array of Questoin results identical to the return 
+ * The adminQuizFinalResults will get the total final results for session given a playerId, returning
+ * a ranked list of all the player performances and and array of Questoin results identical to the return
  * of adminQuizQuestionResults
- * 
- * @param {number} playerId 
+ *
+ * @param {number} playerId
  * @returns {object {
  * usersRankedbyScore: UserRanks[];
  * questionResults: QuestionResultsReturn[];
- * }} 
+ * }}
  */
 function adminQuizFinalResults(playerId: number): ErrorObject | FinalScoreReturn {
   const data = getData();
@@ -1065,16 +1065,16 @@ function adminQuizFinalResults(playerId: number): ErrorObject | FinalScoreReturn
   return getFinalScoreSummary(session);
 }
 /**
- * adminQuizCompletedQuizResults will do the same thing as adminQuizFinalResults but, 
- * given a valid quizId, sessionId and token and will return the exact same thing as quizFinalResults 
- *  
- * @param {number} quizId 
- * @param {number} sessionId 
- * @param {string} token 
+ * adminQuizCompletedQuizResults will do the same thing as adminQuizFinalResults but,
+ * given a valid quizId, sessionId and token and will return the exact same thing as quizFinalResults
+ *
+ * @param {number} quizId
+ * @param {number} sessionId
+ * @param {string} token
  * @returns {object {
  * usersRankedbyScore: UserRanks[];
  * questionResults: QuestionResultsReturn[];
- * }} 
+ * }}
  */
 function adminQuizCompletedQuizResults(quizId: number, sessionId: number, token: string): ErrorObject | FinalScoreReturn {
   const data = getData();
@@ -1114,10 +1114,10 @@ function adminQuizCompletedQuizResults(quizId: number, sessionId: number, token:
   return getFinalScoreSummary(session);
 }
 /**
- * adminQuizPlayerStatus will, given a valid player in the session, returns the 
+ * adminQuizPlayerStatus will, given a valid player in the session, returns the
  * current state of the session, the question the session is at, and the number of questions
- * in the session. 
- * @param {number} playerid 
+ * in the session.
+ * @param {number} playerid
  * @returns {object {
  * state: string,
  * numQuestions: number,
@@ -1148,12 +1148,12 @@ function adminQuizPlayerStatus (playerid: number): ErrorObject | QuizPlayerRetur
   };
 }
 /**
- * adminQuizPlayerQuestionInformation will get the information about a question a valid player is currently on. 
- * 
- * @param {number} playerid - The id of the player we want to read the questioninformation off of 
- * @param {number} questionposition - the question the player is currentlly on.  
- * 
- * @returns {Question object} - returns the question object 
+ * adminQuizPlayerQuestionInformation will get the information about a question a valid player is currently on.
+ *
+ * @param {number} playerid - The id of the player we want to read the questioninformation off of
+ * @param {number} questionposition - the question the player is currentlly on.
+ *
+ * @returns {Question object} - returns the question object
  * {
  * questionId?: number;
  * question: string;
@@ -1210,7 +1210,7 @@ function adminQuizPlayerQuestionInformation (playerid: number, questionposition:
  * "playerName": "Yuchao Jiang",
  * "timeSent": 1683019484
  * },
- * 
+ *
  * @param {number} playerid - the player who is view the session chat
  * @returns {object: Message[]} - return an array of message objects in order of when they were sent
  */
@@ -1236,9 +1236,9 @@ function adminQuizChat (playerid: number): ErrorObject | ChatReturn {
   };
 }
 /**
- * adminQuizChatSend allows an valid player in session to be able to send a chat message to said Session. 
+ * adminQuizChatSend allows an valid player in session to be able to send a chat message to said Session.
  * The message should not be empty or more than 100 characters
- * 
+ *
  * @param {number} playerid - the player who will send the message
  * @param {string} messageBody - the message the player wishes to send
  * @returns {object {}}
@@ -1276,13 +1276,13 @@ function adminQuizChatSend (playerid: number, messageBody: string): ErrorObject 
   return {};
 }
 /**
- * adminQuizFinalResultsCSV formats adminQuizFinalResults to make it a valid .csv file. 
- * It will check if the csv-results directory exists and make on if it doesn't. It will then 
+ * adminQuizFinalResultsCSV formats adminQuizFinalResults to make it a valid .csv file.
+ * It will check if the csv-results directory exists and make on if it doesn't. It will then
  * create a csv file containing the finalresults of a given session
- * 
+ *
  * @param {number} quizId- the quiz in the session
  * @param {number} sessionId - the session that the final results will be gotten from
- * @param {string} token - The token of the user requesting the final results. 
+ * @param {string} token - The token of the user requesting the final results.
  * @returns {object {url: string}}
  */
 function adminQuizFinalResultsCSV(quizId: number, sessionId: number, token: string) {

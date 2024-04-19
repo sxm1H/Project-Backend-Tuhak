@@ -2,10 +2,10 @@
 import {
   DataStore,
 } from './interfaces';
-import request, { HttpVerb } from 'sync-request';
+// import request, { HttpVerb } from 'sync-request';
 // Open submission.ts and update DEPLOYED_URL
 
-const DEPLOYED_URL = 'https://1531-24t1-f13b-dream.vercel.app';
+// const DEPLOYED_URL = 'https://1531-24t1-f13b-dream.vercel.app';
 
 let data: DataStore = {
   user: [],
