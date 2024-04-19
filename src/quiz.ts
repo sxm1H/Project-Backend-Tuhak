@@ -9,7 +9,7 @@ import {
 } from './interfaces';
 import {
   getData,
-  //counters,
+  setData,
 } from './dataStore';
 import { Question } from './interfaces';
 import HTTPError from 'http-errors';

@@ -24,7 +24,7 @@ import {
 import HTTPError from 'http-errors';
 import { port, url } from './config.json';
 
-const SERVER_URL = `${url}:${port}`;
+const DEPLOYED_URL = 'https://1531-24t1-f13b-dream.vercel.app';
 const fs = require('fs');
 interface timeoutobj {
   sessionId: number;
