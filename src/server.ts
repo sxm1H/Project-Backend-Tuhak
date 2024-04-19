@@ -62,6 +62,8 @@ import {
   adminQuizFinalResultsCSV,
 } from './v2quiz';
 
+import { getData, setData } from './dataStore'
+
 // import {
 //   v2adminUserDetails,
 //   v2adminUserDetailsUpdate,
@@ -123,20 +125,20 @@ app.put('/data', async (req: Request, res: Response) => {
   return res.status(200).json({});
 });
 
-const load = () => {
-  if (fs.existsSync('./database.json')) {
-    const file = fs.readFileSync('./database.json', { encoding: 'utf8' });
-    //const count = fs.readFileSync('./counters.json', { encoding: 'utf8' });
-    setData(JSON.parse(file));
-    //setCounters(JSON.parse(count));
-  }
-};
-load();
+// const load = () => {
+//   if (fs.existsSync('./database.json')) {
+//     const file = fs.readFileSync('./database.json', { encoding: 'utf8' });
+//     //const count = fs.readFileSync('./counters.json', { encoding: 'utf8' });
+//     setData(JSON.parse(file));
+//     //setCounters(JSON.parse(count));
+//   }
+// };
+// load();
 
-const save = () => {
-  fs.writeFileSync('./database.json', JSON.stringify(getData()));
-  //fs.writeFileSync('./counters.json', JSON.stringify(getCounters()));
-};
+// const save = () => {
+//   fs.writeFileSync('./database.json', JSON.stringify(getData()));
+//   //fs.writeFileSync('./counters.json', JSON.stringify(getCounters()));
+// };
 
 // Example get request
 app.get('/echo', (req: Request, res: Response) => {
@@ -162,7 +164,7 @@ app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body;
   const result = adminAuthRegister(email, password, nameFirst, nameLast);
 
-  save();
+  //save();
   res.json(result);
 });
 

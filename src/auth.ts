@@ -1,4 +1,4 @@
-import { getData, counters } from './dataStore';
+import { getData, setData } from './dataStore';
 import validator from 'validator';
 import {
   ErrorObject,
@@ -25,6 +25,7 @@ import crypto from 'crypto';
 function adminAuthRegister(email: string, password: string, nameFirst: string, nameLast: string): ErrorObject | TokenReturn {
   const data = getData();
   // Returns user object if the email exists already
+  console.log(data)
   const findEmail = data.user.find(user => user.email === email);
 
   // Error checking for all inputs
@@ -69,6 +70,7 @@ function adminAuthRegister(email: string, password: string, nameFirst: string, n
     numFailedPasswordsSinceLastLogin: 0,
   });
 
+  setData(data);
   return { token: token };
 }
 
