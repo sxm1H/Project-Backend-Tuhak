@@ -13,6 +13,10 @@ function clear(): Record<string, never> {
     trash: [],
     quizActiveState: [],
     quizInactiveState: [],
+    sessionIdCounter: 10000,
+    answerIdCounter: 0,
+    questionIdCounter: 0,
+    quizIdCounter: 0
   });
 
   return {};

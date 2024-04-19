@@ -9,7 +9,7 @@ import {
 } from './interfaces';
 import {
   getData,
-  counters,
+  //counters,
 } from './dataStore';
 import { Question } from './interfaces';
 import HTTPError from 'http-errors';
@@ -260,7 +260,7 @@ function adminQuizQuestionUpdate(questionBody: Question, token: string, quizId: 
   }
 
   findQuestion.answers = questionBody.answers.map(answer => ({
-    answerId: counters.answerIdCounter++,
+    answerId: data.answerIdCounter++,
     answer: answer.answer,
     colour: getRandomColour(),
     correct: answer.correct,
@@ -379,9 +379,9 @@ function adminQuizCreate(token: string, name: string, description: string): Erro
     throw HTTPError(400, 'Description is more than 100 characters');
   }
 
-  counters.quizIdCounter++;
+  newdata.quizIdCounter++;
   newdata.quizzes.push({
-    quizId: counters.quizIdCounter,
+    quizId: newdata.quizIdCounter,
     name: name,
     description: description,
     authUserId: authUserId,
@@ -392,7 +392,7 @@ function adminQuizCreate(token: string, name: string, description: string): Erro
     duration: 0,
   });
 
-  return { quizId: counters.quizIdCounter };
+  return { quizId: newdata.quizIdCounter };
 }
 
 /**
@@ -600,16 +600,16 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody: Qu
   const answerBody = [];
   for (const answer of questionBody.answers) {
     answerBody.push({
-      answerId: counters.answerIdCounter,
+      answerId: data.answerIdCounter,
       answer: answer.answer,
       colour: getRandomColour(),
       correct: answer.correct,
     });
-    counters.answerIdCounter++;
+    data.answerIdCounter++;
   }
 
   // Pushing the question to the questionBody of the relevant quiz.
-  const questionId = counters.questionIdCounter;
+  const questionId = data.questionIdCounter;
   findQuiz.questions.push({
     questionId: questionId,
     question: questionBody.question,
@@ -619,7 +619,7 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody: Qu
   });
 
   // Incrementing the questionIdCounter to ensure uniqueness in every questionid.
-  counters.questionIdCounter++;
+  data.questionIdCounter++;
 
   // Updating the fields in the quizId.
   findQuiz.duration += questionBody.duration;
@@ -849,7 +849,7 @@ function adminQuizQuestionDuplicate(token: string, quizId: number, questionId: n
 
   const date = Math.floor(Date.now() / 1000);
   findQuiz.timeLastEdited = date;
-  const newQuestionId = counters.questionIdCounter++;
+  const newQuestionId = data.questionIdCounter++;
   questions[findQuestion + 1].questionId = newQuestionId;
 
   // copies the Answers array for the specific question
@@ -858,7 +858,7 @@ function adminQuizQuestionDuplicate(token: string, quizId: number, questionId: n
   // Updates answerId for new answers in new duplicated question
   questions[findQuestion + 1].answers = duplicateAnswers;
   for (const answer of questions[findQuestion + 1].answers) {
-    answer.answerId = counters.answerIdCounter++;
+    answer.answerId = data.answerIdCounter++;
   }
 
   findQuiz.duration += questions[findQuestion].duration;

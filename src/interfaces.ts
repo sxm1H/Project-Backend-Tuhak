@@ -1,9 +1,9 @@
-interface Counters {
-  sessionIdCounter: number;
-  answerIdCounter: number;
-  questionIdCounter: number;
-  quizIdCounter: number;
-}
+// interface Counters {
+//   sessionIdCounter: number;
+//   answerIdCounter: number;
+//   questionIdCounter: number;
+//   quizIdCounter: number;
+// }
 
 interface DataStore {
   user: User[];
@@ -12,6 +12,10 @@ interface DataStore {
   trash: Quiz[];
   quizActiveState: quizState[];
   quizInactiveState: quizState[];
+  sessionIdCounter: number;
+  answerIdCounter: number;
+  questionIdCounter: number;
+  quizIdCounter: number;
 }
 
 interface answeredQuestion {

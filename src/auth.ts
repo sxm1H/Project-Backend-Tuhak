@@ -95,8 +95,8 @@ function adminAuthLogin(email: string, password: string): ErrorObject | TokenRet
   findUser.numFailedPasswordsSinceLastLogin = 0;
   findUser.numSuccessfulLogins++;
 
-  counters.sessionIdCounter++;
-  const token = counters.sessionIdCounter.toString();
+  newData.sessionIdCounter++;
+  const token = newData.sessionIdCounter.toString();
 
   newData.sessions.push({
     userId: findUser.userId,

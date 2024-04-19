@@ -1,4 +1,7 @@
-import { getData, counters } from './dataStore';
+import {
+   getData, 
+  //counters 
+} from './dataStore';
 import {
   ErrorObject,
   States,
@@ -329,9 +332,9 @@ function v2adminQuizCreate(token: string, name: string, description: string): Er
     throw HTTPError(400, 'Description is more than 100 characters');
   }
 
-  counters.quizIdCounter++;
+  newdata.quizIdCounter++;
   newdata.quizzes.push({
-    quizId: counters.quizIdCounter,
+    quizId: newdata.quizIdCounter,
     name: name,
     description: description,
     authUserId: authUserId,
@@ -343,7 +346,7 @@ function v2adminQuizCreate(token: string, name: string, description: string): Er
     thumbnailUrl: 'https://www.unsw.edu.au/content/dam/images/photos/events/open-day/2020-12-homepage-update/OpenDay_2019_campaign%20-0307-crop.cropimg.width=1920.crop=square.jpg'
   });
 
-  return { quizId: counters.quizIdCounter };
+  return { quizId: newdata.quizIdCounter };
 }
 
 function v2adminQuizRemove(token: string, quizId: number): ErrorObject | Record<string, never> {
@@ -513,16 +516,16 @@ function v2AdminQuizQuestionCreate(quizId: number, token: string, questionBody: 
   const answerBody = [];
   for (const answer of questionBody.answers) {
     answerBody.push({
-      answerId: counters.answerIdCounter,
+      answerId: data.answerIdCounter,
       answer: answer.answer,
       colour: getRandomColour(),
       correct: answer.correct,
     });
-    counters.answerIdCounter++;
+    data.answerIdCounter++;
   }
 
   // Pushing the question to the questionBody of the relevant quiz.
-  const questionId = counters.questionIdCounter;
+  const questionId = data.questionIdCounter;
   findQuiz.questions.push({
     questionId: questionId,
     question: questionBody.question,
@@ -533,7 +536,7 @@ function v2AdminQuizQuestionCreate(quizId: number, token: string, questionBody: 
   });
 
   // Incrementing the questionIdCounter to ensure uniqueness in every questionid.
-  counters.questionIdCounter++;
+  data.questionIdCounter++;
 
   // Updating the fields in the quizId.
   findQuiz.duration += questionBody.duration;
@@ -670,7 +673,7 @@ function v2AdminQuizQuestionUpdate(questionBody: Question, token: string, quizId
   }
 
   findQuestion.answers = questionBody.answers.map(answer => ({
-    answerId: counters.answerIdCounter++,
+    answerId: data.answerIdCounter++,
     answer: answer.answer,
     colour: getRandomColour(),
     correct: answer.correct,
