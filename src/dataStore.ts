@@ -61,7 +61,6 @@ const requestHelper = (method: HttpVerb, path: string, payload: object) => {
 };
 
 const getData = (): Data => {
-  console.log('hello');
   try {
     const res = requestHelper('GET', '/data', {});
     return res.data;

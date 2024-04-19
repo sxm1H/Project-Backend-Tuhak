@@ -105,6 +105,7 @@ function adminAuthLogin(email: string, password: string): ErrorObject | TokenRet
     token: token
   });
 
+  setData(data);
   return { token: token };
 }
 
@@ -132,7 +133,7 @@ function adminUserDetails(token: string): ErrorObject | UserDetailsReturnObject 
   }
 
   const findUser = data.user.find(user => user.userId === findToken.userId);
-
+  setData(data);
   return {
     user: {
       userId: findUser.userId,
@@ -189,7 +190,8 @@ function adminUserDetailsUpdate(token: string, email: string, nameFirst: string,
   data.user[indexToUpdate].email = email;
   data.user[indexToUpdate].nameFirst = nameFirst;
   data.user[indexToUpdate].nameLast = nameLast;
-
+  
+  setData(data);
   return {};
 }
 
@@ -303,6 +305,8 @@ function adminUserPasswordUpdate(token: string, oldPassword: string, newPassword
   // Now checking the contents of the return.
   userInfo.passwordHistory.push(getHash(newPassword));
   userInfo.password = getHash(newPassword);
+
+  setData(data);
   return {};
 }
 
@@ -329,7 +333,7 @@ function adminAuthLogout(token: string): ErrorObject | Record<string, never> {
 
   // Deletes the session object and shuffles the array accordingly.
   data.sessions.splice(findTokenIndex, 1);
-
+  setData(data);
   return {};
 }
 

@@ -80,7 +80,7 @@ function adminQuizNameUpdate(token: string, quizId: number, name: string): Error
   if (!flag) {
     throw HTTPError(403, 'Quiz ID does not refer to a valid quiz');
   }
-
+  setData(newdata);
   return {}; // Empty object
 }
 
@@ -136,7 +136,7 @@ function adminQuizRemove(token: string, quizId: number): ErrorObject | Record<st
   if (!flag) {
     throw HTTPError(403, 'Quiz ID does not refer to a valid quiz');
   }
-
+  setData(newdata);
   return {}; // Empty object
 }
 
@@ -163,7 +163,7 @@ function adminQuizList(token: string): ErrorObject | QuizListReturnObject {
     quizId: quizzes.quizId,
     name: quizzes.name
   }));
-
+  setData(newdata);
   return {
     quizzes: quizList
   };
@@ -191,7 +191,7 @@ function adminQuizTrashView(token: string): ErrorObject | QuizTrashReturnObject 
     quizId: trash.quizId,
     name: trash.name
   }));
-
+  setData(newdata);
   return { quizzes: trashList };
 }
 
@@ -279,7 +279,7 @@ function adminQuizQuestionUpdate(questionBody: Question, token: string, quizId: 
   findQuiz.duration = totalDuration; // Update the total quiz duration
 
   findQuiz.timeLastEdited = date;
-
+  setData(data);
   return {};
 }
 
@@ -319,7 +319,7 @@ function adminQuizInfo(token: string, quizId: number): ErrorObject | QuizInfoRet
   if (findToken.userId !== findQuiz.authUserId) {
     throw HTTPError(403, 'User does not own this quiz.');
   }
-
+  setData(data);
   return {
     quizId: findQuiz.quizId,
     name: findQuiz.name,
@@ -391,7 +391,7 @@ function adminQuizCreate(token: string, name: string, description: string): Erro
     questions: [],
     duration: 0,
   });
-
+  setData(newdata);
   return { quizId: newdata.quizIdCounter };
 }
 
@@ -440,6 +440,7 @@ function adminQuizDescriptionUpdate(token: string, quizId: number, description: 
   // If no errors, updating the quiz fields.
     findQuiz.description = description;
     findQuiz.timeLastEdited = date;
+    setData(data);  
     return {};
   }
 }
@@ -502,7 +503,7 @@ function adminQuizTransfer(token: string, userEmail: string, quizId: number): Er
 
   // Transfers ownership to user belonging to userEmail.
   findQuiz.authUserId = findTarget.userId;
-
+  setData(data);
   return {};
 }
 
@@ -625,7 +626,7 @@ function adminQuizQuestionCreate(quizId: number, token: string, questionBody: Qu
   findQuiz.duration += questionBody.duration;
   findQuiz.timeLastEdited = date;
   findQuiz.numQuestions++;
-
+  setData(data);
   return { questionId: questionId };
 }
 
@@ -683,7 +684,7 @@ function adminQuizTrashEmpty(token: string, quizIds: string): Record<string, nev
     const findQuizIndex = data.trash.findIndex(trash => trash.quizId === userQuizIds1);
     data.trash.splice(findQuizIndex, 1);
   }
-
+  setData(data);
   return {};
 }
 
@@ -751,6 +752,7 @@ function adminQuizQuestionMove(quizid: number, questionid: number, token: string
 
   const date = Math.floor(Date.now() / 1000);
   findQuiz.timeLastEdited = date;
+  setData(data);
   return {};
 }
 
@@ -799,7 +801,7 @@ function adminQuizQuestionDelete(token: string, quizId: number, questionId: numb
 
   // Deleting the Question
   data.quizzes[findQuizIndex].questions.splice(findQuestionIndex, 1);
-
+  setData(data);
   return {};
 }
 
@@ -862,7 +864,7 @@ function adminQuizQuestionDuplicate(token: string, quizId: number, questionId: n
   }
 
   findQuiz.duration += questions[findQuestion].duration;
-
+  setData(data);
   return { newQuestionId: newQuestionId };
 }
 
@@ -915,7 +917,7 @@ function adminQuizRestore(token: string, quizId: number): ErrorObject | Record<s
 
   const findQuizIndex = data.trash.findIndex(trash => trash.quizId === quizId);
   data.trash.splice(findQuizIndex, 1);
-
+  setData(data);
   return {};
 }
 

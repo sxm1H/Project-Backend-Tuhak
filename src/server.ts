@@ -152,7 +152,6 @@ app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
 
   const response = adminQuizDescriptionUpdate(token, quizId, description);
 
-  save();
   res.json(response);
 });
 
@@ -164,7 +163,6 @@ app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body;
   const result = adminAuthRegister(email, password, nameFirst, nameLast);
 
-  //save();
   res.json(result);
 });
 
@@ -172,7 +170,6 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
   const { email, password } = req.body;
   const result = adminAuthLogin(email, password);
 
-  save();
   res.json(result);
 });
 
@@ -180,7 +177,6 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   const { token, name, description } = req.body;
   const result = adminQuizCreate(token, name, description);
 
-  save();
   res.json(result);
 });
 
@@ -189,7 +185,6 @@ app.delete('/v1/admin/quiz/:quizId', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const result = adminQuizRemove(token, quizId);
 
-  save();
   res.json(result);
 });
 
@@ -198,7 +193,6 @@ app.put('/v1/admin/quiz/:quizId/name', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const result = adminQuizNameUpdate(token, quizId, name);
 
-  save();
   res.json(result);
 });
 
@@ -206,7 +200,6 @@ app.get('/v1/admin/user/details', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const response = adminUserDetails(token);
 
-  save();
   res.json(response);
 });
 
@@ -214,7 +207,6 @@ app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const response = adminQuizTrashView(token);
 
-  save();
   res.json(response);
 });
 
@@ -224,7 +216,6 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Respo
   const questionId = parseInt(req.params.questionid);
   const response = adminQuizQuestionUpdate(questionBody, token, quizId, questionId);
 
-  save();
   res.json(response);
 });
 
@@ -232,7 +223,6 @@ app.put('/v1/admin/user/details', (req: Request, res: Response) => {
   const { token, email, nameFirst, nameLast } = req.body;
   const response = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
 
-  save();
   res.json(response);
 });
 
@@ -240,7 +230,6 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
   const { token, oldPassword, newPassword } = req.body;
   const response = adminUserPasswordUpdate(token, oldPassword, newPassword);
 
-  save();
   res.json(response);
 });
 
@@ -248,7 +237,6 @@ app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
   const sessionId = req.query.token as string;
   const response = adminQuizList(sessionId);
 
-  save();
   res.json(response);
 });
 
@@ -257,7 +245,6 @@ app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const response = adminQuizInfo(token, quizId);
 
-  save();
   res.json(response);
 });
 
@@ -266,7 +253,6 @@ app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
   const { token, questionBody } = req.body;
   const response = adminQuizQuestionCreate(quizId, token, questionBody);
 
-  save();
   res.json(response);
 });
 
@@ -274,7 +260,6 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   const { token } = req.body;
   const response = adminAuthLogout(token);
 
-  save();
   res.json(response);
 });
 
@@ -284,7 +269,6 @@ app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Re
   const questionId = parseInt(req.params.questionid);
   const response = adminQuizQuestionDelete(token, quizId, questionId);
 
-  save();
   res.json(response);
 });
 
@@ -293,7 +277,6 @@ app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
   const { token, userEmail } = req.body;
   const response = adminQuizTransfer(token, userEmail, quizId);
 
-  save();
   res.json(response);
 });
 
@@ -302,7 +285,6 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const response = adminQuizTrashEmpty(token, stringQuizIds);
 
-  save();
   res.json(response);
 });
 
@@ -312,7 +294,6 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: 
   const { token, newPosition } = req.body;
   const response = adminQuizQuestionMove(quizId, questionId, token, newPosition);
 
-  save();
   res.json(response);
 });
 
@@ -322,7 +303,6 @@ app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
   const { token } = req.body;
   const response = adminQuizQuestionDuplicate(token, quizId, questionId);
 
-  save();
   res.json(response);
 });
 
@@ -331,7 +311,6 @@ app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   const { token } = req.body;
   const response = adminQuizRestore(token, quizId);
 
-  save();
   res.json(response);
 });
 
@@ -343,7 +322,6 @@ app.post('/v2/admin/auth/logout', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const response = adminAuthLogout(token);
 
-  save();
   res.json(response);
 });
 
@@ -351,7 +329,6 @@ app.get('/v2/admin/user/details', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const response = adminUserDetails(token);
 
-  save();
   res.json(response);
 });
 
@@ -360,7 +337,6 @@ app.put('/v2/admin/user/details', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const response = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
 
-  save();
   res.json(response);
 });
 
@@ -369,7 +345,6 @@ app.put('/v2/admin/user/password', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const response = adminUserPasswordUpdate(token, oldPassword, newPassword);
 
-  save();
   res.json(response);
 });
 
@@ -377,7 +352,6 @@ app.get('/v2/admin/quiz/list', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const response = adminQuizList(token);
 
-  save();
   res.json(response);
 });
 
@@ -386,7 +360,6 @@ app.post('/v2/admin/quiz', (req: Request, res: Response) => {
   const { name, description } = req.body;
   const result = v2adminQuizCreate(token, name, description);
 
-  save();
   res.json(result);
 });
 
@@ -397,7 +370,6 @@ app.delete('/v2/admin/quiz/:quizId', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const result = v2adminQuizRemove(token, quizId);
 
-  save();
   res.json(result);
 });
 
@@ -405,7 +377,6 @@ app.get('/v2/admin/quiz/trash', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const response = adminQuizTrashView(token);
 
-  save();
   res.json(response);
 });
 
@@ -414,7 +385,6 @@ app.get('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const response = v2AdminQuizInfo(token, quizId);
 
-  save();
   res.json(response);
 });
 
@@ -424,7 +394,6 @@ app.put('/v2/admin/quiz/:quizId/name', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const result = adminQuizNameUpdate(token, quizId, name);
 
-  save();
   res.json(result);
 });
 
@@ -434,7 +403,6 @@ app.put('/v2/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   const { description } = req.body;
   const response = adminQuizDescriptionUpdate(token, quizId, description);
 
-  save();
   res.json(response);
 });
 
@@ -443,7 +411,6 @@ app.post('/v2/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const response = adminQuizRestore(token, quizId);
 
-  save();
   res.json(response);
 });
 
@@ -452,7 +419,6 @@ app.delete('/v2/admin/quiz/trash/empty', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const response = adminQuizTrashEmpty(token, stringQuizIds);
 
-  save();
   res.json(response);
 });
 
@@ -462,7 +428,6 @@ app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
   const { userEmail } = req.body;
   const response = v2adminQuizTransfer(token, userEmail, quizId);
 
-  save();
   res.json(response);
 });
 
@@ -472,7 +437,6 @@ app.post('/v2/admin/quiz/:quizid/question', (req: Request, res: Response) => {
   const { questionBody } = req.body;
   const response = v2AdminQuizQuestionCreate(quizId, token, questionBody);
 
-  save();
   res.json(response);
 });
 
@@ -483,7 +447,6 @@ app.put('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Respo
   const questionId = parseInt(req.params.questionid);
   const response = v2AdminQuizQuestionUpdate(questionBody, token, quizId, questionId);
 
-  save();
   res.json(response);
 });
 
@@ -493,7 +456,6 @@ app.delete('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Re
   const questionId = parseInt(req.params.questionid);
   const response = v2adminQuizQuestionDelete(token, quizId, questionId);
 
-  save();
   res.json(response);
 });
 
@@ -504,7 +466,6 @@ app.put('/v2/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: 
   const { newPosition } = req.body;
   const response = adminQuizQuestionMove(quizId, questionId, token, newPosition);
 
-  save();
   res.json(response);
 });
 
@@ -514,7 +475,6 @@ app.post('/v2/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
   const token = req.headers.token as string;
   const response = adminQuizQuestionDuplicate(token, quizId, questionId);
 
-  save();
   res.json(response);
 });
 
@@ -527,7 +487,6 @@ app.post('/v1/admin/quiz/:quizid/session/start', (req: Request, res: Response) =
 
   const response = adminQuizSessionCreate(token, quizId, autoStartNum);
 
-  save();
   res.json(response);
 });
 
@@ -539,7 +498,6 @@ app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
 
   const response = adminQuizSessionUpdate(token, quizId, sessionId, action);
 
-  save();
   res.json(response);
 });
 
@@ -548,7 +506,6 @@ app.post('/v1/player/join', (req: Request, res: Response) => {
 
   const response = adminQuizSessionJoin(sessionId, name);
 
-  save();
   res.json(response);
 });
 
@@ -559,7 +516,6 @@ app.put('/v1/player/:playerid/question/:questionposition/answer', (req: Request,
 
   const response = adminQuizPlayerSubmitAnswer(answerIds, playerid, questionposition);
 
-  save();
   res.json(response);
 });
 
@@ -570,7 +526,6 @@ app.put('/v1/admin/quiz/:quizid/thumbnail', (req: Request, res: Response) => {
 
   const response = adminQuizThumbnailUpdate(quizId, token, imgUrl);
 
-  save();
   res.json(response);
 });
 
@@ -579,7 +534,6 @@ app.get('/v1/admin/quiz/:quizid/sessions', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const response = adminQuizSessions(token, quizId);
 
-  save();
   res.json(response);
 });
 
@@ -589,7 +543,6 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
   const sessionId = parseInt(req.params.sessionid);
   const response = adminQuizGetSessionStatus(quizId, sessionId, token);
 
-  save();
   res.json(response);
 });
 
@@ -597,7 +550,6 @@ app.get('/v1/player/:playerid', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);
   const response = adminQuizPlayerStatus(playerId);
 
-  save();
   res.json(response);
 });
 
@@ -606,7 +558,6 @@ app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: R
   const questionposition = parseInt(req.params.questionposition);
   const response = adminQuizPlayerQuestionInformation(playerId, questionposition);
 
-  save();
   res.json(response);
 });
 
@@ -614,7 +565,6 @@ app.get('/v1/player/:playerid/chat', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);
   const response = adminQuizChat(playerId);
 
-  save();
   res.json(response);
 });
 
@@ -623,7 +573,6 @@ app.post('/v1/player/:playerid/chat', (req: Request, res: Response) => {
   const { message } = req.body;
   const response = adminQuizChatSend(playerId, message.messageBody);
 
-  save();
   res.json(response);
 });
 app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request, res: Response) => {
@@ -631,7 +580,6 @@ app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request
   const questionPosition = parseInt(req.params.questionposition);
   const response = adminQuizQuestionResults(playerId, questionPosition);
 
-  save();
   res.json(response);
 });
 
@@ -639,7 +587,6 @@ app.get('/v1/player/:playerid/results', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);
   const response = adminQuizFinalResults(playerId);
 
-  save();
   res.json(response);
 });
 
@@ -649,7 +596,6 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid/results', (req: Request, res:
   const token = req.headers.token as string;
   const response = adminQuizCompletedQuizResults(quizId, sessionId, token);
 
-  save();
   res.json(response);
 });
 
@@ -660,7 +606,6 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid/results/csv', ( req: Request,
   const response = adminQuizFinalResultsCSV(quizId, sessionId, token);
   console.log(response);
 
-  save();
   res.json(response);
 })
 

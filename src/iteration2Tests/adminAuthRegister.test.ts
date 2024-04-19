@@ -4,12 +4,12 @@ import {
 } from './testHelpers';
 import HTTPError from 'http-errors';
 
-// beforeEach(() => {
-//   clear();
-// });
+beforeEach(() => {
+  clear();
+});
 
 describe('Testing POST /v1/admin/auth/register', () => {
-  test.only('Successful registration: Return values', () => {
+  test('Successful registration: Return values', () => {
     expect(adminAuthRegister('dunyao@unsw.edu.au', 'abcd1234', 'DunYao', 'Foo')).toStrictEqual({
       token: expect.any(String)
     });

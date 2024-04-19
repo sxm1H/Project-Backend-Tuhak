@@ -1,6 +1,6 @@
 import {
    getData, 
-  //counters 
+   setData,
 } from './dataStore';
 import {
   ErrorObject,
@@ -54,7 +54,8 @@ function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: string)
 
   findQuiz.thumbnailUrl = imgUrl;
   findQuiz.timeLastEdited = Math.floor(Date.now() / 1000);
-
+  
+  setData(data);
   return {};
 }
 
@@ -112,7 +113,8 @@ function adminQuizSessionCreate(token: string, quizId: number, autoStartNum: num
     messages: [],
   });
 
-  return { sessionId: newSessionId };
+  setData(data) 
+return { sessionId: newSessionId };
 }
 
 function adminQuizSessionUpdate(token: string, quizId: number, sessionId: number, action: string): ErrorObject | Record<string, never> {
@@ -156,7 +158,8 @@ function adminQuizSessionUpdate(token: string, quizId: number, sessionId: number
       throw HTTPError(400, 'Action enum cannot be applied in the current state');
     }
 
-    return {};
+    setData(data) 
+return {};
   }
 
   // If state == END could be a possible outcome.
@@ -174,7 +177,8 @@ function adminQuizSessionUpdate(token: string, quizId: number, sessionId: number
     quizFinalHelper(findSession, action);
   }
 
-  return {};
+  setData(data) 
+return {};
 }
 
 function adminQuizSessionJoin(sessionId: number, name: string): ErrorObject | PlayerId {
@@ -210,7 +214,8 @@ function adminQuizSessionJoin(sessionId: number, name: string): ErrorObject | Pl
     score: 0
   });
 
-  return { playerId: playerId };
+  setData(data) 
+return { playerId: playerId };
 }
 
 function adminQuizPlayerSubmitAnswer (answerIds: number[], playerid: number, questionposition: number): ErrorObject | Record<string, never> {
@@ -282,7 +287,8 @@ function adminQuizPlayerSubmitAnswer (answerIds: number[], playerid: number, que
   findQuestion.timeTaken = timeEnd - findQuestion.timeStart;
   findQuestion.answers = answerIds;
 
-  return {};
+  setData(data) 
+return {};
 }
 
 /**
@@ -346,7 +352,8 @@ function v2adminQuizCreate(token: string, name: string, description: string): Er
     thumbnailUrl: 'https://www.unsw.edu.au/content/dam/images/photos/events/open-day/2020-12-homepage-update/OpenDay_2019_campaign%20-0307-crop.cropimg.width=1920.crop=square.jpg'
   });
 
-  return { quizId: newdata.quizIdCounter };
+  setData(newdata) 
+return { quizId: newdata.quizIdCounter };
 }
 
 function v2adminQuizRemove(token: string, quizId: number): ErrorObject | Record<string, never> {
@@ -375,7 +382,8 @@ function v2adminQuizRemove(token: string, quizId: number): ErrorObject | Record<
   newdata.trash.push(newdata.quizzes[findQuizIndex]);
   newdata.quizzes.splice(findQuizIndex, 1);
 
-  return {};
+  setData(newdata) 
+return {};
 }
 
 function v2adminQuizTransfer(token: string, userEmail: string, quizId: number): ErrorObject | Record<string, never> {
@@ -426,7 +434,8 @@ function v2adminQuizTransfer(token: string, userEmail: string, quizId: number): 
   // Transfers ownership to user belonging to userEmail.
   findQuiz.authUserId = findTarget.userId;
 
-  return {};
+  setData(data) 
+return {};
 }
 
 /**
@@ -543,7 +552,8 @@ function v2AdminQuizQuestionCreate(quizId: number, token: string, questionBody: 
   findQuiz.timeLastEdited = date;
   findQuiz.numQuestions++;
 
-  return { questionId: questionId };
+  setData(data) 
+return { questionId: questionId };
 }
 
 /**
@@ -583,7 +593,8 @@ function v2AdminQuizInfo(token: string, quizId: number): ErrorObject | QuizInfoR
     throw HTTPError(403, 'User does not own this quiz.');
   }
 
-  return {
+  setData(data) 
+return {
     quizId: findQuiz.quizId,
     name: findQuiz.name,
     timeCreated: findQuiz.timeCreated,
@@ -694,7 +705,8 @@ function v2AdminQuizQuestionUpdate(questionBody: Question, token: string, quizId
 
   findQuiz.timeLastEdited = date;
 
-  return {};
+  setData(data) 
+return {};
 }
 
 /**
@@ -750,7 +762,8 @@ function v2adminQuizQuestionDelete(token: string, quizId: number, questionId: nu
   // Deleting the Question
   data.quizzes[findQuizIndex].questions.splice(findQuestionIndex, 1);
 
-  return {};
+  setData(data) 
+return {};
 }
 
 function adminQuizSessions (token: string, quizId: number): ErrorObject | QuizSessionReturn {
@@ -782,7 +795,8 @@ function adminQuizSessions (token: string, quizId: number): ErrorObject | QuizSe
     }
   }
 
-  return {
+  setData(data) 
+return {
     activeSessions: activeSessions,
     inactiveSessions: inactiveSessions,
   };
@@ -826,7 +840,8 @@ function adminQuizGetSessionStatus (quizId: number, sessionId: number, token: st
     thumbnailUrl: findSession.metadata.thumbnailUrl,
   };
 
-  return {
+  setData(data) 
+return {
     state: findSession.state,
     atQuestion: findSession.atQuestion,
     players: newPlayers,
@@ -864,6 +879,7 @@ function adminQuizQuestionResults(playerid: number, questionPosition: number): E
     throw HTTPError(400, 'session is not yet up to this question');
   }
 
+  setData(data);
   return getQuestionResults(session, questionPosition);
 }
 
@@ -890,6 +906,7 @@ function adminQuizFinalResults(playerId: number): ErrorObject | FinalScoreReturn
     throw HTTPError(400, 'Session is not in FINAL_RESULTS state');
   }
 
+  setData(data);
   return getFinalScoreSummary(session);
 }
 
@@ -927,6 +944,7 @@ function adminQuizCompletedQuizResults(quizId: number, sessionId: number, token:
     throw HTTPError(403, 'User does not own this quiz.');
   }
 
+  setData(data);
   return getFinalScoreSummary(session);
 }
 
@@ -946,7 +964,8 @@ function adminQuizPlayerStatus (playerid: number): ErrorObject | QuizPlayerRetur
     throw HTTPError(400, 'player ID does not exist');
   }
 
-  return {
+  setData(data) 
+return {
     state: session.state,
     numQuestions: session.metadata.numQuestions,
     atQuestion: session.atQuestion,
@@ -982,7 +1001,8 @@ function adminQuizPlayerQuestionInformation (playerid: number, questionposition:
     throw HTTPError(400, 'Session is in LOBBY, QUESTION_COUNTDOWN, or END state');
   }
 
-  return {
+  setData(data) 
+return {
     questionId: session.metadata.questions[questionposition - 1].questionId,
     question: session.metadata.questions[questionposition - 1].question,
     duration: session.metadata.questions[questionposition - 1].duration,
@@ -1008,7 +1028,8 @@ function adminQuizChat (playerid: number): ErrorObject | ChatReturn {
     throw HTTPError(400, 'player ID does not exist');
   }
 
-  return {
+  setData(data) 
+return {
     messages: session.messages,
   };
 }
@@ -1042,7 +1063,8 @@ function adminQuizChatSend (playerid: number, messageBody: string): ErrorObject 
     timeSent: Math.floor(Date.now() / 1000),
   });
 
-  return {};
+  setData(data) 
+return {};
 }
 
 function adminQuizFinalResultsCSV(quizId: number, sessionId: number, token: string) {
@@ -1091,6 +1113,7 @@ function adminQuizFinalResultsCSV(quizId: number, sessionId: number, token: stri
   }
   fs.writeFileSync('.' + filename, csvFormattedResults);
 
+  setData(data);
   return SERVER_URL + filename;
 }
 
@@ -1122,7 +1145,8 @@ function quizWaitThreeHelper (session: quizState): Record<string, never> {
   timeoutIds.splice(findSession, 1);
   quizSkipCountdownHelper(session);
 
-  return {};
+  setData(getData()) 
+return {};
 }
 
 function quizSkipCountdownHelper (session: quizState): Record<string, never> {
@@ -1151,7 +1175,8 @@ function quizSkipCountdownHelper (session: quizState): Record<string, never> {
     });
   }
 
-  return {};
+  setData(getData()) 
+return {};
 }
 
 function quizOpenQuestionDurationHelper (session: quizState): Record<string, never> {
@@ -1160,7 +1185,8 @@ function quizOpenQuestionDurationHelper (session: quizState): Record<string, nev
   const findSession = timeoutIds.findIndex(ids => ids.sessionId === session.sessionId);
   timeoutIds.splice(findSession, 1);
 
-  return {};
+  setData(getData()) 
+return {};
 }
 
 function clearTimeoutId (session: quizState): Record<string, never> {
@@ -1170,7 +1196,8 @@ function clearTimeoutId (session: quizState): Record<string, never> {
     timeoutIds.splice(findSession, 1);
   }
 
-  return {};
+  setData(getData()) 
+return {};
 }
 
 function quizCountdownHelper (session: quizState, action: string): Record<string, never> {
@@ -1182,7 +1209,8 @@ function quizCountdownHelper (session: quizState, action: string): Record<string
   } else {
     throw HTTPError(400, 'Action enum cannot be applied in the current state');
   }
-  return {};
+  setData(getData()) 
+return {};
 }
 
 function quizOpenHelper (session: quizState, action: string): Record<string, never> {
@@ -1199,7 +1227,8 @@ function quizOpenHelper (session: quizState, action: string): Record<string, nev
     // state
     throw HTTPError(400, 'Action enum cannot be applied in the current state');
   }
-  return {};
+  setData(getData()) 
+return {};
 }
 
 function quizCloseHelper (session: quizState, action: string): Record<string, never> {
@@ -1219,7 +1248,8 @@ function quizCloseHelper (session: quizState, action: string): Record<string, ne
   } else {
     throw HTTPError(400, 'Action enum cannot be applied in the current state');
   }
-  return {};
+  setData(getData()) 
+return {};
 }
 
 function quizShowHelper (session: quizState, action: string): Record<string, never> {
@@ -1237,13 +1267,15 @@ function quizShowHelper (session: quizState, action: string): Record<string, nev
   } else {
     throw HTTPError(400, 'Action enum cannot be applied in the current state');
   }
-  return {};
+  setData(getData()) 
+return {};
 }
 
 function quizFinalHelper (session: quizState, action: string): ErrorObject | Record<string, never> {
   if (action === Actions.END) {
     session.state = States.END;
-    return {};
+    setData(getData()) 
+return {};
   } else {
     throw HTTPError(400, 'Action enum cannot be applied in the current state');
   }
@@ -1300,7 +1332,8 @@ function getQuestionResults(session: quizState, questionPosition: number): Quest
   averageAnswerTime = Math.round(averageAnswerTime / session.players.length);
   const percentageCorrect = Math.round((playersCorrectList.length / session.players.length) * 100);
 
-  return {
+  setData(getData()) 
+return {
     questionId: session.metadata.questions[questionPosition - 1].questionId,
     playersCorrectList: playersCorrectList,
     averageAnswerTime: averageAnswerTime,
@@ -1328,7 +1361,8 @@ function getFinalScoreSummary(session: quizState): FinalScoreReturn {
     questionResults.push(getQuestionResults(session, i + 1));
   }
 
-  return {
+  setData(getData()) 
+return {
     usersRankedByScore: usersRankedByScore,
     questionResults: questionResults,
   };
@@ -1365,7 +1399,8 @@ function rankScorePlayers(session: quizState): Record<string, never> {
     findPlayer.scorePer.push(0);
   }
 
-  return {};
+  setData(getData()) 
+return {};
 }
 
 function getFinalScoreCSVFormatted(session: quizState) {
