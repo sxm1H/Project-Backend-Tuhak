@@ -218,6 +218,10 @@ const adminQuizCompletedQuizResults = (quizid: number, sessionid: number, token:
   return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionid}/results`, { }, { token });
 };
 
+const adminQuizFinalResultsCSV = (quizId: number, sessionId: number, token: string) => {
+  return requestHelper('GET', `/v1/admin/quiz/${quizId}/session/${sessionId}/results/csv`, { }, { token });
+}
+
 // ============================================================================================== //
 
 export {
@@ -253,5 +257,6 @@ export {
   adminQuizChatSend,
   adminQuizQuestionResults,
   adminQuizFinalResults,
-  adminQuizCompletedQuizResults
+  adminQuizCompletedQuizResults,
+  adminQuizFinalResultsCSV,
 };

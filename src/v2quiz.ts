@@ -19,7 +19,10 @@ import {
   QuestionId
 } from './interfaces';
 import HTTPError from 'http-errors';
+import { port, url } from './config.json';
 
+const SERVER_URL = `${url}:${port}`;
+const fs = require('fs');
 interface timeoutobj {
   sessionId: number;
   timeoutId: ReturnType<typeof setTimeout>;
@@ -1039,6 +1042,55 @@ function adminQuizChatSend (playerid: number, messageBody: string): ErrorObject 
   return {};
 }
 
+function adminQuizFinalResultsCSV(quizId: number, sessionId: number, token: string) {
+  const data = getData();
+
+  // Double for loop, to iterate through two arrays.
+
+  let session: quizState | undefined;
+  for (const sessions of data.quizActiveState) {
+    if (sessions.sessionId === sessionId) {
+      session = sessions;
+    }
+  }
+
+  //Error Checks
+  const searchToken = data.sessions.find(session => session.token === token);
+  if (!searchToken) {
+    throw HTTPError(401, 'Token is empty or invalid');
+  }
+
+  const findQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  if (!findQuiz) {
+    throw HTTPError(403, 'Quiz ID does not refer to a valid quiz');
+  }
+  if (findQuiz.authUserId !== searchToken.userId) {
+    throw HTTPError(403, 'User does not own this quiz.');
+  }
+
+  if (session === undefined) {
+    throw HTTPError(400, 'Session does not exist');
+  }
+  
+  if (session.metadata.quizId !== quizId) {
+    throw HTTPError(400, 'Session Is Not Currently Running for this Quiz')
+  }
+
+  if (session.state !== States.FINAL_RESULTS) {
+    throw HTTPError(400, 'Session is not in FINAL_RESULTS state');
+  }
+
+  const csvFormattedResults = getFinalScoreCSVFormatted(session);
+
+  const filename = '/csv-results/CSVscore' + JSON.stringify(sessionId) + '.csv'
+  if (!fs.existsSync('./csv-results')) {
+    fs.mkdirSync('./csv-results');
+  }
+  fs.writeFileSync('.' + filename, csvFormattedResults);
+
+  return SERVER_URL + filename;
+}
+
 /// ////////////////////////////////////////////////////////////////////////////////////////////////
 /// ////////////////////////////////////////////////////////////////////////////////////////////////
 /// //////////////////////////////////// HELPER FUNCTIONS //////////////////////////////////////////
@@ -1313,6 +1365,21 @@ function rankScorePlayers(session: quizState): Record<string, never> {
   return {};
 }
 
+function getFinalScoreCSVFormatted(session: quizState) {
+  const allplayers = session.players;
+  allplayers.sort((a, b) => a.name.localeCompare(b.name));
+  let csvFormattedResults = '';
+  for (let player of allplayers) {
+    csvFormattedResults += player.name;
+    for (let i = 0; i < session.metadata.numQuestions; i++) {
+      csvFormattedResults += ',' + player.scorePer[i];
+      csvFormattedResults += ',' + player.rank[i];
+    }
+    csvFormattedResults+= '\n'
+  }
+  return csvFormattedResults;
+}
+
 export {
   adminQuizSessionCreate,
   adminQuizSessionUpdate,
@@ -1335,4 +1402,5 @@ export {
   adminQuizChatSend,
   adminQuizPlayerQuestionInformation,
   adminQuizPlayerStatus,
+  adminQuizFinalResultsCSV,
 };
