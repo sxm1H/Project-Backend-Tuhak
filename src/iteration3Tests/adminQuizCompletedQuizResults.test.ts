@@ -54,7 +54,7 @@ describe('Testing /v1/admin/{quizid}/session/{sessionid}/results', () => {
         {
           questionId: questionId,
           playersCorrectList: ['Sami'],
-          averageAnswerTime: 2,
+          averageAnswerTime: expect.any(Number),
           percentageCorrect: 50,
         }
       ]

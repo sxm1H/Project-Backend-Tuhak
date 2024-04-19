@@ -37,30 +37,30 @@ beforeEach(() => {
 });
 
 describe('Testing /v1/admin/quiz/{quizid}/session/{sessionid)/results/csv', () => {
-  test('Test Successful: Creating a CSV file for a 2 Question Quiz', () => {
-    const sessionId = adminQuizSessionCreate(token1, quizId, 0).sessionId;
-    const playerId1 = adminQuizPlayerJoin(sessionId, 'Sami').playerId;
-    const playerId2 = adminQuizPlayerJoin(sessionId, 'Dun Yao').playerId;
-    adminQuizSessionUpdate(token1, quizId, sessionId, 'NEXT_QUESTION');
-    adminQuizSessionUpdate(token1, quizId, sessionId, 'SKIP_COUNTDOWN');
-    const answerId1 = v2adminQuizInfo(token1, quizId).questions[0].answers;
-    sleepSync(1000);
-    adminQuizPlayerSubmitAnswer(playerId1, 1, [answerId1[0].answerId]);
-    sleepSync(1000);
-    adminQuizPlayerSubmitAnswer(playerId2, 1, [answerId1[1].answerId]);
-    adminQuizSessionUpdate(token1, quizId, sessionId, 'GO_TO_ANSWER');
-    adminQuizSessionUpdate(token1, quizId, sessionId, 'NEXT_QUESTION');
-    adminQuizSessionUpdate(token1, quizId, sessionId, 'SKIP_COUNTDOWN');
-    const answerId2 = v2adminQuizInfo(token1, quizId).questions[1].answers;
-    sleepSync(1000);
-    adminQuizPlayerSubmitAnswer(playerId1, 2, [answerId2[0].answerId]);
-    sleepSync(1000);
-    adminQuizPlayerSubmitAnswer(playerId2, 2, [answerId2[0].answerId]);
-    adminQuizSessionUpdate(token1, quizId, sessionId, 'GO_TO_ANSWER');
-    adminQuizSessionUpdate(token1, quizId, sessionId, 'GO_TO_FINAL_RESULTS');
-    const url = adminQuizFinalResultsCSV(quizId, sessionId, token1);
-    expect(url).toStrictEqual(expect.any(String));
-  });
+    test('Test Successful: Creating a CSV file for a 2 Question Quiz', () => {
+        const sessionId = adminQuizSessionCreate(token1, quizId, 0).sessionId;
+        const playerId1 = adminQuizPlayerJoin(sessionId, 'Sami').playerId;
+        const playerId2 = adminQuizPlayerJoin(sessionId, 'Dun Yao').playerId;
+        adminQuizSessionUpdate(token1, quizId, sessionId, 'NEXT_QUESTION');
+        adminQuizSessionUpdate(token1, quizId, sessionId, 'SKIP_COUNTDOWN');
+        const answerId1 = v2adminQuizInfo(token1, quizId).questions[0].answers;
+        sleepSync(1000);
+        adminQuizPlayerSubmitAnswer(playerId1, 1, [answerId1[0].answerId]);
+        sleepSync(1000);
+        adminQuizPlayerSubmitAnswer(playerId2, 1, [answerId1[1].answerId]);
+        adminQuizSessionUpdate(token1, quizId, sessionId, 'GO_TO_ANSWER');
+        adminQuizSessionUpdate(token1, quizId, sessionId, 'NEXT_QUESTION');
+        adminQuizSessionUpdate(token1, quizId, sessionId, 'SKIP_COUNTDOWN');
+        const answerId2 = v2adminQuizInfo(token1, quizId).questions[1].answers;
+        sleepSync(1000);
+        adminQuizPlayerSubmitAnswer(playerId1, 2, [answerId2[0].answerId]);
+        sleepSync(1000);
+        adminQuizPlayerSubmitAnswer(playerId2, 2, [answerId2[0].answerId]);
+        adminQuizSessionUpdate(token1, quizId, sessionId, 'GO_TO_ANSWER');
+        adminQuizSessionUpdate(token1, quizId, sessionId, 'GO_TO_FINAL_RESULTS');
+        const url = adminQuizFinalResultsCSV(quizId, sessionId, token1).url;
+        expect(url).toStrictEqual(expect.any(String));
+    })
 
   test('Test Unsuccessful: SessionId does not Refer to a Valid Quiz', () => {
     const sessionId = adminQuizSessionCreate(token1, quizId, 0).sessionId;
