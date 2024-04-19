@@ -1007,6 +1007,17 @@ function adminQuizQuestionResults(playerid: number, questionPosition: number): E
   return getQuestionResults(session, questionPosition);
 }
 
+/**
+ * The adminQuizFinalResults will get the total final results for session given a playerId, returning 
+ * a ranked list of all the player performances and and array of Questoin results identical to the return 
+ * of adminQuizQuestionResults
+ * 
+ * @param {number} playerId 
+ * @returns {object {
+ * usersRankedbyScore: UserRanks[];
+ * questionResults: QuestionResultsReturn[];
+ * }} 
+ */
 function adminQuizFinalResults(playerId: number): ErrorObject | FinalScoreReturn {
   const data = getData();
 
@@ -1032,7 +1043,18 @@ function adminQuizFinalResults(playerId: number): ErrorObject | FinalScoreReturn
 
   return getFinalScoreSummary(session);
 }
-
+/**
+ * adminQuizCompletedQuizResults will do the same thing as adminQuizFinalResults but, 
+ * given a valid quizId, sessionId and token and will return the exact same thing as quizFinalResults 
+ *  
+ * @param {number} quizId 
+ * @param {number} sessionId 
+ * @param {string} token 
+ * @returns {object {
+ * usersRankedbyScore: UserRanks[];
+ * questionResults: QuestionResultsReturn[];
+ * }} 
+ */
 function adminQuizCompletedQuizResults(quizId: number, sessionId: number, token: string): ErrorObject | FinalScoreReturn {
   const data = getData();
 
@@ -1069,7 +1091,17 @@ function adminQuizCompletedQuizResults(quizId: number, sessionId: number, token:
 
   return getFinalScoreSummary(session);
 }
-
+/**
+ * adminQuizPlayerStatus will, given a valid player in the session, returns the 
+ * current state of the session, the question the session is at, and the number of questions
+ * in the session. 
+ * @param {number} playerid 
+ * @returns {object {
+ * state: string,
+ * numQuestions: number,
+ * atQuestion: number
+ * }}
+ */
 function adminQuizPlayerStatus (playerid: number): ErrorObject | QuizPlayerReturn {
   const data = getData();
 
@@ -1092,7 +1124,21 @@ function adminQuizPlayerStatus (playerid: number): ErrorObject | QuizPlayerRetur
     atQuestion: session.atQuestion,
   };
 }
-
+/**
+ * adminQuizPlayerQuestionInformation will get the information about a question a valid player is currently on. 
+ * 
+ * @param {number} playerid - The id of the player we want to read the questioninformation off of 
+ * @param {number} questionposition - the question the player is currentlly on.  
+ * 
+ * @returns {Question object} - returns the question object 
+ * {
+ * questionId?: number;
+ * question: string;
+ * duration: number;
+ * points: number;
+ * answers: Answer[];
+ * thumbnailUrl?: string;} when successful
+ */
 function adminQuizPlayerQuestionInformation (playerid: number, questionposition: number): ErrorObject | Question {
   const data = getData();
 
@@ -1131,7 +1177,19 @@ function adminQuizPlayerQuestionInformation (playerid: number, questionposition:
     answers: session.metadata.questions[questionposition - 1].answers,
   };
 }
-
+/**
+ * adminQuizChat will show all chat messages in a given session, given a valid playerId in said session.
+ * The chat messages should be formated as so:
+ * {
+ * "messageBody": "This is a message body",
+ * "playerId": 5546,
+ * "playerName": "Yuchao Jiang",
+ * "timeSent": 1683019484
+ * },
+ * 
+ * @param {number} playerid - the player who is view the session chat
+ * @returns {object: Message[]} - return an array of message objects in order of when they were sent
+ */
 function adminQuizChat (playerid: number): ErrorObject | ChatReturn {
   const data = getData();
 
@@ -1152,7 +1210,14 @@ function adminQuizChat (playerid: number): ErrorObject | ChatReturn {
     messages: session.messages,
   };
 }
-
+/**
+ * adminQuizChatSend allows an valid player in session to be able to send a chat message to said Session. 
+ * The message should not be empty or more than 100 characters
+ * 
+ * @param {number} playerid - the player who will send the message
+ * @param {string} messageBody - the message the player wishes to send
+ * @returns {object {}}
+ */
 function adminQuizChatSend (playerid: number, messageBody: string): ErrorObject | Record<string, never> {
   const data = getData();
 
@@ -1184,7 +1249,16 @@ function adminQuizChatSend (playerid: number, messageBody: string): ErrorObject 
 
   return {};
 }
-
+/**
+ * adminQuizFinalResultsCSV formats adminQuizFinalResults to make it a valid .csv file. 
+ * It will check if the csv-results directory exists and make on if it doesn't. It will then 
+ * create a csv file containing the finalresults of a given session
+ * 
+ * @param {number} quizId- the quiz in the session
+ * @param {number} sessionId - the session that the final results will be gotten from
+ * @param {string} token - The token of the user requesting the final results. 
+ * @returns {object {url: string}}
+ */
 function adminQuizFinalResultsCSV(quizId: number, sessionId: number, token: string) {
   const data = getData();
 
@@ -1231,7 +1305,7 @@ function adminQuizFinalResultsCSV(quizId: number, sessionId: number, token: stri
   }
   fs.writeFileSync('.' + filename, csvFormattedResults);
 
-  return SERVER_URL + filename;
+  return {url: SERVER_URL + filename};
 }
 
 /// ////////////////////////////////////////////////////////////////////////////////////////////////
