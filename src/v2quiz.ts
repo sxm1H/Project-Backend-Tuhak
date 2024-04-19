@@ -143,7 +143,9 @@ function adminQuizSessionCreate(token: string, quizId: number, autoStartNum: num
 }
 /**
  * adminQuizSessionUpdate will update the session's state based on the current state of the session
- * and the action provided. This function will check if:
+ * and the action provided. When the session switches from QUESTION_OPEN state to another state, all players
+ * last submitted answers will be calculated. 
+ * This function will check if:
  *  - The token is valid and owns the quiz
  *  - The user owns this quiz 
  *  - The SessionId is a valid session
@@ -264,6 +266,24 @@ function adminQuizSessionJoin(sessionId: number, name: string): ErrorObject | Pl
   return { playerId: playerId };
 }
 
+/**
+ * adminQuizPlayerSubmitAnswer will allow a player to submit an answer to the current question in the session. 
+ * The player is allowed to submit as many answers they can as long as the session is QUESTION_OPEN state. Only their
+ * last answer they submitted will be considered when the question closes. 
+ * The function should check if: 
+ *  - The playerId exists in the current session
+ *  - The session Is in QUESTION_OPEN state
+ *  - The questionposition corresponds to a position outside the number of questions in the quiz
+ *  - The quiz is up to the questionPosition
+ *  - An answer is not submitted
+ *  - The answers submitted do not correspond to the answers in the current question
+ * 
+ * @param {number[]} answerIds - the array of answer selections a player has chosen 
+ * @param {number} playerid - the player Id of the player answering the question
+ * @param questionposition - the question the player is answering
+ * 
+ * @returns {object {}} - will return an empty object when successful
+ */
 function adminQuizPlayerSubmitAnswer (answerIds: number[], playerid: number, questionposition: number): ErrorObject | Record<string, never> {
   const data = getData();
 
@@ -344,8 +364,6 @@ function adminQuizPlayerSubmitAnswer (answerIds: number[], playerid: number, que
  * @param {string} name - The name of the quiz that is being created
  * @param {string} description - the description of the quiz being created
  *
- * @return {object {error: string}} - returns an error string if an the correct error
- * is encountered
  * @return {object {quizId: number}} - returns a quiz Id object that contains the unique quiz Id relating
  * to the created quiz.
  */
@@ -399,7 +417,22 @@ function v2adminQuizCreate(token: string, name: string, description: string): Er
 
   return { quizId: counters.quizIdCounter };
 }
-
+/**
+  * <Given a registered userId and quizId, delete the quiz from data storage.>
+  * <In addition, the quiz will be sent to the trash in data, which can be retrieved
+  * or permanantly deleted from data in the future"
+  *
+  * It should check for if :
+  *    - the Token is valid/User is logged in
+  *    - the quizId does not refer to a quiz that the user owns
+  *    - Quiz Id does not refer to a quiz
+  *    - There is a session of a quiz that is not in END state
+  * 
+  * @param {Number} token - the token created in adminAuthRegister.
+  * @param {number} quizId - quizId which may or may not be registered in the data
+  *
+  * @returns {object { }} returns empty object if function went successful
+*/
 function v2adminQuizRemove(token: string, quizId: number): ErrorObject | Record<string, never> {
   const newdata = getData();
 
@@ -429,6 +462,25 @@ function v2adminQuizRemove(token: string, quizId: number): ErrorObject | Record<
   return {};
 }
 
+/**
+  * adminQuizTransfer takes in the user's token, the quizId of the quiz they wish to transfer ownership of, and
+  * the email of the target user. If successful, the logged in user will no longer own the quiz, replaced by
+  * the user linked to the email.
+  *
+  * This function does some preliminary error checking for
+  *   1. Is the token valid
+  *   2. Is the email valid
+  *   3. Does the email belong to the logged in user
+  *   4. Does the user actually own the quiz
+  *   5. Does the target user own a quiz of the same name.
+  *   6. Any session for the quiz is not in END state
+  *
+  * @param {string} token - This is the user's token for their session.
+  * @param {string} userEmail - Email belonging to the target user.
+  * @param {number} quizId - ID belonging to the quiz the logged in user wishes to transfer ownership of.
+  *
+  * @returns {object {}} Empty Object to indicidate that everything worked.
+*/
 function v2adminQuizTransfer(token: string, userEmail: string, quizId: number): ErrorObject | Record<string, never> {
   const data = getData();
 
@@ -492,6 +544,7 @@ function v2adminQuizTransfer(token: string, userEmail: string, quizId: number): 
  * 6. Question Duration
  * 7. Question Points
  * 8. Answer Lengths and Duplicates.
+ * 9. Thumbnail
  * Following the error checks, the question will then be pushed onto the relevant quiz's question
  * array, and the quiz duration, last edited and number of questions field in the quiz object
  * is then updated.
@@ -500,8 +553,7 @@ function v2adminQuizTransfer(token: string, userEmail: string, quizId: number): 
  * @param { string } token - Contains the user's current session token.
  * @param { Question } questionBody - An object containing question, duration, points and answers.
  *
- * @returns { Error Object } -  Object containing the key 'error' and the value being the relevant error message
- * @returns { Empty Object } - Empty Object to indicate succesful addition of the question.
+ * @returns { object {questionId: number} } - Empty Object to indicate succesful addition of the question.
  */
 
 function v2AdminQuizQuestionCreate(quizId: number, token: string, questionBody: Question): ErrorObject | QuestionId {
@@ -605,11 +657,6 @@ function v2AdminQuizQuestionCreate(quizId: number, token: string, questionBody: 
   * @param {number} quizId - ID of quiz user is trying to access.
   *
   * @returns {
-*   object {
-  *     error: string
-  *   }
-  * } - Error object with information regarding error.
-  * @returns {
   *   return {
   *     quizId: number,
   *     name: string,
@@ -653,7 +700,6 @@ function v2AdminQuizInfo(token: string, quizId: number): ErrorObject | QuizInfoR
  * It should return an error if any of these parameters are invalid.
  * @param {array} Question - the question array created in adminQuizQuestionCreate.
  *
- * @returns {Object {error: string}} - If an error is occurs, it will return an error object with a string
  * @returns {} - on succesful calling of this function it will return an empty object
  */
 function v2AdminQuizQuestionUpdate(questionBody: Question, token: string, quizId: number, questionId: number): ErrorObject | Record<string, never> {
@@ -755,6 +801,7 @@ function v2AdminQuizQuestionUpdate(questionBody: Question, token: string, quizId
  * 1. Is the token valid ?
  * 2. Is the Quiz Id valid ?
  * 3. Does the User Own This Quiz ?
+ * 4. Is any session for this quiz In END state?
  * Following that, the relevant question's index is obtained and is then checked to see whether the question exists.
  * If it does, the question is then deleted.
  *
@@ -762,7 +809,6 @@ function v2AdminQuizQuestionUpdate(questionBody: Question, token: string, quizId
  * @param { number } quizId - Contains the relevant quiz Id.
  * @param { number } questionId - Contains the relevant question Id.
  *
- * @returns { Error Object } -  Object containing the key 'error' and the value being the relevant error message
  * @returns { Empty Object } - Empty Object to indicate succesful addition of the question.
  */
 function v2adminQuizQuestionDelete(token: string, quizId: number, questionId: number): ErrorObject | Record<string, never> {
@@ -803,7 +849,20 @@ function v2adminQuizQuestionDelete(token: string, quizId: number, questionId: nu
 
   return {};
 }
-
+/**
+ * adminQuizSessions will return a list of all active and inactive sessions for a given quiz. A session is 
+ * considered inactive when it is at the END state and active on every other state. 
+ * This should check if:
+ *  - The token is valid (empty or doesn't belong to a user)
+ *  - The user does not own the quiz or the quizId does not exist
+ * 
+ * @param {string} token 
+ * @param {number} quizId 
+ * @returns {object {
+ * activeSessions: number[],
+ * inactiveSessions: number[]
+ * }}
+ */
 function adminQuizSessions (token: string, quizId: number): ErrorObject | QuizSessionReturn {
   const data = getData();
 
@@ -838,7 +897,22 @@ function adminQuizSessions (token: string, quizId: number): ErrorObject | QuizSe
     inactiveSessions: inactiveSessions,
   };
 }
-
+/**
+ * adminQuizGetSessionStatus gets info about the given session, i.e state, atquestion
+ * players, and the quiz. 
+ *  
+ * @param {number} quizId 
+ * @param {number} sessionId 
+ * @param {string} token 
+ * 
+ * @returns {
+ *  object {
+ *    state: string,
+ *    atQuestion: number,
+ *    players: string[],
+ *    metadata: Quiz
+ * }} 
+ */
 function adminQuizGetSessionStatus (quizId: number, sessionId: number, token: string): ErrorObject | SessionStatusReturn {
   const data = getData();
 
@@ -884,7 +958,22 @@ function adminQuizGetSessionStatus (quizId: number, sessionId: number, token: st
     metadata: metadata,
   };
 }
-
+/**
+ * adminQuizQuestionResult will return an object containing the questionId, the list 
+ * of players who got the question correct, the average answer time and the percentage of people
+ * who got it correct. It calls getQuestionResult, which contains the logic to caculate the average 
+ * time and percentagecorrect, as well as push all players who got it correct into the CorrectList array.
+ * 
+ * @param {number} playerid 
+ * @param {number} questionPosition 
+ * 
+ * @returns {Object {
+ * questionId: number,
+ * playersCorrectList: string[],
+ * averageAnswerTimer: number,
+ * percentagecorrect: number
+ * }}
+ */
 function adminQuizQuestionResults(playerid: number, questionPosition: number): ErrorObject | QuestionResultsReturn {
   const data = getData();
 
