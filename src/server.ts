@@ -58,6 +58,7 @@ import {
   adminQuizQuestionResults,
   adminQuizFinalResults,
   adminQuizCompletedQuizResults,
+  adminQuizFinalResultsCSV,
 } from './v2quiz';
 
 // import {
@@ -629,6 +630,17 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid/results', (req: Request, res:
   save();
   res.json(response);
 });
+
+app.get('/v1/admin/quiz/:quizid/session/:sessionid/results/csv', ( req: Request, res: Response ) => {
+  const quizId = parseInt(req.params.quizid);
+  const sessionId = parseInt(req.params.sessionid);
+  const token = req.headers.token as string;
+  const response = adminQuizFinalResultsCSV(quizId, sessionId, token);
+  console.log(response);
+
+  save();
+  res.json(response);
+})
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
