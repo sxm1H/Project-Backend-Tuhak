@@ -1083,8 +1083,8 @@ function adminQuizFinalResultsCSV(quizId: number, sessionId: number, token: stri
   const csvFormattedResults = getFinalScoreCSVFormatted(session);
 
   const filename = '/csv-results/CSVscore' + JSON.stringify(sessionId) + '.csv'
-  if (!fs.existsSync('.' + filename, csvFormattedResults)) {
-    fs.mkdirSync('.' + filename, csvFormattedResults);
+  if (!fs.existsSync('./csv-results')) {
+    fs.mkdirSync('./csv-results');
   }
   fs.writeFileSync('.' + filename, csvFormattedResults);
 
