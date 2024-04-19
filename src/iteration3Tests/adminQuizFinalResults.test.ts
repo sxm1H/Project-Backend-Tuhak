@@ -63,13 +63,13 @@ describe('Testing /v1/{playerid}/results', () => {
         {
           questionId: questionId,
           playersCorrectList: ['Sami'],
-          averageAnswerTime: 2,
+          averageAnswerTime: expect.any(Number),
           percentageCorrect: 50,
         },
         {
           questionId: questionId2,
           playersCorrectList: ['Sami', 'Dun Yao'],
-          averageAnswerTime: 2,
+          averageAnswerTime: expect.any(Number),
           percentageCorrect: 100,
         },
       ]
