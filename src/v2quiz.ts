@@ -26,6 +26,19 @@ interface timeoutobj {
 }
 const timeoutIds: timeoutobj[] = [];
 
+/**
+ * adminQuizThumbnailUpdate will update the thumbnail URL to a Quiz to a URL of there choice. It will update
+ * the last time the quiz was edited. It should throw errors when 
+ *  - Token is invalid (User is not logged in)
+ *  - The User does not own the quiz being edited
+ *  - The ThumbnailUrl the user wants to update is not a valid link to an image
+ * 
+ * @param {string} token - Token of the user updating the quiz
+ * @param {number} quizId - The Quiz the user wants to update
+ * @param {string} imgUrl - The url of the image of that the user wants to update to
+ * 
+ * @return {object {}} - return an empty object when successful
+ */
 function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: string): ErrorObject | Record<string, never> {
   const data = getData();
 
@@ -52,6 +65,23 @@ function adminQuizThumbnailUpdate(quizId: number, token: string, imgUrl: string)
   return {};
 }
 
+/**
+ * adminQuizSessionCreate will Create a new session for the given quizId. 
+ * This session will start at LOBBY state and will stay there until the corresponding
+ * number of players join the session. The function should check if:
+ *   - The token is valid
+ *   - The Quiz exists/is valid
+ *   - The user owns the quiz 
+ *   - If the autoStartNum is greater than 50
+ *   - There are more than 10 active sessions for the quiz
+ *   - The Quiz does not have any questions in it 
+ *   - THe quiz is in the trash
+ * 
+ * @param {string} token - token of the user creating the session
+ * @param {number} quizId - the quiz that the session is being created from
+ * @param {number} autoStartNum - the number of players that have to join to automatically start the quiz
+ * @returns {{object {sessionId: number}}} - Returns a unique Id of the session being created
+ */
 function adminQuizSessionCreate(token: string, quizId: number, autoStartNum: number): ErrorObject | SessionIdReturn {
   const data = getData();
   const findToken = data.sessions.find(ids => ids.token === token);
@@ -108,7 +138,21 @@ function adminQuizSessionCreate(token: string, quizId: number, autoStartNum: num
 
   return { sessionId: newSessionId };
 }
-
+/**
+ * adminQuizSessionUpdate will update the session's state based on the current state of the session
+ * and the action provided. This function will check if:
+ *  - The token is valid and owns the quiz
+ *  - The user owns this quiz 
+ *  - The SessionId is a valid session
+ *  - The Aciton is a valid action that can be taken
+ *  - The action being taken is a valid action for the current state
+ * @param { string } token 
+ * @param { number } quizId 
+ * @param { number } sessionId 
+ * @param { string } action 
+ * 
+ * @returns {object {}} - it will return an object if successful 
+ */
 function adminQuizSessionUpdate(token: string, quizId: number, sessionId: number, action: string): ErrorObject | Record<string, never> {
   const data = getData();
   const findToken = data.sessions.find(ids => ids.token === token);
@@ -170,7 +214,17 @@ function adminQuizSessionUpdate(token: string, quizId: number, sessionId: number
 
   return {};
 }
-
+/**
+ * adminQuizSessionJoin will allow a guest player to be created and join an active 
+ * session. Each player will be assigned a unique player id. The function should test for
+ *  - If the session is valid and in LOBBY State
+ *  - If the player that joins does not have a unique name
+ * 
+ * 
+ * @param { number } sessionId
+ * @param {string} name 
+ * @returns {object {playerId: number}}
+ */
 function adminQuizSessionJoin(sessionId: number, name: string): ErrorObject | PlayerId {
   const data = getData();
   const findSession = data.quizActiveState.find(session => session.sessionId === sessionId);
