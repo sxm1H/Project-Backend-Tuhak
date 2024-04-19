@@ -239,6 +239,7 @@ interface RequestHelperReturnType {
   messageBody?: string;
   playerName?: string;
   timeSent?: number;
+  url?: string;
 }
 
 enum States {

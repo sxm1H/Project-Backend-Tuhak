@@ -58,7 +58,7 @@ describe('Testing /v1/admin/quiz/{quizid}/session/{sessionid)/results/csv', () =
         adminQuizPlayerSubmitAnswer(playerId2, 2, [answerId2[0].answerId]);
         adminQuizSessionUpdate(token1, quizId, sessionId, 'GO_TO_ANSWER');
         adminQuizSessionUpdate(token1, quizId, sessionId, 'GO_TO_FINAL_RESULTS');
-        const url = adminQuizFinalResultsCSV(quizId, sessionId, token1);
+        const url = adminQuizFinalResultsCSV(quizId, sessionId, token1).url;
         expect(url).toStrictEqual(expect.any(String));
     })
 
