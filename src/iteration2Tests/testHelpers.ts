@@ -1,9 +1,9 @@
-import request, { HttpVerb } from 'sync-request-curl';
+import request, { HttpVerb } from 'sync-request';
 import { port, url } from '../config.json';
 import { Answer, RequestHelperReturnType } from '../interfaces';
 import HTTPError from 'http-errors';
 
-const SERVER_URL = `${url}:${port}`;
+const DEPLOYED_URL = 'https://1531-24t1-f13b-dream.vercel.app';
 const TIMEOUT_MS = 20000;
 
 // The 'RequestHelperReturnType' inteface and 'requestHelper' have been referenced from the file
@@ -21,7 +21,7 @@ const requestHelper = (
     // PUT/POST
     json = payload;
   }
-  const res = request(method, SERVER_URL + path, { qs, json, timeout: TIMEOUT_MS });
+  const res = request(method, DEPLOYED_URL + path, { qs, json, timeout: TIMEOUT_MS });
 
   let responseBody: RequestHelperReturnType | Record<string, never>;
   try {

@@ -1,10 +1,10 @@
-import request, { HttpVerb } from 'sync-request-curl';
+import request, { HttpVerb } from 'sync-request';
 import { port, url } from '../config.json';
 import { Answer, RequestHelperReturnType } from '../interfaces';
 import { IncomingHttpHeaders } from 'http';
 import HTTPError from 'http-errors';
 
-const SERVER_URL = `${url}:${port}`;
+const DEPLOYED_URL = 'https://1531-24t1-f13b-dream.vercel.app';
 const TIMEOUT_MS = 20000;
 
 // This 'requestHelper' function has been referenced from quiz.test.ts from lab08_quiz.
@@ -23,7 +23,7 @@ const requestHelper = (
     json = payload;
   }
 
-  const url = SERVER_URL + path;
+  const url = DEPLOYED_URL + path;
   const res = request(method, url, { qs, json, headers, timeout: TIMEOUT_MS });
 
   let responseBody: RequestHelperReturnType | Record<string, never>;
