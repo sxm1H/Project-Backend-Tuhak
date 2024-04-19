@@ -264,7 +264,6 @@ enum Actions {
 }
 
 export {
-  Counters,
   DataStore,
   User,
   Quiz,

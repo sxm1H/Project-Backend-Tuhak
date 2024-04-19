@@ -25,7 +25,7 @@ import crypto from 'crypto';
 function adminAuthRegister(email: string, password: string, nameFirst: string, nameLast: string): ErrorObject | TokenReturn {
   const data = getData();
   // Returns user object if the email exists already
-  console.log(data)
+  console.log(data);
   const findEmail = data.user.find(user => user.email === email);
 
   // Error checking for all inputs
@@ -105,7 +105,7 @@ function adminAuthLogin(email: string, password: string): ErrorObject | TokenRet
     token: token
   });
 
-  setData(data);
+  setData(newData);
   return { token: token };
 }
 
@@ -190,7 +190,7 @@ function adminUserDetailsUpdate(token: string, email: string, nameFirst: string,
   data.user[indexToUpdate].email = email;
   data.user[indexToUpdate].nameFirst = nameFirst;
   data.user[indexToUpdate].nameLast = nameLast;
-  
+
   setData(data);
   return {};
 }

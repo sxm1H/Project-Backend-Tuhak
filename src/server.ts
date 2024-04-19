@@ -62,7 +62,7 @@ import {
   adminQuizFinalResultsCSV,
 } from './v2quiz';
 
-import { getData, setData } from './dataStore'
+// import { getData, setData } from './dataStore'
 
 // import {
 //   v2adminUserDetails,
@@ -84,16 +84,15 @@ import { getData, setData } from './dataStore'
 //   v2adminQuizTrashView,
 //   v2adminQuizQuestionUpdate,
 //   v2adminQuizRestore
-import { getData, setData, setCounters, getCounters } from './dataStore';
+// import { getData, setData, setCounters, getCounters } from './dataStore';
 
-const KV_REST_API_URL = "https://generous-alpaca-44466.upstash.io";
-const KV_REST_API_TOKEN = "Aa2yASQgYjdlOWEyMzctMDE5OC00ZDhiLThiODctOTcwNTQ2MzBiMTAyOTRmOTA1OWQwMzJjNGIxODkxZTA1YjJiMTVjMjlmOTY=";
+// const KV_REST_API_URL="https://logical-hermit-49437.upstash.io"
+// const KV_REST_API_TOKEN="AcEdASQgMTljMDdjMTYtOWNkZC00MjcwLTlmZGItZTg2ZjJiY2YzNjNlOGE0ZjQ3ZDU2MmY0NDdhNDk5NzRhM2Y5MjY1Y2VkZjA="
 
-const database = createClient({
-  url: KV_REST_API_URL,
-  token: KV_REST_API_TOKEN,
-});
-
+// const database = createClient({
+//   url: KV_REST_API_URL,
+//   token: KV_REST_API_TOKEN,
+// });
 
 // Set up web app
 const app = express();
@@ -114,16 +113,16 @@ const HOST: string = process.env.IP || '127.0.0.1';
 // ====================================================================
 //  ================= WORK IS DONE BELOW THIS LINE ===================
 // ====================================================================
-app.get('/data', async (req: Request, res: Response) => {
-  const data = await database.hgetall("data:names");
-  res.status(200).json(data);
-});
+// app.get('/data', async (req: Request, res: Response) => {
+//   const data = await database.hgetall("data:names");
+//   res.status(200).json(data);
+// });
 
-app.put('/data', async (req: Request, res: Response) => {
-  const { data } = req.body;
-  await database.hset("data:names", { data });
-  return res.status(200).json({});
-});
+// app.put('/data', async (req: Request, res: Response) => {
+//   const { data } = req.body;
+//   await database.hset("data:names", { data });
+//   return res.status(200).json({});
+// });
 
 // const load = () => {
 //   if (fs.existsSync('./database.json')) {
@@ -599,7 +598,7 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid/results', (req: Request, res:
   res.json(response);
 });
 
-app.get('/v1/admin/quiz/:quizid/session/:sessionid/results/csv', ( req: Request, res: Response ) => {
+app.get('/v1/admin/quiz/:quizid/session/:sessionid/results/csv', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const sessionId = parseInt(req.params.sessionid);
   const token = req.headers.token as string;
@@ -607,7 +606,7 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid/results/csv', ( req: Request,
   console.log(response);
 
   res.json(response);
-})
+});
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

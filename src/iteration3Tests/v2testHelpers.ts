@@ -4,7 +4,8 @@ import { Answer, RequestHelperReturnType } from '../interfaces';
 import { IncomingHttpHeaders } from 'http';
 import HTTPError from 'http-errors';
 
-const DEPLOYED_URL = 'https://1531-24t1-f13b-dream.vercel.app';
+// const DEPLOYED_URL = 'https://1531-24t1-f13b-dream.vercel.app';
+const DEPLOYED_URL = `${url}:${port}`;
 const TIMEOUT_MS = 20000;
 
 // This 'requestHelper' function has been referenced from quiz.test.ts from lab08_quiz.
@@ -220,7 +221,7 @@ const adminQuizCompletedQuizResults = (quizid: number, sessionid: number, token:
 
 const adminQuizFinalResultsCSV = (quizId: number, sessionId: number, token: string) => {
   return requestHelper('GET', `/v1/admin/quiz/${quizId}/session/${sessionId}/results/csv`, { }, { token });
-}
+};
 
 // ============================================================================================== //
 

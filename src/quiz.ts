@@ -440,7 +440,7 @@ function adminQuizDescriptionUpdate(token: string, quizId: number, description: 
   // If no errors, updating the quiz fields.
     findQuiz.description = description;
     findQuiz.timeLastEdited = date;
-    setData(data);  
+    setData(data);
     return {};
   }
 }
