@@ -4,8 +4,7 @@ import { Answer, RequestHelperReturnType } from '../interfaces';
 import { IncomingHttpHeaders } from 'http';
 import HTTPError from 'http-errors';
 
-// const DEPLOYED_URL = 'https://1531-24t1-f13b-dream.vercel.app';
-const DEPLOYED_URL = `${url}:${port}`;
+const DEPLOYED_URL = 'https://1531-24t1-f13b-dream.vercel.app';
 const TIMEOUT_MS = 20000;
 
 // This 'requestHelper' function has been referenced from quiz.test.ts from lab08_quiz.

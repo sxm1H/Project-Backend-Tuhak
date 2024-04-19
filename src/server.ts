@@ -10,7 +10,7 @@ import fs from 'fs';
 import path from 'path';
 import process from 'process';
 import { clear } from './other';
-// import { createClient } from '@vercel/kv';
+import { createClient } from '@vercel/kv';
 import {
   adminAuthLogin,
   adminAuthRegister,
@@ -36,7 +36,6 @@ import {
   adminQuizQuestionUpdate,
   adminQuizRestore
 } from './quiz';
-
 import {
   adminQuizPlayerSubmitAnswer,
   adminQuizSessionCreate,
@@ -61,38 +60,15 @@ import {
   adminQuizCompletedQuizResults,
   adminQuizFinalResultsCSV,
 } from './v2quiz';
-
 // import { getData, setData } from './dataStore'
 
-// import {
-//   v2adminUserDetails,
-//   v2adminUserDetailsUpdate,
-//   v2adminUserPasswordUpdate,
-//   v2adminAuthLogout
-// } from './v2auth';
-//   v2adminQuizNameUpdate,
-//   v2adminQuizRemove,
-//   v2adminQuizList,
-//   v2adminQuizInfo,
-//   v2adminQuizDescriptionUpdate,
-//   v2adminQuizQuestionDelete,
-//   v2adminQuizTransfer,
-//   v2adminQuizQuestionCreate,
-//   v2adminQuizTrashEmpty,
-//   v2adminQuizQuestionMove,
-//   v2adminQuizQuestionDuplicate,
-//   v2adminQuizTrashView,
-//   v2adminQuizQuestionUpdate,
-//   v2adminQuizRestore
-// import { getData, setData, setCounters, getCounters } from './dataStore';
+const KV_REST_API_URL="https://logical-hermit-49437.upstash.io"
+const KV_REST_API_TOKEN="AcEdASQgMTljMDdjMTYtOWNkZC00MjcwLTlmZGItZTg2ZjJiY2YzNjNlOGE0ZjQ3ZDU2MmY0NDdhNDk5NzRhM2Y5MjY1Y2VkZjA="
 
-// const KV_REST_API_URL="https://logical-hermit-49437.upstash.io"
-// const KV_REST_API_TOKEN="AcEdASQgMTljMDdjMTYtOWNkZC00MjcwLTlmZGItZTg2ZjJiY2YzNjNlOGE0ZjQ3ZDU2MmY0NDdhNDk5NzRhM2Y5MjY1Y2VkZjA="
-
-// const database = createClient({
-//   url: KV_REST_API_URL,
-//   token: KV_REST_API_TOKEN,
-// });
+const database = createClient({
+  url: KV_REST_API_URL,
+  token: KV_REST_API_TOKEN,
+});
 
 // Set up web app
 const app = express();
@@ -113,31 +89,16 @@ const HOST: string = process.env.IP || '127.0.0.1';
 // ====================================================================
 //  ================= WORK IS DONE BELOW THIS LINE ===================
 // ====================================================================
-// app.get('/data', async (req: Request, res: Response) => {
-//   const data = await database.hgetall("data:names");
-//   res.status(200).json(data);
-// });
+app.get('/data', async (req: Request, res: Response) => {
+  const data = await database.hgetall("data:names");
+  res.status(200).json(data);
+});
 
-// app.put('/data', async (req: Request, res: Response) => {
-//   const { data } = req.body;
-//   await database.hset("data:names", { data });
-//   return res.status(200).json({});
-// });
-
-// const load = () => {
-//   if (fs.existsSync('./database.json')) {
-//     const file = fs.readFileSync('./database.json', { encoding: 'utf8' });
-//     //const count = fs.readFileSync('./counters.json', { encoding: 'utf8' });
-//     setData(JSON.parse(file));
-//     //setCounters(JSON.parse(count));
-//   }
-// };
-// load();
-
-// const save = () => {
-//   fs.writeFileSync('./database.json', JSON.stringify(getData()));
-//   //fs.writeFileSync('./counters.json', JSON.stringify(getCounters()));
-// };
+app.put('/data', async (req: Request, res: Response) => {
+  const { data } = req.body;
+  await database.hset("data:names", { data });
+  return res.status(200).json({});
+});
 
 // Example get request
 app.get('/echo', (req: Request, res: Response) => {

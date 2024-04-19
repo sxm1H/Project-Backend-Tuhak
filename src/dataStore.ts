@@ -2,10 +2,9 @@
 import {
   DataStore,
 } from './interfaces';
-// import request, { HttpVerb } from 'sync-request';
-// Open submission.ts and update DEPLOYED_URL
+import request, { HttpVerb } from 'sync-request';
 
-// const DEPLOYED_URL = 'https://1531-24t1-f13b-dream.vercel.app';
+const DEPLOYED_URL = 'https://1531-24t1-f13b-dream.vercel.app';
 
 let data: DataStore = {
   user: [],
@@ -20,85 +19,57 @@ let data: DataStore = {
   quizIdCounter: 0
 };
 
-// let counters: Counters = {
-//   sessionIdCounter: 10000,
-//   answerIdCounter: 0,
-//   questionIdCounter: 0,
-//   quizIdCounter: 0
-// };
-
 // YOU SHOULD MODIFY THIS OBJECT ABOVE ONLY
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
 
-/*
-Example usage
-    let store = getData()
-    console.log(store) # Prints { 'names': ['Hayden', 'Tam', 'Rani', 'Giuliana', 'Rando'] }
+const requestHelper = (method: HttpVerb, path: string, payload: object) => {
+  let json = {};
+  let qs = {};
+  if (['POST', 'DELETE'].includes(method)) {
+    qs = payload;
+  } else {
+    json = payload;
+  }
 
-    names = store.names
+  const res = request(method, DEPLOYED_URL + path, { qs, json, timeout: 20000 });
+  return JSON.parse(res.body.toString());
+};
 
-    names.pop()
-    names.push('Jake')
+const getData = (): DataStore => {
+  try {
+    const res = requestHelper('GET', '/data', {});
+    return res.data;
+  } catch (e) {
+    return {
+      user: [],
+      quizzes: [],
+      sessions: [],
+      trash: [],
+      quizActiveState: [],
+      quizInactiveState: [],
+      sessionIdCounter: 10000,
+      answerIdCounter: 0,
+      questionIdCounter: 0,
+      quizIdCounter: 0
+    };
+  }
+};
 
-    console.log(store) # Prints { 'names': ['Hayden', 'Tam', 'Rani', 'Giuliana', 'Jake'] }
-    setData(store)
-*/
-
-// const requestHelper = (method: HttpVerb, path: string, payload: object) => {
-//   let json = {};
-//   let qs = {};
-//   if (['POST', 'DELETE'].includes(method)) {
-//     qs = payload;
-//   } else {
-//     json = payload;
-//   }
-
-//   const res = request(method, DEPLOYED_URL + path, { qs, json, timeout: 20000 });
-//   return JSON.parse(res.body.toString());
-// };
-
-// const getData = (): DataStore => {
-//   try {
-//     const res = requestHelper('GET', '/data', {});
-//     return res.data;
-//   } catch (e) {
-//     return {
-//       user: [],
-//       quizzes: [],
-//       sessions: [],
-//       trash: [],
-//       quizActiveState: [],
-//       quizInactiveState: [],
-//       sessionIdCounter: 10000,
-//       answerIdCounter: 0,
-//       questionIdCounter: 0,
-//       quizIdCounter: 0
-//     };
-//   }
-// };
-
-// const setData = (newData: DataStore) => {
-//   requestHelper('PUT', '/data', { data: newData });
-// };
+const setData = (newData: DataStore) => {
+  requestHelper('PUT', '/data', { data: newData });
+};
 
 // Use get() to access the data
-function getData(): DataStore {
-  return data;
-}
-
-// // function getCounters(): Counters {
-// //   return counters;
-// // }
+// function getData(): DataStore {
+//   return data;
+// }
 
 // // Use set(newData) to pass in the entire data object, with modifications made
-function setData(newData: DataStore): void {
-  data = newData;
-}
-
-// function setCounters(newCounters: Counters): void {
-//   counters = newCounters;
+// function setData(newData: DataStore): void {
+//   data = newData;
 // }
+
 export {
   getData,
   setData,
